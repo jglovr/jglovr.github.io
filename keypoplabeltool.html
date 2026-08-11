@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Label & SKU Merger</title>
+    <!-- Load PDF.js for reading text -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <!-- Load pdf-lib for editing PDFs -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; background: #f9f9f9; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input[type="file"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #222; color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; width: 100%; }
+        button:hover { background: #444; }
+        #status { margin-top: 20px; font-weight: bold; text-align: center; color: #333; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Shipping Label & SKU Merger</h2>
+    
+    <div class="input-group">
+        <label for="packingList">1. Upload Packing Lists PDF</label>
+        <input type="file" id="packingList" accept="application/pdf">
+    </div>
+
+    <div class="input-group">
+        <label for="shippingLabels">2. Upload Shipping Labels PDF</label>
+        <input type="file" id="shippingLabels" accept="application/pdf">
+    </div>
+
+    <button id="processBtn">Process & Download Labels</button>
+    <div id="status"></div>
+</div>
+
+<script>
+    // Initialize PDF.js worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    async function extractTextFromPDF(file) {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const pagesText = [];
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            const text = textContent.items.map(item => item.str).join(' ');
+            pagesText.push(text);
+        }
+        return pagesText;
+    }
+
+    function parsePackingList(pageText) {
+        // Strip all spaces to easily find the 22-digit USPS tracking number
+        const cleanText = pageText.replace(/\s+/g, '');
+        
+        // Find 22 consecutive digits starting with 9 (Standard USPS tracking format)
+        const trackingMatch = cleanText.match(/(9\d{21})/);
+        const tracking = trackingMatch ? trackingMatch[1] : null;
+
+        // Find SKUs and Quantities
+        const skus = [];
+        const qtys = [];
+        
+        const skuMatches = [...pageText.matchAll(/SKU:\s*([^\s]+)/gi)];
+        const qtyMatches = [...pageText.matchAll(/(\d+)\s*x\s*\$/g)];
+
+        skuMatches.forEach(match => skus.push(match[1]));
+        qtyMatches.forEach(match => qtys.push(match[1]));
+
+        // Format to: SKU A QTY A, SKU B QTY B
+        let items = [];
+        for (let i = 0; i < skus.length; i++) {
+            let q = qtys[i] || "1";
+            items.push(`${skus[i]} QTY ${q}`);
+        }
+
+        return { tracking, dataString: items.join(', ') };
+    }
+
+    document.getElementById('processBtn').addEventListener('click', async () => {
+        const packingFile = document.getElementById('packingList').files[0];
+        const labelFile = document.getElementById('shippingLabels').files[0];
+        const statusDiv = document.getElementById('status');
+
+        if (!packingFile || !labelFile) {
+            statusDiv.innerText = "Please upload both PDFs.";
+            statusDiv.style.color = "red";
+            return;
+        }
+
+        statusDiv.innerText = "Processing PDFs... Please wait.";
+        statusDiv.style.color = "#333";
+
+        try {
+            // 1. Extract text
+            const packingTexts = await extractTextFromPDF(packingFile);
+            const labelTexts = await extractTextFromPDF(labelFile);
+
+            // 2. Parse packing list data
+            const parsedOrders = packingTexts.map(parsePackingList).filter(order => order.tracking && order.dataString);
+            
+            console.log("Successfully Parsed Orders with Tracking:", parsedOrders);
+
+            // 3. Load the Label PDF for editing
+            const labelArrayBuffer = await labelFile.arrayBuffer();
+            const pdfDoc = await PDFLib.PDFDocument.load(labelArrayBuffer);
+            const pages = pdfDoc.getPages();
+
+            let matchCount = 0;
+
+            // 4. Match and draw text
+            for (let i = 0; i < labelTexts.length; i++) {
+                // Strip spaces from label text to match the clean tracking number
+                const cleanLabelText = labelTexts[i].replace(/\s+/g, '');
+                const page = pages[i];
+                
+                // Find matching order via Tracking Number
+                const matchedOrder = parsedOrders.find(order => cleanLabelText.includes(order.tracking));
+
+                if (matchedOrder) {
+                    matchCount++;
+                    // Draw the SKU/QTY text
+                    page.drawText(matchedOrder.dataString, {
+                        x: 20,   // Moved to 20 pixels from the left edge
+                        y: 47,   // Moved down 3 pixels (from 50 to 47)
+                        size: 9, // Kept font size at 9
+                        color: PDFLib.rgb(0, 0, 0)
+                    });
+                }
+            }
+
+            // 5. Save and download
+            const pdfBytes = await pdfDoc.save();
+            const blob = new Blob([pdfBytes], { type: "application/pdf" });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = "Merged_Shipping_Labels.pdf";
+            link.click();
+
+            statusDiv.innerText = `Success! Merged ${matchCount} labels. Your PDF is downloading.`;
+            statusDiv.style.color = "green";
+
+        } catch (error) {
+            console.error(error);
+            statusDiv.innerText = "An error occurred. Check the browser console for details.";
+            statusDiv.style.color = "red";
+        }
+    });
+</script>
+</body>
+</html>
