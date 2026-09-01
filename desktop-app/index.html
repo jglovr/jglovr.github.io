@@ -1667,6 +1667,18 @@ Type 'TYPE README.TXT' to view system documentation manual.
             window.electronAPI.onFloppyInserted(async (disk) => {
                 playFloppySeek();
 
+                // Auto Power-On Workstation System if sleeping or at BIOS boot screen
+                if (!systemPoweredOn) {
+                    systemPoweredOn = true;
+                    const pScreen = document.getElementById('power-screen-container');
+                    if (pScreen) pScreen.style.display = 'none';
+                    const bMain = document.getElementById('bios-main-content');
+                    if (bMain) bMain.style.display = 'none';
+                    const bScreen = document.getElementById('bios-boot-screen');
+                    if (bScreen) bScreen.classList.add('hidden');
+                    startComputerFanHum();
+                }
+
                 const badge = document.getElementById('floppy-badge');
                 const badgeText = document.getElementById('floppy-badge-text');
                 const header = document.getElementById('floppy-header-status');
@@ -1720,7 +1732,8 @@ Type 'TYPE README.TXT' to view system documentation manual.
                 }
 
                 // 2. ZERO-CLICK INSTANT AUTOMATIC GAME LAUNCH FROM DISK
-                openGameWindowFromBlob(disk.content, meta.title, `win-floppy-auto-${disk.fileName}`, meta.iconKey);
+                const cleanWinId = `win-floppy-auto-${disk.fileName.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                openGameWindowFromBlob(disk.content, meta.title, cleanWinId, meta.iconKey);
             });
 
             window.electronAPI.onFloppyEjected(() => {
@@ -1846,9 +1859,22 @@ Type 'TYPE README.TXT' to view system documentation manual.
             playFloppySeek();
             toggleBrowserFullscreen();
 
+            // Force BIOS boot overlay hidden if still active
+            if (!systemPoweredOn) {
+                systemPoweredOn = true;
+                const pContainer = document.getElementById('power-screen-container');
+                if (pContainer) pContainer.style.display = 'none';
+                const bContent = document.getElementById('bios-main-content');
+                if (bContent) bContent.style.display = 'none';
+                const bScreen = document.getElementById('bios-boot-screen');
+                if (bScreen) bScreen.classList.add('hidden');
+                startComputerFanHum();
+            }
+
             let win = document.getElementById(winId);
             if (win) {
                 win.style.display = 'flex';
+                win.classList.remove('minimized');
                 bringToFront(winId);
                 return;
             }
