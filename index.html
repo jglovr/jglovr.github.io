@@ -924,7 +924,7 @@
             </div>
             <div class="sys-info-group">
                 <span>DRIVE A: 3.5" FLOPPY</span>
-                <span id="sys-header-count">DRIVE C: 5 PROGRAMS</span>
+                <span id="sys-header-count">DRIVE C: 4 PROGRAMS</span>
             </div>
         </div>
 
@@ -937,13 +937,9 @@
                     <div class="shortcut-icon">📁</div>
                     <div class="shortcut-label">C:\GAMES</div>
                 </div>
-                <div class="desktop-shortcut" id="icon-codyfrog" onclick="openGameWindow('codyfrog.html', 'Cody Frog', 'window-codyfrog', '🐸', this)">
+                <div class="desktop-shortcut" id="icon-codyfrog" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog', 'window-codyfrog', '🐸', this)">
                     <div class="shortcut-icon">🐸</div>
                     <div class="shortcut-label">CODYFROG</div>
-                </div>
-                <div class="desktop-shortcut" id="icon-codyclassic" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog Classic', 'window-codyclassic', '🐸', this)">
-                    <div class="shortcut-icon">🐸</div>
-                    <div class="shortcut-label">CODYCLASS</div>
                 </div>
                 <div class="desktop-shortcut" id="icon-gnomes" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', '🍄', this)">
                     <div class="shortcut-icon">🍄</div>
@@ -995,14 +991,14 @@
                 <div class="window-body bevel-in">
                     <div id="catalog-container" class="catalog-grid">
 
-                        <!-- Game 1: Cody Frog (Mac II Edition) -->
+                        <!-- Game 1: Cody Frog -->
                         <div class="game-card bevel-out" id="card-codyfrog">
                             <div class="card-header">
                                 <div>
                                     <h3 class="game-title">Cody Frog</h3>
                                     <span class="game-file-name">CODYFROG.EXE</span>
                                 </div>
-                                <span class="card-badge">MAC II</span>
+                                <span class="card-badge">PUZZLE</span>
                             </div>
                             <div class="card-media">
                                 <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#55aaff;">
@@ -1018,7 +1014,7 @@
                                 </svg>
                             </div>
                             <div class="card-description">
-                                Macintosh System 7 edition of Cody Frog. Build logic instruction sequences with classic Macintosh II GUI styling!
+                                Guide Cody the Frog through challenging grid obstacles by building logic instruction paths and sequences!
                             </div>
                             <div class="card-meta-list">
                                 <span>SIZE: 98.4 KB</span>
@@ -1026,46 +1022,11 @@
                                 <span>STATUS: READY</span>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-action primary bevel-out" onclick="openGameWindow('codyfrog.html', 'Cody Frog', 'window-codyfrog', '🐸', this)">▶ RUN PROGRAM</button>
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog', 'window-codyfrog', '🐸', this)">▶ RUN PROGRAM</button>
                             </div>
                         </div>
 
-                        <!-- Game 2: Cody Frog Classic -->
-                        <div class="game-card bevel-out" id="card-codyclassic">
-                            <div class="card-header">
-                                <div>
-                                    <h3 class="game-title">Cody Frog Classic</h3>
-                                    <span class="game-file-name">CODYCLASS.EXE</span>
-                                </div>
-                                <span class="card-badge">CLASSIC</span>
-                            </div>
-                            <div class="card-media">
-                                <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#1a252f;">
-                                    <rect x="0" y="0" width="200" height="120" fill="#0b0f19" />
-                                    <circle cx="100" cy="50" r="28" fill="#2ecc71" />
-                                    <circle cx="90" cy="40" r="6" fill="#fff" />
-                                    <circle cx="90" cy="40" r="3" fill="#000" />
-                                    <circle cx="110" cy="40" r="6" fill="#fff" />
-                                    <circle cx="110" cy="40" r="3" fill="#000" />
-                                    <path d="M 85 58 Q 100 68 115 58" stroke="#145a32" stroke-width="3" fill="none" />
-                                    <rect x="50" y="85" width="100" height="20" rx="4" fill="#34495e" stroke="#f39c12" stroke-width="2"/>
-                                    <text x="100" y="99" fill="#f1c40f" font-family="monospace" font-size="12" text-anchor="middle">CLASSIC 486 &gt;&gt;</text>
-                                </svg>
-                            </div>
-                            <div class="card-description">
-                                The original 486 workstation version of Cody Frog. Solve grid movement puzzles and bridge mechanics.
-                            </div>
-                            <div class="card-meta-list">
-                                <span>SIZE: 91.3 KB</span>
-                                <span>TYPE: 16-Bit Logic</span>
-                                <span>STATUS: READY</span>
-                            </div>
-                            <div class="card-actions">
-                                <button class="btn-action primary bevel-out" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog Classic', 'window-codyclassic', '🐸', this)">▶ RUN PROGRAM</button>
-                            </div>
-                        </div>
-
-                        <!-- Game 3: Gnomes in the Tall Grass -->
+                        <!-- Game 2: Gnomes in the Tall Grass -->
                         <div class="game-card bevel-out" id="card-gnomes">
                             <div class="card-header">
                                 <div>
@@ -1097,7 +1058,7 @@
                             </div>
                         </div>
 
-                        <!-- Game 4: SYSTEM_VOID -->
+                        <!-- Game 3: SYSTEM_VOID -->
                         <div class="game-card bevel-out" id="card-sysvoid">
                             <div class="card-header">
                                 <div>
@@ -1128,7 +1089,7 @@
                             </div>
                         </div>
 
-                        <!-- Game 5: Music Grid Live Mixer -->
+                        <!-- Game 4: Music Grid Live Mixer -->
                         <div class="game-card bevel-out" id="card-gridmix">
                             <div class="card-header">
                                 <div>
@@ -1174,8 +1135,8 @@
                 </div>
 
                 <div class="window-statusbar">
-                    <span id="catalog-status-count">5 Object(s) displayed</span>
-                    <span id="catalog-status-usage">Total Disk Usage: 965.5 KB</span>
+                    <span id="catalog-status-count">4 Object(s) displayed</span>
+                    <span id="catalog-status-usage">Total Disk Usage: 874.2 KB</span>
                 </div>
             </div>
 
@@ -1245,11 +1206,8 @@ Type 'TYPE README.TXT' to view system documentation manual.
                 JGLOVR OS
             </div>
             <div class="start-menu-list">
-                <div class="start-item" onclick="openGameWindow('codyfrog.html', 'Cody Frog', 'window-codyfrog', '🐸', this)">
-                    <span>🐸</span> Cody Frog (Mac II)
-                </div>
-                <div class="start-item" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog Classic', 'window-codyclassic', '🐸', this)">
-                    <span>🐸</span> Cody Frog Classic
+                <div class="start-item" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog', 'window-codyfrog', '🐸', this)">
+                    <span>🐸</span> Cody Frog
                 </div>
                 <div class="start-item" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', '🍄', this)">
                     <span>🍄</span> Gnomes in Tall Grass
@@ -1704,7 +1662,7 @@ Type 'TYPE README.TXT' to view system documentation manual.
                 desktopContainer.insertBefore(shortcut, termIcon);
             });
 
-            const totalCount = 5 + customGames.length;
+            const totalCount = 4 + customGames.length;
             const sysHeaderCount = document.getElementById('sys-header-count');
             if (sysHeaderCount) sysHeaderCount.textContent = `DRIVE C: ${totalCount} PROGRAMS`;
 
@@ -2195,11 +2153,14 @@ Type 'TYPE README.TXT' to view system documentation manual.
 
 PROGRAM EXECUTABLES (C:\\GAMES\\*.*):
 ----------------------------------
-1. CODYFROG.EXE  - Cody Frog (Macintosh II System 7 Edition)
-2. CODYCLASS.EXE - Cody Frog Classic (16-Bit Logic Edition)
-3. GNOMES.EXE    - 3D Meadow World Simulation
-4. SYS_VOID.EXE  - CRT Vector Space Survival Arcade Shooter
-5. GRIDMIX.EXE   - 16-Step Audio Sequencer & Live Synthesizer
+1. CODYFROG.EXE  - Cody Frog (Logic & Instruction Sequencer)
+2. GNOMES.EXE    - 3D Meadow World Simulation
+3. SYS_VOID.EXE  - CRT Vector Space Survival Arcade Shooter
+4. GRIDMIX.EXE   - 16-Step Audio Sequencer & Live Synthesizer
+
+SPECIAL COMMAND LINE EXECUTABLES:
+---------------------------------
+- CODY26.EXE    : Cody Frog '26 (Original 486 Legacy Engine)
 
 SYSTEM UTILITIES & COMMANDS:
 ---------------------------
@@ -2207,7 +2168,7 @@ SYSTEM UTILITIES & COMMANDS:
 - A: / C:       : Switch between Drive A:\\ (Floppy) and Drive C:\\ (Hard Drive)
 - COPY A:\\* C:  : Install program from floppy disk to hard drive
 - TYPE [file]   : Output text contents of a file (e.g. TYPE README.TXT)
-- RUN [file]    : Execute program in retro window (e.g. RUN CODYFROG)
+- RUN [file]    : Execute program in retro window (e.g. RUN CODYFROG or RUN CODY26)
 - MEM           : Display MS-DOS conventional and XMS memory allocation
 - SYSINFO       : Show hardware CPU, FPU, VRAM, and BIOS summary
 - TREE          : Output ASCII system directory tree structure
@@ -2235,7 +2196,7 @@ SYSTEM UTILITIES & COMMANDS:
         const cmdHistory = [];
         let historyIndex = -1;
 
-        const knownFiles = ['CODYFROG.EXE', 'CODYCLASS.EXE', 'GNOMES.EXE', 'SYS_VOID.EXE', 'GRIDMIX.EXE', 'README.TXT', 'CONFIG.SYS', 'AUTOEXEC.BAT'];
+        const knownFiles = ['CODYFROG.EXE', 'CODY26.EXE', 'GNOMES.EXE', 'SYS_VOID.EXE', 'GRIDMIX.EXE', 'README.TXT', 'CONFIG.SYS', 'AUTOEXEC.BAT'];
 
         function updateTerminalPrompt() {
             const promptLabel = document.getElementById('term-prompt-label');
@@ -2337,7 +2298,7 @@ Drive A:\\ is empty. No floppy disk inserted.`;
  Directory of C:\\GAMES
 
 CODYFROG EXE      98,412 08-31-26  9:44p
-CODYCLASS EXE     91,355 08-31-26  9:44p
+CODY26   EXE      91,355 08-31-26  9:44p
 GNOMES   EXE     639,298 08-31-26  9:30p
 SYS_VOID EXE      81,617 08-31-26  9:30p
 GRIDMIX  EXE      62,314 08-31-26  9:30p
@@ -2431,7 +2392,7 @@ C:\\
 ├── DRIVERS\\
 └── GAMES\\
     ├── CODYFROG.EXE
-    ├── CODYCLASS.EXE
+    ├── CODY26.EXE
     ├── GNOMES.EXE
     ├── SYS_VOID.EXE
     ├── GRIDMIX.EXE
@@ -2459,7 +2420,7 @@ C:\\
   EJECT         - Eject floppy disk from Drive A:\\
   DIR           - List files in current directory
   TYPE [file]   - View file contents (e.g. TYPE README.TXT)
-  RUN [file]    - Execute program in retro window (e.g. RUN CODYFROG)
+  RUN [file]    - Execute program in retro window (RUN CODYFROG or RUN CODY26)
   CD [path]     - Change directory (C:\\GAMES, C:\\DOS, C:\\)
   MEM           - Display memory allocation table
   SYSINFO       - Display hardware diagnostic summary
@@ -2495,13 +2456,13 @@ C:\\
                 } else if (cmd === 'shutdown') {
                     triggerShutdown();
                     return;
-                } else if (cmd.startsWith('run ') || cmd.startsWith('play ')) {
-                    const target = cmd.replace('run ', '').replace('play ', '');
-                    if (target.includes('codyclass') || target.includes('classic')) {
-                        openGameWindow('codyfrogclassic.html', 'Cody Frog Classic', 'window-codyclassic', '🐸', document.getElementById('icon-codyclassic'));
-                        reply += `Launching CODYCLASS.EXE...`;
-                    } else if (target.includes('cody')) {
-                        openGameWindow('codyfrog.html', 'Cody Frog', 'window-codyfrog', '🐸', document.getElementById('icon-codyfrog'));
+                } else if (cmd.startsWith('run ') || cmd.startsWith('play ') || cmd.includes('cody')) {
+                    const target = cmd.replace('run ', '').replace('play ', '').trim();
+                    if (target.includes('26') || target === 'cody26' || cmd.includes('26')) {
+                        openGameWindow('codyfrog.html', 'Cody Frog \'26', 'window-cody26', '🐸', document.getElementById('icon-codyfrog'));
+                        reply += `Launching CODY26.EXE (Original 486 Legacy Engine)...`;
+                    } else if (target.includes('cody') || cmd.includes('cody')) {
+                        openGameWindow('codyfrogclassic.html', 'Cody Frog', 'window-codyfrog', '🐸', document.getElementById('icon-codyfrog'));
                         reply += `Launching CODYFROG.EXE...`;
                     } else if (target.includes('gnome')) {
                         openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', '🍄', document.getElementById('icon-gnomes'));
