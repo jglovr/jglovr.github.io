@@ -2507,7 +2507,6 @@ Type 'TYPE README.TXT' to view system documentation manual.
             const startMenu = document.getElementById('start-menu');
             if (startMenu) startMenu.classList.remove('active');
 
-            playSound('click');
             await new Promise(r => setTimeout(r, 450));
 
             // 1. Unload Open Program Windows One-by-One (450ms delay per window)
@@ -2517,7 +2516,6 @@ Type 'TYPE README.TXT' to view system documentation manual.
                 win.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
                 win.style.opacity = '0';
                 win.style.transform = 'scale(0.9)';
-                playSound('click');
                 await new Promise(r => setTimeout(r, 450));
                 win.style.display = 'none';
                 
@@ -2532,7 +2530,6 @@ Type 'TYPE README.TXT' to view system documentation manual.
                 icon.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
                 icon.style.opacity = '0';
                 icon.style.transform = 'translateY(12px) scale(0.7)';
-                playSound('click');
                 await new Promise(r => setTimeout(r, 400));
             }
 
@@ -2541,7 +2538,6 @@ Type 'TYPE README.TXT' to view system documentation manual.
             if (startBtn) {
                 startBtn.style.transition = 'opacity 0.3s ease';
                 startBtn.style.opacity = '0';
-                playSound('click');
                 await new Promise(r => setTimeout(r, 500));
             }
 
@@ -2549,7 +2545,6 @@ Type 'TYPE README.TXT' to view system documentation manual.
             if (taskbarTray) {
                 taskbarTray.style.transition = 'opacity 0.3s ease';
                 taskbarTray.style.opacity = '0';
-                playSound('click');
                 await new Promise(r => setTimeout(r, 500));
             }
 
@@ -2557,7 +2552,6 @@ Type 'TYPE README.TXT' to view system documentation manual.
             if (taskbar) {
                 taskbar.style.transition = 'opacity 0.35s ease';
                 taskbar.style.opacity = '0';
-                playSound('click');
                 await new Promise(r => setTimeout(r, 600));
             }
 
