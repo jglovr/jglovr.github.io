@@ -3,14 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JGLOVR OS 3.11 - Desktop Workstation</title>
-
+    <title>JGLOVR OS v3.11 - Personal Workstation</title>
+    <link rel="icon" type="image/png" href="assets/icon.png">
+    <meta name="description" content="JGLOVR OS v3.11 Personal Workstation Computer System with Physical Floppy Drive Support.">
+    
     <!-- Google Fonts for Retro System Aesthetics -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
 
     <style>
+        /* ==========================================
+           RETRO OS DESIGN SYSTEM & THEMES
+           ========================================== */
         :root {
             --bg-teal: #008080;
             --win-bg: #c0c0c0;
@@ -21,16 +26,71 @@
             --header-bg-gradient: linear-gradient(90deg, #000080 0%, #1084d0 100%);
             --header-text: #ffffff;
             --text-main: #000000;
+            --text-muted: #404040;
+            --highlight: #000080;
+            --highlight-text: #ffffff;
             --font-sys: 'VT323', monospace;
             --font-mono: 'Share Tech Mono', monospace;
             --font-pixel: 'Press Start 2P', monospace;
         }
 
-        * { box-sizing: border-box; user-select: none; }
+        /* CRT / Color Themes */
+        body.theme-dos-green {
+            --bg-teal: #051505;
+            --win-bg: #0a200a;
+            --win-border-light: #33ff33;
+            --win-border-dark: #116611;
+            --win-border-shadow: #002200;
+            --header-bg: #116611;
+            --header-bg-gradient: linear-gradient(90deg, #116611 0%, #22aa22 100%);
+            --header-text: #051505;
+            --text-main: #33ff33;
+            --text-muted: #1c991c;
+            --highlight: #33ff33;
+            --highlight-text: #051505;
+        }
+
+        body.theme-dos-amber {
+            --bg-teal: #1a0f00;
+            --win-bg: #291800;
+            --win-border-light: #ffb000;
+            --win-border-dark: #996600;
+            --win-border-shadow: #442800;
+            --header-bg: #996600;
+            --header-bg-gradient: linear-gradient(90deg, #996600 0%, #ffb000 100%);
+            --header-text: #1a0f00;
+            --text-main: #ffb000;
+            --text-muted: #cc8800;
+            --highlight: #ffb000;
+            --highlight-text: #1a0f00;
+        }
+
+        body.theme-c64 {
+            --bg-teal: #4040e0;
+            --win-bg: #a0a0ff;
+            --win-border-light: #ffffff;
+            --win-border-dark: #6060c0;
+            --win-border-shadow: #202080;
+            --header-bg: #202080;
+            --header-bg-gradient: linear-gradient(90deg, #202080 0%, #4040e0 100%);
+            --header-text: #ffffff;
+            --text-main: #000000;
+            --text-muted: #202080;
+            --highlight: #202080;
+            --highlight-text: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-font-smoothing: none;
+        }
 
         html, body {
-            margin: 0; padding: 0;
-            width: 100vw; height: 100vh;
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
             overflow: hidden;
             background-color: #000000;
             font-family: var(--font-sys);
@@ -38,6 +98,56 @@
             color: var(--text-main);
         }
 
+        /* Scanlines Overlay */
+        .crt-scanlines {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 99999;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 4px, 6px 100%;
+            opacity: 0.85;
+            display: block;
+        }
+        body.scanlines-off .crt-scanlines { display: none; }
+
+        /* Nostalgic CRT Monitor Warming Up Animation */
+        @keyframes crtWarmUp {
+            0% {
+                opacity: 0;
+                filter: brightness(4) contrast(3) blur(5px);
+                transform: scaleY(0.004) scaleX(0.6);
+            }
+            25% {
+                opacity: 0.9;
+                filter: brightness(3) contrast(2) blur(3px);
+                transform: scaleY(0.03) scaleX(0.95);
+            }
+            55% {
+                filter: brightness(1.5) contrast(1.3) blur(1px);
+                transform: scaleY(1.02) scaleX(1.01);
+            }
+            100% {
+                opacity: 1;
+                filter: brightness(1) contrast(1) blur(0px);
+                transform: scaleY(1) scaleX(1);
+            }
+        }
+
+        .crt-warming-up {
+            animation: crtWarmUp 1.2s cubic-bezier(0.1, 0.85, 0.2, 1) forwards;
+            transform-origin: center center;
+        }
+
+        /* Classic Retro Bevel Utilities */
         .bevel-out {
             background-color: var(--win-bg);
             border-top: 2px solid var(--win-border-light);
@@ -56,14 +166,23 @@
             box-shadow: inset 1px 1px var(--win-border-dark);
             color: #000;
         }
+        body.theme-dos-green .bevel-in,
+        body.theme-dos-amber .bevel-in {
+            background-color: #000000;
+            color: var(--text-main);
+        }
 
+        /* Screen Layout Structure */
         #os-viewport {
             display: flex;
             flex-direction: column;
-            width: 100vw; height: 100vh;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
             background-color: var(--bg-teal);
         }
 
+        /* Top System Status Header */
         #sys-header {
             height: 32px;
             padding: 2px 8px;
@@ -72,8 +191,24 @@
             justify-content: space-between;
             font-family: var(--font-mono);
             font-size: 14px;
+            z-index: 10;
         }
 
+        .sys-info-group {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .badge-tag {
+            background: #000;
+            color: #00ff00;
+            padding: 1px 6px;
+            border-radius: 2px;
+            font-weight: bold;
+        }
+
+        /* Main Desktop Area */
         #desktop {
             flex: 1;
             position: relative;
@@ -83,10 +218,14 @@
             overflow: hidden;
         }
 
+        /* Desktop Shortcuts Column */
         #desktop-icons {
             display: flex;
             flex-direction: column;
+            flex-wrap: wrap;
             gap: 16px;
+            align-content: flex-start;
+            z-index: 5;
             width: 110px;
         }
 
@@ -98,52 +237,172 @@
             text-align: center;
             cursor: pointer;
             padding: 6px 4px;
+            border: 1px dashed transparent;
             color: #ffffff;
             text-shadow: 1px 1px 2px #000000;
+            transition: transform 0.1s;
         }
-        .desktop-shortcut:hover {
-            border: 1px dashed #ffffff;
+        .desktop-shortcut:hover, .desktop-shortcut.active {
+            border-color: #ffffff;
             background-color: rgba(0, 0, 128, 0.4);
         }
 
         .shortcut-icon {
-            width: 48px; height: 48px;
+            width: 48px;
+            height: 48px;
             margin-bottom: 4px;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background: var(--win-bg);
             border: 2px solid var(--win-border-light);
+            border-right-color: var(--win-border-shadow);
+            border-bottom-color: var(--win-border-shadow);
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.5);
         }
 
+        .shortcut-label {
+            font-size: 16px;
+            line-height: 1.1;
+            word-break: break-word;
+        }
+
+        /* DRAGGABLE & RESIZABLE RETRO WINDOW SYSTEM */
         .window {
             position: absolute;
             display: flex;
             flex-direction: column;
             z-index: 10;
-            min-width: 340px; min-height: 240px;
+            min-width: 340px;
+            min-height: 240px;
             box-shadow: 4px 4px 14px rgba(0,0,0,0.6);
+            resize: both;
+            overflow: hidden;
         }
 
+        /* Maximized Windows */
         .window.maximized {
-            top: 0 !important; left: 0 !important;
-            width: 100vw !important; height: calc(100vh - 38px) !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: calc(100vh - 38px) !important;
             box-shadow: none !important;
+            resize: none !important;
+            border-radius: 0 !important;
         }
 
         .window-titlebar {
             height: 30px;
+            min-height: 30px;
             background: var(--header-bg-gradient);
             color: var(--header-text);
             padding: 2px 6px;
-            display: flex; align-items: center; justify-content: space-between;
-            font-weight: bold; font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: move;
+        }
+
+        .window-title-text {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 3px;
+        }
+
+        .win-btn {
+            width: 22px;
+            height: 22px;
+            min-width: 22px;
+            padding: 0;
+            font-family: var(--font-pixel);
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .window-menubar {
+            display: flex;
+            gap: 12px;
+            padding: 3px 8px;
+            border-bottom: 1px solid var(--win-border-dark);
+            font-size: 17px;
+        }
+
+        .menu-item {
+            cursor: pointer;
+            padding: 0 4px;
+        }
+        .menu-item:hover {
+            background-color: var(--highlight);
+            color: var(--highlight-text);
         }
 
         .window-body {
-            flex: 1; padding: 12px;
+            flex: 1;
+            padding: 12px;
             overflow-y: auto;
-            display: flex; flex-direction: column; gap: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            height: 100%;
         }
 
+        .window-statusbar {
+            padding: 3px 8px;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid var(--win-border-dark);
+            background: var(--win-bg);
+        }
+
+        /* Default Window Coordinates */
+        #catalog-window { top: 20px; left: 140px; width: 780px; height: 560px; }
+        #terminal-window { top: 70px; left: 220px; width: 680px; height: 450px; }
+
+        .game-program-window {
+            top: 20px;
+            left: 100px;
+            width: 900px;
+            height: 600px;
+        }
+
+        /* Explorer Toolbar */
+        .explorer-toolbar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 6px;
+            margin-bottom: 4px;
+        }
+
+        .path-box {
+            flex: 1;
+            padding: 3px 8px;
+            font-family: var(--font-mono);
+            font-size: 16px;
+        }
+
+        .view-mode-btn {
+            padding: 2px 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Catalog Layout */
         .catalog-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -151,283 +410,2475 @@
         }
 
         .game-card {
-            display: flex; flex-direction: column;
+            display: flex;
+            flex-direction: column;
             padding: 10px;
+            position: relative;
+            transition: transform 0.1s;
+        }
+        .game-card:hover {
+            border-color: #000;
+            box-shadow: inset 1px 1px #fff, inset -1px -1px #404040, 2px 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid var(--win-border-dark);
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+
+        .game-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #000080;
+            margin: 0;
+            line-height: 1.1;
+        }
+        body.theme-dos-green .game-title { color: #33ff33; }
+        body.theme-dos-amber .game-title { color: #ffb000; }
+
+        .game-file-name {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            color: #666;
+            background: #e0e0e0;
+            padding: 1px 5px;
+            border: 1px inset #888;
+        }
+        body.theme-dos-green .game-file-name,
+        body.theme-dos-amber .game-file-name {
+            background: #111;
+            color: var(--text-muted);
+        }
+
+        .card-media {
+            height: 130px;
+            width: 100%;
+            background: #000;
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px inset var(--win-border-dark);
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: #ffcc00;
+            color: #000;
+            font-family: var(--font-pixel);
+            font-size: 9px;
+            padding: 3px 6px;
+            border: 1px solid #000;
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        .card-description {
+            font-size: 18px;
+            line-height: 1.25;
+            margin-bottom: 12px;
+            flex: 1;
+        }
+
+        .card-meta-list {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 6px;
+            margin-bottom: 10px;
+            background: rgba(0,0,0,0.05);
+            border: 1px solid var(--win-border-dark);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
         }
 
         .btn-action {
-            flex: 1; padding: 6px 4px;
-            font-family: var(--font-sys); font-size: 18px; font-weight: bold;
-            cursor: pointer; text-align: center;
-            background-color: #000080; color: #ffffff;
+            flex: 1;
+            padding: 6px 4px;
+            font-family: var(--font-sys);
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
             border: 2px solid var(--win-border-light);
         }
+        .btn-action.primary {
+            background-color: #000080;
+            color: #ffffff;
+        }
+        body.theme-dos-green .btn-action.primary { background-color: #116611; color: #33ff33; }
+        body.theme-dos-amber .btn-action.primary { background-color: #996600; color: #ffb000; }
 
+        .btn-action:hover { filter: brightness(1.15); }
+        .btn-action:active { box-shadow: inset 2px 2px var(--win-border-shadow); }
+
+        .iframe-container {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border: none;
+            display: block;
+        }
+
+        /* Expanding Wireframe Box Animation Element */
+        .expanding-wireframe {
+            position: fixed;
+            border: 3px double var(--win-border-light);
+            background: rgba(0, 0, 128, 0.35);
+            box-shadow: 0 0 15px rgba(255,255,255,0.6), inset 0 0 15px rgba(255,255,255,0.4);
+            pointer-events: none;
+            z-index: 999999;
+            transition: all 0.3s cubic-bezier(0.05, 0.85, 0.2, 1);
+        }
+
+        /* Terminal Body */
+        .terminal-body {
+            background-color: #000000;
+            color: #00ff00;
+            font-family: var(--font-mono);
+            font-size: 16px;
+            padding: 12px;
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            cursor: text;
+        }
+
+        .terminal-output {
+            white-space: pre-wrap;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .terminal-prompt-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .terminal-input {
+            background: transparent;
+            border: none;
+            color: #00ff00;
+            font-family: var(--font-mono);
+            font-size: 16px;
+            flex: 1;
+            outline: none;
+        }
+
+        /* Taskbar at Bottom */
         #taskbar {
             height: 38px;
             background-color: var(--win-bg);
             border-top: 2px solid var(--win-border-light);
-            display: flex; align-items: center; justify-content: space-between;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             padding: 2px 4px;
+            z-index: 99999;
         }
 
-        .floppy-badge-btn {
-            padding: 2px 8px; font-weight: bold; cursor: pointer;
+        .taskbar-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        #start-btn {
+            height: 30px;
+            padding: 2px 12px 2px 8px;
+            font-weight: bold;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .taskbar-tasks {
+            display: flex;
+            gap: 4px;
+            overflow-x: auto;
+            flex: 1;
+            margin: 0 8px;
+        }
+
+        .task-tab {
+            height: 28px;
+            min-width: 140px;
+            max-width: 200px;
+            padding: 2px 8px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .task-tab.active {
+            background-color: #e0e0e0;
+            border-top: 2px solid var(--win-border-shadow);
+            border-left: 2px solid var(--win-border-shadow);
+            border-right: 2px solid var(--win-border-light);
+            border-bottom: 2px solid var(--win-border-light);
+            font-weight: bold;
+        }
+
+        .system-tray {
+            height: 30px;
+            padding: 2px 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-mono);
+            font-size: 15px;
+        }
+
+        .tray-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            padding: 2px 6px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .tray-btn:hover { background: rgba(0,0,0,0.1); }
+
+        .floppy-tray-btn {
+            padding: 2px 8px;
+            font-weight: bold;
+            cursor: pointer;
             border: 2px solid var(--win-border-light);
             background-color: var(--win-bg);
             display: flex;
             align-items: center;
             gap: 6px;
         }
-        .floppy-badge-btn.active {
-            background-color: #008000; color: #ffffff;
-            animation: pulseDisk 1s infinite alternate;
+        .floppy-tray-btn.disk-inserted {
+            background-color: #008000;
+            color: #ffffff;
+            animation: diskBlink 1s infinite alternate;
         }
-        @keyframes pulseDisk {
+        @keyframes diskBlink {
             0% { filter: brightness(1); }
-            100% { filter: brightness(1.4); }
+            100% { filter: brightness(1.3); }
         }
 
+        /* Start Menu Popup */
+        #start-menu {
+            position: absolute;
+            bottom: 40px;
+            left: 4px;
+            width: 240px;
+            background-color: var(--win-bg);
+            z-index: 100000;
+            display: flex;
+            flex-direction: row;
+            box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
+        }
+        #start-menu.hidden { display: none; }
+
+        .start-menu-banner {
+            width: 32px;
+            background: var(--header-bg);
+            color: #fff;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            text-align: center;
+            padding: 12px 4px;
+            font-family: var(--font-pixel);
+            font-size: 13px;
+            letter-spacing: 2px;
+        }
+
+        .start-menu-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 4px 0;
+        }
+
+        .start-item {
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .start-item:hover {
+            background-color: var(--highlight);
+            color: var(--highlight-text);
+        }
+
+        .start-divider {
+            height: 1px;
+            background: var(--win-border-dark);
+            margin: 4px 0;
+            border-bottom: 1px solid var(--win-border-light);
+        }
+
+        /* Authentic Retro BIOS / POST Boot Screen Overlay */
+        #bios-boot-screen {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #000000;
+            color: #ffffff;
+            font-family: var(--font-mono);
+            font-size: 16px;
+            line-height: 1.35;
+            padding: 16px;
+            z-index: 9999999;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        #bios-boot-screen.hidden { display: none; }
+
+        /* Power-On Center Screen */
+        #power-screen-container {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000000;
+            z-index: 10;
+        }
+
+        .power-prompt-box {
+            padding: 20px 30px;
+            border: 2px solid #00ff00;
+            background: rgba(0, 40, 0, 0.4);
+            color: #00ff00;
+            font-family: var(--font-pixel);
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.4), inset 0 0 10px rgba(0, 255, 0, 0.2);
+            animation: blink 1.4s infinite;
+        }
+
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0.3; }
+        }
+
+        .bios-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #666;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+        }
+
+        .bios-energy-logo {
+            font-family: monospace;
+            color: #ffff00;
+            font-weight: bold;
+            font-size: 12px;
+            white-space: pre;
+            line-height: 1.05;
+        }
+
+        .bios-log {
+            flex: 1;
+            white-space: pre-wrap;
+            line-height: 1.25;
+            height: calc(100vh - 150px);
+            overflow-y: hidden;
+            font-size: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .bios-footer {
+            border-top: 1px solid #666;
+            padding-top: 6px;
+            color: #888888;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        /* Shutdown Screen */
+        #shutdown-screen {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #000;
+            color: #ff9900;
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-sys);
+            text-align: center;
+        }
+        #shutdown-screen.hidden { display: none; }
+
+        /* FLOPPY DISK INSTALLER MODAL OVERLAY */
         #floppy-modal {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.6);
             z-index: 999999;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         #floppy-modal.hidden { display: none; }
 
-        .floppy-card {
-            width: 500px; padding: 16px; background: var(--win-bg);
+        .floppy-modal-card {
+            width: 480px;
+            padding: 16px;
+            background: var(--win-bg);
+        }
+
+        @media (max-width: 768px) {
+            #catalog-window { top: 5px; left: 5px; width: 95vw; height: 80vh; }
+            #desktop-icons { display: none; }
+            .catalog-grid { grid-template-columns: 1fr; }
+            #terminal-window { width: 95vw; left: 2.5vw; }
         }
     </style>
 </head>
-<body>
+<body class="theme-win95" id="os-body">
 
-    <div id="os-viewport">
+    <!-- CRT Scanlines Overlay -->
+    <div class="crt-scanlines"></div>
 
-        <!-- Top Header -->
-        <div id="sys-header" class="bevel-out">
-            <div>
-                <span class="badge-tag" style="background:#000; color:#00ff00; padding:1px 6px; font-weight:bold;">JGLOVR-OS DESKTOP APP</span>
-                <span>SYSTEM: Native Physical Floppy Watcher Active</span>
-            </div>
-            <div>
-                <span id="floppy-header-status">DRIVE A:\ [NO DISK]</span>
+    <!-- RETRO BIOS / POST BOOT SCREEN -->
+    <div id="bios-boot-screen" onclick="handlePowerOnInteraction()">
+        
+        <!-- INITIAL BLACK SCREEN: POWER ON PROMPT ONLY -->
+        <div id="power-screen-container">
+            <div class="power-prompt-box">
+                [ SYSTEM STANDBY ]<br><br>
+                &gt;&gt; CLICK ANYWHERE OR PRESS ANY KEY TO POWER ON &lt;&lt;
             </div>
         </div>
 
-        <!-- Desktop -->
+        <!-- POST CONTENT: SHOWN ONCE POWERED ON -->
+        <div id="bios-main-content" style="display: none; height: 100%; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div class="bios-header">
+                    <div>
+                        <div style="font-size: 22px; font-weight: bold; color: #00ff00;">JGLOVR Modular BIOS v4.06 (C) 1995</div>
+                        <div>Antigravity AGY-486 PCI/VLB Super Workstation System</div>
+                    </div>
+                    <div class="bios-energy-logo">
+  ___________
+ /   EPA     \
+|  POLLUTION |
+|  PREVENTER |
+ \___________/
+                    </div>
+                </div>
+
+                <div style="font-size: 16px; color: #00ff00; margin-bottom: 6px;">
+                    Memory Test: <span id="memory-counter" style="font-weight: bold;">0</span> KB OK
+                </div>
+
+                <div class="bios-log" id="bios-log-text"></div>
+            </div>
+
+            <div class="bios-footer">
+                <span>Click or Press <b>[ENTER / ESC]</b> to Skip POST Sequence</span>
+                <span>(C) JGLOVR Systems 1995-2026</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MAIN OS VIEWPORT -->
+    <div id="os-viewport">
+
+        <!-- Top System Bar -->
+        <div id="sys-header" class="bevel-out">
+            <div class="sys-info-group">
+                <span class="badge-tag">JGLOVR-OS 3.11</span>
+                <span>CPU: i486DX2-66MHz</span>
+                <span>RAM: 16,384 KB OK</span>
+            </div>
+            <div class="sys-info-group">
+                <span>DRIVE A: 3.5" FLOPPY</span>
+                <span id="sys-header-count">DRIVE C: 5 PROGRAMS</span>
+            </div>
+        </div>
+
+        <!-- Main Desktop Area -->
         <div id="desktop">
+
+            <!-- Desktop Shortcuts Column -->
             <div id="desktop-icons">
-                <div class="desktop-shortcut" onclick="openWindow('catalog-window')">
+                <div class="desktop-shortcut" id="icon-catalog" onclick="openWindow('catalog-window')">
                     <div class="shortcut-icon">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M2 5C2 3.89 2.89 3 4 3H10L12 6H20C21.1 6 22 6.9 22 8V19C22 20.1 21.1 21 20 21H4C2.89 21 2 20.1 2 19V5Z" fill="#E6AE17" stroke="#000000" stroke-width="1.5"/><path d="M2 9H22V19C22 20.1 21.1 21 20 21H4C2.89 21 2 20.1 2 19V9Z" fill="#F1C40F" stroke="#000000" stroke-width="1.5"/></svg>
                     </div>
-                    <div>C:\GAMES</div>
+                    <div class="shortcut-label">C:\GAMES</div>
+                </div>
+                <div class="desktop-shortcut" id="icon-codyfrog" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog', 'window-codyfrog', 'FROG', this)">
+                    <div class="shortcut-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="14" rx="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="7" cy="6" r="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="17" cy="6" r="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="7" cy="6" r="1" fill="#FFFFFF"/><circle cx="17" cy="6" r="1" fill="#FFFFFF"/><path d="M8 14Q12 18 16 14" stroke="#000000" stroke-width="1.5" fill="none"/></svg>
+                    </div>
+                    <div class="shortcut-label">CODYFROG</div>
+                </div>
+                <div class="desktop-shortcut" id="icon-traingame" onclick="openGameWindow('traingame.html', 'Train Game', 'window-traingame', 'TRAIN', this)">
+                    <div class="shortcut-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="3" y="10" width="16" height="8" rx="2" fill="#E74C3C" stroke="#000000" stroke-width="1.5"/><rect x="13" y="6" width="6" height="12" fill="#34495E" stroke="#000000" stroke-width="1.5"/><rect x="15" y="8" width="3" height="4" fill="#AADFFF"/><rect x="5" y="6" width="3" height="4" fill="#2C3E50" stroke="#000000" stroke-width="1"/><circle cx="6" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><circle cx="12" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><circle cx="17" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><path d="M6 5C6 3 8 2 10 2" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+                    </div>
+                    <div class="shortcut-label">TRAINGAME</div>
+                </div>
+                <div class="desktop-shortcut" id="icon-gnomes" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', 'GNOMES', this)">
+                    <div class="shortcut-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 14H20L12 2Z" fill="#E74C3C" stroke="#000000" stroke-width="1.5"/><circle cx="10" cy="8" r="1" fill="#FFFFFF"/><circle cx="15" cy="11" r="1.2" fill="#FFFFFF"/><rect x="7" y="14" width="10" height="8" rx="2" fill="#F5CBA7" stroke="#000000" stroke-width="1.5"/><ellipse cx="12" cy="19" rx="4" ry="2.5" fill="#ECF0F1"/></svg>
+                    </div>
+                    <div class="shortcut-label">GNOMES</div>
+                </div>
+                <div class="desktop-shortcut" id="icon-sysvoid" onclick="openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', 'SYSVOID', this)">
+                    <div class="shortcut-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" fill="#050505" stroke="#00FF00" stroke-width="1.5"/><path d="M12 5L7 17L12 14L17 17L12 5Z" fill="#00FF00" stroke="#000000" stroke-width="1"/></svg>
+                    </div>
+                    <div class="shortcut-label">SYS_VOID</div>
+                </div>
+                <div class="desktop-shortcut" id="icon-gridmix" onclick="openGameWindow('musicgridlivemix.html', 'Music Grid Synthesizer', 'window-gridmix', 'GRIDMIX', this)">
+                    <div class="shortcut-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" fill="#111525" stroke="#00D2FF" stroke-width="1.5"/><rect x="5" y="5" width="5" height="5" fill="#00D2FF"/><rect x="14" y="5" width="5" height="5" fill="#FF3366"/><rect x="9" y="14" width="5" height="5" fill="#00FF7F"/><rect x="14" y="14" width="5" height="5" fill="#FFD700"/></svg>
+                    </div>
+                    <div class="shortcut-label">GRIDMIX</div>
+                </div>
+                <div class="desktop-shortcut" id="icon-terminal" onclick="toggleWindow('terminal-window')">
+                    <div class="shortcut-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="15" rx="2" fill="#111111" stroke="#000000" stroke-width="1.5"/><rect x="4" y="5" width="16" height="11" fill="#000000"/><path d="M6 8L9 10L6 12" stroke="#00FF00" stroke-width="1.5" fill="none"/><line x1="11" y1="12" x2="14" y2="12" stroke="#00FF00" stroke-width="1.5"/><rect x="8" y="18" width="8" height="3" fill="#888888" stroke="#000000" stroke-width="1"/></svg>
+                    </div>
+                    <div class="shortcut-label">MS-DOS</div>
                 </div>
             </div>
 
-            <!-- Catalog Window -->
-            <div id="catalog-window" class="window bevel-out" style="top:20px; left:140px; width:760px; height:540px;">
+            <!-- Explorer Catalog Window -->
+            <div id="catalog-window" class="window bevel-out">
                 <div class="window-titlebar">
-                    <div style="display:flex; align-items:center; gap:8px;">
+                    <div class="window-title-text">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" fill="#2980B9" stroke="#000000" stroke-width="1.5"/><rect x="7" y="3" width="10" height="7" fill="#BDC3C7" stroke="#000000" stroke-width="1"/><rect x="12" y="4" width="3" height="5" fill="#7F8C8D"/><rect x="6" y="13" width="12" height="8" fill="#ECF0F1" stroke="#000000" stroke-width="1"/></svg>
-                        <span>Native Desktop Software Catalog - [C:\GAMES\*.*]</span>
+                        <span>Executing Software Catalog - [C:\GAMES\*.*]</span>
+                    </div>
+                    <div class="window-controls">
+                        <button class="win-btn bevel-out" onclick="minimizeWindow('catalog-window')">_</button>
+                        <button class="win-btn bevel-out" onclick="toggleMaximize('catalog-window')">🗖</button>
+                        <button class="win-btn bevel-out" onclick="closeWindow('catalog-window')">X</button>
                     </div>
                 </div>
+
+                <div class="window-menubar bevel-out">
+                    <span class="menu-item" onclick="playSound('click')"><u>F</u>ile</span>
+                    <span class="menu-item" onclick="playSound('click')"><u>E</u>dit</span>
+                    <span class="menu-item" onclick="playSound('click')"><u>V</u>iew</span>
+                    <span class="menu-item" onclick="toggleWindow('terminal-window')"><u>T</u>erminal</span>
+                    <span class="menu-item" onclick="openAboutDialog()"><u>H</u>elp</span>
+                </div>
+
+                <div class="explorer-toolbar bevel-out">
+                    <button class="win-btn bevel-out" style="width: auto; padding: 2px 8px;" onclick="location.reload()">↺ Reboot</button>
+                    <span style="font-size: 16px;">Address:</span>
+                    <div class="path-box bevel-in">C:\GAMES\CATALOG.DIR</div>
+                    <button class="view-mode-btn bevel-out" onclick="toggleCatalogView()">View Mode</button>
+                </div>
+
                 <div class="window-body bevel-in">
-                    <div id="catalog-container" class="catalog-grid"></div>
+                    <div id="catalog-container" class="catalog-grid">
+
+                        <!-- Game 1: Cody Frog -->
+                        <div class="game-card bevel-out" id="card-codyfrog">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="game-title">Cody Frog</h3>
+                                    <span class="game-file-name">CODYFROG.EXE</span>
+                                </div>
+                                <span class="card-badge">PUZZLE</span>
+                            </div>
+                            <div class="card-media">
+                                <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#55aaff;">
+                                    <rect x="0" y="0" width="200" height="120" fill="#336699" />
+                                    <circle cx="100" cy="50" r="28" fill="#00aa00" stroke="#000" stroke-width="2" />
+                                    <circle cx="90" cy="40" r="6" fill="#fff" stroke="#000" stroke-width="1.5" />
+                                    <circle cx="90" cy="40" r="3" fill="#000" />
+                                    <circle cx="110" cy="40" r="6" fill="#fff" stroke="#000" stroke-width="1.5" />
+                                    <circle cx="110" cy="40" r="3" fill="#000" />
+                                    <path d="M 85 58 Q 100 68 115 58" stroke="#000" stroke-width="3" fill="none" />
+                                    <rect x="40" y="85" width="120" height="22" rx="2" fill="#e6e6e6" stroke="#000000" stroke-width="2"/>
+                                    <text x="100" y="100" fill="#000000" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">MAC SYSTEM 7 &gt;&gt;</text>
+                                </svg>
+                            </div>
+                            <div class="card-description">
+                                Guide Cody the Frog through challenging grid obstacles by building logic instruction paths and sequences!
+                            </div>
+                            <div class="card-meta-list">
+                                <span>SIZE: 98.4 KB</span>
+                                <span>TYPE: 16-Bit Logic</span>
+                                <span>STATUS: READY</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog', 'window-codyfrog', 'FROG', this)">▶ RUN PROGRAM</button>
+                            </div>
+                        </div>
+
+                        <!-- Game 2: Train Game -->
+                        <div class="game-card bevel-out" id="card-traingame">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="game-title">Train Game</h3>
+                                    <span class="game-file-name">TRAIN.EXE</span>
+                                </div>
+                                <span class="card-badge">SIMULATION</span>
+                            </div>
+                            <div class="card-media">
+                                <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#00A0A0;">
+                                    <rect x="0" y="80" width="200" height="40" fill="#48B844" />
+                                    <line x1="0" y1="90" x2="200" y2="90" stroke="#C0C0C0" stroke-width="4" />
+                                    <line x1="0" y1="100" x2="200" y2="100" stroke="#C0C0C0" stroke-width="4" />
+                                    <rect x="40" y="60" width="80" height="30" fill="#E74C3C" stroke="#000000" stroke-width="2"/>
+                                    <rect x="90" y="45" width="30" height="45" fill="#34495E" stroke="#000000" stroke-width="2"/>
+                                    <rect x="100" y="52" width="15" height="15" fill="#AADFFF"/>
+                                    <circle cx="55" cy="92" r="8" fill="#111" />
+                                    <circle cx="85" cy="92" r="8" fill="#111" />
+                                    <circle cx="105" cy="92" r="8" fill="#111" />
+                                </svg>
+                            </div>
+                            <div class="card-description">
+                                Build track networks, construct covered bridge sheds, manage passenger dispatching, and run steam locomotives!
+                            </div>
+                            <div class="card-meta-list">
+                                <span>SIZE: 68.6 KB</span>
+                                <span>TYPE: 3D Train Sim</span>
+                                <span>STATUS: READY</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('traingame.html', 'Train Game', 'window-traingame', 'TRAIN', this)">▶ RUN PROGRAM</button>
+                            </div>
+                        </div>
+
+                        <!-- Game 3: Gnomes in the Tall Grass -->
+                        <div class="game-card bevel-out" id="card-gnomes">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="game-title">Gnomes in the Tall Grass</h3>
+                                    <span class="game-file-name">GNOMES.EXE</span>
+                                </div>
+                                <span class="card-badge">3D SIM</span>
+                            </div>
+                            <div class="card-media">
+                                <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#1b2e1b;">
+                                    <rect x="0" y="70" width="200" height="50" fill="#2d4a1d" />
+                                    <path d="M 10 70 L 15 30 L 22 70 M 30 70 L 38 25 L 45 70 M 150 70 L 158 20 L 165 70" stroke="#44aa44" stroke-width="3" fill="none" />
+                                    <polygon points="100,15 80,60 120,60" fill="#e74c3c" />
+                                    <circle cx="100" cy="65" r="12" fill="#f5cba7" />
+                                    <ellipse cx="100" cy="72" rx="10" ry="8" fill="#ecf0f1" />
+                                    <polygon points="160,85 168,75 176,85 168,95" fill="#00e5ff" stroke="#0077aa" />
+                                </svg>
+                            </div>
+                            <div class="card-description">
+                                A cozy 3D meadow world simulation. Explore tall grass, manage gnome structures, collect gems, and speed up time.
+                            </div>
+                            <div class="card-meta-list">
+                                <span>SIZE: 639 KB</span>
+                                <span>TYPE: 3D Simulation</span>
+                                <span>STATUS: READY</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', 'GNOMES', this)">▶ RUN PROGRAM</button>
+                            </div>
+                        </div>
+
+                        <!-- Game 4: SYSTEM_VOID -->
+                        <div class="game-card bevel-out" id="card-sysvoid">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="game-title">S Y S T E M _ V O I D</h3>
+                                    <span class="game-file-name">SYS_VOID.EXE</span>
+                                </div>
+                                <span class="card-badge">ARCADE</span>
+                            </div>
+                            <div class="card-media">
+                                <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#050505;">
+                                    <text x="100" y="45" fill="#00ff00" font-family="monospace" font-size="16" font-weight="bold" text-anchor="middle" filter="drop-shadow(0 0 5px #00ff00)">SYSTEM_VOID</text>
+                                    <polygon points="100,60 90,85 100,80 110,85" fill="none" stroke="#00ff00" stroke-width="2" />
+                                    <circle cx="50" cy="70" r="10" fill="none" stroke="#ff0055" stroke-width="1.5" />
+                                    <circle cx="150" cy="65" r="12" fill="none" stroke="#00e5ff" stroke-width="1.5" />
+                                    <line x1="0" y1="100" x2="200" y2="100" stroke="#00ff00" stroke-width="1" stroke-dasharray="4,4" />
+                                </svg>
+                            </div>
+                            <div class="card-description">
+                                Vector-graphics space survival shooter with authentic CRT barrel distortion, screen flicker, and intense arcade action.
+                            </div>
+                            <div class="card-meta-list">
+                                <span>SIZE: 81.6 KB</span>
+                                <span>TYPE: Vector Arcade</span>
+                                <span>STATUS: READY</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', 'SYSVOID', this)">▶ RUN PROGRAM</button>
+                            </div>
+                        </div>
+
+                        <!-- Game 5: Music Grid Live Mixer -->
+                        <div class="game-card bevel-out" id="card-gridmix">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="game-title">Music Grid Synthesizer</h3>
+                                    <span class="game-file-name">GRIDMIX.EXE</span>
+                                </div>
+                                <span class="card-badge">AUDIO</span>
+                            </div>
+                            <div class="card-media">
+                                <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#0f111a;">
+                                    <g fill="#202436" stroke="#262a3d" stroke-width="1">
+                                        <rect x="25" y="20" width="30" height="20" rx="3" fill="#00d2ff" />
+                                        <rect x="65" y="20" width="30" height="20" rx="3" />
+                                        <rect x="105" y="20" width="30" height="20" rx="3" fill="#ff3366" />
+                                        <rect x="145" y="20" width="30" height="20" rx="3" />
+
+                                        <rect x="25" y="50" width="30" height="20" rx="3" />
+                                        <rect x="65" y="50" width="30" height="20" rx="3" fill="#00ff7f" />
+                                        <rect x="105" y="50" width="30" height="20" rx="3" />
+                                        <rect x="145" y="50" width="30" height="20" rx="3" fill="#ffd700" />
+
+                                        <rect x="25" y="80" width="30" height="20" rx="3" fill="#ff00d4" />
+                                        <rect x="65" y="80" width="30" height="20" rx="3" />
+                                        <rect x="105" y="80" width="30" height="20" rx="3" fill="#ff9500" />
+                                        <rect x="145" y="80" width="30" height="20" rx="3" />
+                                    </g>
+                                </svg>
+                            </div>
+                            <div class="card-description">
+                                Interactive 16-step audio sequencer and live sound synthesizer module. Compose multi-layer melodies and drum beats.
+                            </div>
+                            <div class="card-meta-list">
+                                <span>SIZE: 62.3 KB</span>
+                                <span>TYPE: Audio Synthesizer</span>
+                                <span>STATUS: READY</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('musicgridlivemix.html', 'Music Grid Synth', 'window-gridmix', 'GRIDMIX', this)">▶ RUN PROGRAM</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="window-statusbar">
+                    <span id="catalog-status-count">5 Object(s) displayed</span>
+                    <span id="catalog-status-usage">Total Disk Usage: 942.8 KB</span>
                 </div>
             </div>
 
+            <!-- Dynamic Window Container (Multi-Program Support) -->
             <div id="dynamic-windows-container"></div>
+
+            <!-- Terminal Window (MS-DOS Prompt) -->
+            <div id="terminal-window" class="window bevel-out" style="display: none;">
+                <div class="window-titlebar">
+                    <div class="window-title-text">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="15" rx="2" fill="#111111" stroke="#000000" stroke-width="1.5"/><rect x="4" y="5" width="16" height="11" fill="#000000"/><path d="M6 8L9 10L6 12" stroke="#00FF00" stroke-width="1.5" fill="none"/><line x1="11" y1="12" x2="14" y2="12" stroke="#00FF00" stroke-width="1.5"/><rect x="8" y="18" width="8" height="3" fill="#888888" stroke="#000000" stroke-width="1"/></svg>
+                        <span id="term-title-text">MS-DOS Command Prompt - [C:\GAMES]</span>
+                    </div>
+                    <div class="window-controls">
+                        <button class="win-btn bevel-out" onclick="minimizeWindow('terminal-window')">_</button>
+                        <button class="win-btn bevel-out" onclick="toggleMaximize('terminal-window')">🗖</button>
+                        <button class="win-btn bevel-out" onclick="closeWindow('terminal-window')">X</button>
+                    </div>
+                </div>
+                <div class="terminal-body" onclick="document.getElementById('term-input').focus()">
+                    <div class="terminal-output" id="term-output">JGLOVR-OS MS-DOS Core Version 6.22 [DOSKey Active]
+(C) Copyright 1981-1995 Personal Computing Corp.
+
+Type 'HELP' or 'DIR' to list commands and files.
+Type 'A:' to switch to physical USB Floppy Disk Drive A:.
+Type 'TYPE README.TXT' to view system documentation manual.
+</div>
+                    <div class="terminal-prompt-line">
+                        <span id="term-prompt-label">C:\GAMES&gt;</span>
+                        <input type="text" id="term-input" class="terminal-input" autofocus onkeydown="handleTerminalKey(event)">
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- Taskbar -->
         <div id="taskbar">
-            <div style="display:flex; gap:6px;">
-                <button class="bevel-out" style="height:30px; font-weight:bold; display:flex; align-items:center; gap:6px;" onclick="alert('JGLOVR-OS Desktop App v3.11')">
+            <div class="taskbar-left">
+                <button id="start-btn" class="bevel-out" onclick="toggleStartMenu()">
                     <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" fill="#E74C3C"/><rect x="11" y="2" width="7" height="7" fill="#2ECC71"/><rect x="2" y="11" width="7" height="7" fill="#3498DB"/><rect x="11" y="11" width="7" height="7" fill="#F1C40F"/></svg>
-                    Start
+                    <span>Start</span>
                 </button>
             </div>
-            <div class="bevel-in" style="padding:2px 10px; font-family:var(--font-mono); font-size:15px; display:flex; gap:10px;">
-                <button class="floppy-badge-btn bevel-out" id="floppy-badge" onclick="openFloppyModal()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" fill="#2980B9" stroke="#000000" stroke-width="1.5"/><rect x="7" y="3" width="10" height="7" fill="#BDC3C7" stroke="#000000" stroke-width="1"/><rect x="12" y="4" width="3" height="5" fill="#7F8C8D"/><rect x="6" y="13" width="12" height="8" fill="#ECF0F1" stroke="#000000" stroke-width="1"/></svg>
-                    <span id="floppy-badge-text">DRIVE A:\ [NO DISK]</span>
-                </button>
-                <span id="system-clock">12:00 PM</span>
-            </div>
-        </div>
 
-    </div>
-
-    <!-- PHYSICAL FLOPPY DISK INSERTED MODAL -->
-    <div id="floppy-modal" class="hidden">
-        <div class="floppy-card bevel-out">
-            <div class="window-titlebar" style="margin:-16px -16px 12px -16px;">
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" fill="#2980B9" stroke="#000000" stroke-width="1.5"/><rect x="7" y="3" width="10" height="7" fill="#BDC3C7" stroke="#000000" stroke-width="1"/><rect x="12" y="4" width="3" height="5" fill="#7F8C8D"/><rect x="6" y="13" width="12" height="8" fill="#ECF0F1" stroke="#000000" stroke-width="1"/></svg>
-                    <span>PHYSICAL FLOPPY DISK DETECTED - DRIVE A:\</span>
+            <div class="taskbar-tasks" id="taskbar-tabs">
+                <div class="task-tab bevel-out active" id="tab-catalog-window" onclick="toggleTaskWindow('catalog-window')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M2 5C2 3.89 2.89 3 4 3H10L12 6H20C21.1 6 22 6.9 22 8V19C22 20.1 21.1 21 20 21H4C2.89 21 2 20.1 2 19V5Z" fill="#E6AE17" stroke="#000000" stroke-width="1.5"/><path d="M2 9H22V19C22 20.1 21.1 21 20 21H4C2.89 21 2 20.1 2 19V9Z" fill="#F1C40F" stroke="#000000" stroke-width="1.5"/></svg>
+                    <span>C:\GAMES</span>
                 </div>
             </div>
 
-            <div style="font-size: 18px; line-height: 1.4; margin-bottom: 16px;" id="floppy-modal-text">
-                Detecting Physical 3.5" Floppy Disk...
+            <div class="system-tray bevel-in">
+                <button class="floppy-tray-btn bevel-out" id="floppy-drive-btn" title="Mount Physical USB Floppy Drive or Drop Floppy Disk" onclick="promptFloppyDriveAction()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" fill="#2980B9" stroke="#000000" stroke-width="1.5"/><rect x="7" y="3" width="10" height="7" fill="#BDC3C7" stroke="#000000" stroke-width="1"/><rect x="12" y="4" width="3" height="5" fill="#7F8C8D"/><rect x="6" y="13" width="12" height="8" fill="#ECF0F1" stroke="#000000" stroke-width="1"/></svg>
+                    <span id="floppy-status-text">Drive A: [Empty]</span>
+                </button>
+                <button class="tray-btn" title="Toggle Display Mode" onclick="toggleBrowserFullscreen()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="14" rx="2" fill="#2C3E50" stroke="#000000" stroke-width="1.5"/><rect x="5" y="5" width="14" height="10" fill="#000000"/><line x1="8" y1="9" x2="16" y2="9" stroke="#00FF00" stroke-width="1"/><rect x="9" y="17" width="6" height="4" fill="#7F8C8D" stroke="#000000" stroke-width="1"/></svg>
+                    Display
+                </button>
+                <button class="tray-btn" id="sfx-tray-btn" title="Toggle System Sound Effects" onclick="toggleSound()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 9H8L13 4V20L8 15H4V9Z" fill="#27AE60" stroke="#000000" stroke-width="1.5"/><path d="M16 8C17.5 9.5 17.5 14.5 16 16" stroke="#000000" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+                    <span id="sfx-btn-text">SFX</span>
+                </button>
+                <button class="tray-btn" title="Switch Display Color Theme" onclick="cycleTheme()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3C7 3 3 7 3 12C3 17 7 21 12 21C13.5 21 14.5 19.8 14.5 18.5C14.5 17.8 14.2 17.2 13.8 16.7C13.4 16.2 13.2 15.6 13.2 15C13.2 13.6 14.3 12.5 15.7 12.5H18C19.7 12.5 21 11.2 21 9.5C21 5.9 17 3 12 3Z" fill="#8E44AD" stroke="#000000" stroke-width="1.5"/><circle cx="7.5" cy="9.5" r="1.5" fill="#E74C3C"/><circle cx="10.5" cy="6.5" r="1.5" fill="#F1C40F"/><circle cx="14.5" cy="7.5" r="1.5" fill="#2ECC71"/><circle cx="7.5" cy="14.5" r="1.5" fill="#3498DB"/></svg>
+                    Theme
+                </button>
+                <button class="tray-btn" title="Toggle CRT Scanline Overlay" onclick="toggleScanlines()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="14" rx="2" fill="#34495E" stroke="#000000" stroke-width="1.5"/><line x1="4" y1="7" x2="20" y2="7" stroke="#33FF33" stroke-width="1" stroke-dasharray="2,2"/><line x1="4" y1="11" x2="20" y2="11" stroke="#33FF33" stroke-width="1" stroke-dasharray="2,2"/></svg>
+                    CRT
+                </button>
+                <span id="system-clock">12:00:00 PM</span>
+            </div>
+        </div>
+
+        <!-- Start Menu -->
+        <div id="start-menu" class="bevel-out hidden">
+            <div class="start-menu-banner">
+                JGLOVR OS
+            </div>
+            <div class="start-menu-list">
+                <div class="start-item" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog', 'window-codyfrog', 'FROG', this)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="14" rx="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="7" cy="6" r="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="17" cy="6" r="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="7" cy="6" r="1" fill="#FFFFFF"/><circle cx="17" cy="6" r="1" fill="#FFFFFF"/><path d="M8 14Q12 18 16 14" stroke="#000000" stroke-width="1.5" fill="none"/></svg>
+                    <span>Cody Frog</span>
+                </div>
+                <div class="start-item" onclick="openGameWindow('traingame.html', 'Train Game', 'window-traingame', 'TRAIN', this)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="10" width="16" height="8" rx="2" fill="#E74C3C" stroke="#000000" stroke-width="1.5"/><rect x="13" y="6" width="6" height="12" fill="#34495E" stroke="#000000" stroke-width="1.5"/><rect x="15" y="8" width="3" height="4" fill="#AADFFF"/><rect x="5" y="6" width="3" height="4" fill="#2C3E50" stroke="#000000" stroke-width="1"/><circle cx="6" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><circle cx="12" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><circle cx="17" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><path d="M6 5C6 3 8 2 10 2" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+                    <span>Train Game</span>
+                </div>
+                <div class="start-item" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', 'GNOMES', this)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 14H20L12 2Z" fill="#E74C3C" stroke="#000000" stroke-width="1.5"/><circle cx="10" cy="8" r="1" fill="#FFFFFF"/><circle cx="15" cy="11" r="1.2" fill="#FFFFFF"/><rect x="7" y="14" width="10" height="8" rx="2" fill="#F5CBA7" stroke="#000000" stroke-width="1.5"/><ellipse cx="12" cy="19" rx="4" ry="2.5" fill="#ECF0F1"/></svg>
+                    <span>Gnomes in Tall Grass</span>
+                </div>
+                <div class="start-item" onclick="openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', 'SYSVOID', this)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" fill="#050505" stroke="#00FF00" stroke-width="1.5"/><path d="M12 5L7 17L12 14L17 17L12 5Z" fill="#00FF00" stroke="#000000" stroke-width="1"/></svg>
+                    <span>S Y S T E M _ V O I D</span>
+                </div>
+                <div class="start-item" onclick="openGameWindow('musicgridlivemix.html', 'Music Grid Synth', 'window-gridmix', 'GRIDMIX', this)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" fill="#111525" stroke="#00D2FF" stroke-width="1.5"/><rect x="5" y="5" width="5" height="5" fill="#00D2FF"/><rect x="14" y="5" width="5" height="5" fill="#FF3366"/><rect x="9" y="14" width="5" height="5" fill="#00FF7F"/><rect x="14" y="14" width="5" height="5" fill="#FFD700"/></svg>
+                    <span>Music Grid Synth</span>
+                </div>
+                <div class="start-divider"></div>
+                <div class="start-item" onclick="promptFloppyDriveAction()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" fill="#2980B9" stroke="#000000" stroke-width="1.5"/><rect x="7" y="3" width="10" height="7" fill="#BDC3C7" stroke="#000000" stroke-width="1"/><rect x="12" y="4" width="3" height="5" fill="#7F8C8D"/><rect x="6" y="13" width="12" height="8" fill="#ECF0F1" stroke="#000000" stroke-width="1"/></svg>
+                    <span>Physical Floppy Drive A:</span>
+                </div>
+                <div class="start-item" onclick="toggleWindow('terminal-window')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="15" rx="2" fill="#111111" stroke="#000000" stroke-width="1.5"/><rect x="4" y="5" width="16" height="11" fill="#000000"/><path d="M6 8L9 10L6 12" stroke="#00FF00" stroke-width="1.5" fill="none"/><line x1="11" y1="12" x2="14" y2="12" stroke="#00FF00" stroke-width="1.5"/><rect x="8" y="18" width="8" height="3" fill="#888888" stroke="#000000" stroke-width="1"/></svg>
+                    <span>Command Prompt</span>
+                </div>
+                <div class="start-item" onclick="openAboutDialog()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#2980B9" stroke="#000000" stroke-width="1.5"/><circle cx="12" cy="8" r="1.5" fill="#FFFFFF"/><rect x="11" y="11" width="2" height="6" fill="#FFFFFF"/></svg>
+                    <span>System Information</span>
+                </div>
+                <div class="start-divider"></div>
+                <div class="start-item" onclick="triggerShutdown()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#C0392B" stroke="#000000" stroke-width="1.5"/><path d="M12 6V12" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/><path d="M8 8.5A6 6 0 1 0 16 8.5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+                    <span>Shut Down System...</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FLOPPY DISK INSTALLER MODAL OVERLAY -->
+    <div id="floppy-modal" class="hidden">
+        <div class="floppy-modal-card bevel-out">
+            <div class="window-titlebar" style="margin:-16px -16px 12px -16px;">
+                <div class="window-title-text">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" fill="#2980B9" stroke="#000000" stroke-width="1.5"/><rect x="7" y="3" width="10" height="7" fill="#BDC3C7" stroke="#000000" stroke-width="1"/><rect x="12" y="4" width="3" height="5" fill="#7F8C8D"/><rect x="6" y="13" width="12" height="8" fill="#ECF0F1" stroke="#000000" stroke-width="1"/></svg>
+                    <span id="floppy-modal-title">Floppy Disk Inserted - Drive A:\</span>
+                </div>
+                <div class="window-controls">
+                    <button class="win-btn bevel-out" onclick="closeFloppyModal()">X</button>
+                </div>
             </div>
 
-            <div style="display:flex; gap:8px;">
-                <button class="btn-action bevel-out" onclick="runFloppyDirectly()">▶ RUN FROM DISK (A:\)</button>
-                <button class="btn-action bevel-out" onclick="installFloppyToDisk()">📥 COPY TO C:\GAMES</button>
-                <button class="btn-action bevel-out" onclick="closeFloppyModal()">CLOSE</button>
+            <div style="font-size: 18px; line-height: 1.4; margin-bottom: 16px;" id="floppy-modal-body">
+                Physical Floppy Disk detected in 3.5" High-Density Drive A:\
+            </div>
+
+            <div class="card-actions">
+                <button class="btn-action primary bevel-out" id="btn-run-floppy" onclick="runFloppyDirectly()">▶ RUN FROM DISK (A:\)</button>
+                <button class="btn-action primary bevel-out" id="btn-install-floppy" onclick="installFloppyToHardDrive()">📥 INSTALL TO C:\GAMES</button>
+                <button class="btn-action primary bevel-out" id="btn-burn-floppy" onclick="openFloppyBurnModal()">💾 BURN GAME TO DISK</button>
+                <button class="btn-action bevel-out" onclick="ejectFloppyDriveAction()">⏏ EJECT DISK</button>
             </div>
         </div>
     </div>
 
+    <!-- FLOPPY DISK BURN / WRITE MODAL OVERLAY -->
+    <div id="floppy-burn-modal" class="hidden">
+        <div class="floppy-modal-card bevel-out" style="width: 500px;">
+            <div class="window-titlebar" style="margin:-16px -16px 12px -16px;">
+                <div class="window-title-text">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" fill="#2980B9" stroke="#000000" stroke-width="1.5"/><rect x="7" y="3" width="10" height="7" fill="#BDC3C7" stroke="#000000" stroke-width="1"/><rect x="12" y="4" width="3" height="5" fill="#7F8C8D"/><rect x="6" y="13" width="12" height="8" fill="#ECF0F1" stroke="#000000" stroke-width="1"/></svg>
+                    <span>Write / Burn Game to Physical Floppy Disk (Drive A:\)</span>
+                </div>
+                <div class="window-controls">
+                    <button class="win-btn bevel-out" onclick="closeFloppyBurnModal()">X</button>
+                </div>
+            </div>
+
+            <div style="font-size: 18px; line-height: 1.4; margin-bottom: 12px;">
+                Select a game from your hard drive library (C:\GAMES) to write onto the physical 3.5" floppy disk in <b>Drive A:\</b>:
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <select id="floppy-burn-select" style="width: 100%; padding: 8px; font-family: monospace; font-size: 16px; background: #fff; color: #000; border: 2px inset #888;">
+                    <option value="TRAIN.HTML">Train Game (3D Rail Sim)</option>
+                    <option value="CODYFROG.HTML">Cody Frog (Mac II Logic Edition)</option>
+                    <option value="CODY26.HTML">Cody Frog '26 (Original 3D Edition)</option>
+                    <option value="GNOMES.HTML">Gnomes in the Tall Grass (3D Meadow Sim)</option>
+                    <option value="SYS_VOID.HTML">S Y S T E M _ V O I D (Vector Space Shooter)</option>
+                    <option value="GRIDMIX.HTML">Music Grid Synthesizer (Audio Sequencer)</option>
+                </select>
+            </div>
+
+            <div id="floppy-burn-progress" class="hidden" style="margin-bottom: 16px; background: #000; color: #00ff00; padding: 8px; font-family: monospace; font-size: 14px;">
+                Writing sector tracks to Physical Floppy Disk Drive A:\ ...
+            </div>
+
+            <div class="card-actions">
+                <button class="btn-action primary bevel-out" onclick="executeFloppyBurn()">💾 BURN TO DRIVE A:\</button>
+                <button class="btn-action bevel-out" onclick="closeFloppyBurnModal()">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nostalgic Shutdown Screen Overlay -->
+    <div id="shutdown-screen" class="hidden">
+        <h1 style="font-size: 36px; margin-bottom: 20px;">It is now safe to turn off<br>your computer.</h1>
+        <p style="font-size: 20px; color: #888;">Or click below to restart or exit application</p>
+        <div style="display: flex; gap: 12px; margin-top: 30px;">
+            <button class="btn-action primary bevel-out" style="width: 220px;" onclick="restartSystem()">RESTART SYSTEM</button>
+            <button class="btn-action primary bevel-out" style="width: 220px;" onclick="shutdownDesktopApp()">EXIT APPLICATION</button>
+        </div>
+    </div>
+
+    <!-- Subsystem Scripts -->
+    <script src="floppy_installer.js"></script>
+    
+    <!-- System JavaScript -->
     <script>
-        const floppyAudio = new Audio('../assets/floppy_drive.mp3');
-        floppyAudio.volume = 0.15;
+        // RETRO SVG ICON REGISTRY FOR DYNAMIC WINDOWS & TASKBAR TABS
+        const SVG_ICONS = {
+            'FOLDER': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><path d="M2 5C2 3.89 2.89 3 4 3H10L12 6H20C21.1 6 22 6.9 22 8V19C22 20.1 21.1 21 20 21H4C2.89 21 2 20.1 2 19V5Z" fill="#E6AE17" stroke="#000000" stroke-width="1.5"/><path d="M2 9H22V19C22 20.1 21.1 21 20 21H4C2.89 21 2 20.1 2 19V9Z" fill="#F1C40F" stroke="#000000" stroke-width="1.5"/></svg>`,
+            'FROG': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><rect x="3" y="6" width="18" height="14" rx="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="7" cy="6" r="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="17" cy="6" r="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="7" cy="6" r="1" fill="#FFFFFF"/><circle cx="17" cy="6" r="1" fill="#FFFFFF"/><path d="M8 14Q12 18 16 14" stroke="#000000" stroke-width="1.5" fill="none"/></svg>`,
+            'TRAIN': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><rect x="3" y="10" width="16" height="8" rx="2" fill="#E74C3C" stroke="#000000" stroke-width="1.5"/><rect x="13" y="6" width="6" height="12" fill="#34495E" stroke="#000000" stroke-width="1.5"/><rect x="15" y="8" width="3" height="4" fill="#AADFFF"/><rect x="5" y="6" width="3" height="4" fill="#2C3E50" stroke="#000000" stroke-width="1"/><circle cx="6" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><circle cx="12" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><circle cx="17" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><path d="M6 5C6 3 8 2 10 2" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>`,
+            'GNOMES': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><path d="M12 2L4 14H20L12 2Z" fill="#E74C3C" stroke="#000000" stroke-width="1.5"/><circle cx="10" cy="8" r="1" fill="#FFFFFF"/><circle cx="15" cy="11" r="1.2" fill="#FFFFFF"/><rect x="7" y="14" width="10" height="8" rx="2" fill="#F5CBA7" stroke="#000000" stroke-width="1.5"/><ellipse cx="12" cy="19" rx="4" ry="2.5" fill="#ECF0F1"/></svg>`,
+            'SYSVOID': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><rect x="2" y="2" width="20" height="20" fill="#050505" stroke="#00FF00" stroke-width="1.5"/><path d="M12 5L7 17L12 14L17 17L12 5Z" fill="#00FF00" stroke="#000000" stroke-width="1"/></svg>`,
+            'GRIDMIX': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><rect x="2" y="2" width="20" height="20" fill="#111525" stroke="#00D2FF" stroke-width="1.5"/><rect x="5" y="5" width="5" height="5" fill="#00D2FF"/><rect x="14" y="5" width="5" height="5" fill="#FF3366"/><rect x="9" y="14" width="5" height="5" fill="#00FF7F"/><rect x="14" y="14" width="5" height="5" fill="#FFD700"/></svg>`,
+            'TERMINAL': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><rect x="2" y="3" width="20" height="15" rx="2" fill="#111111" stroke="#000000" stroke-width="1.5"/><rect x="4" y="5" width="16" height="11" fill="#000000"/><path d="M6 8L9 10L6 12" stroke="#00FF00" stroke-width="1.5" fill="none"/><line x1="11" y1="12" x2="14" y2="12" stroke="#00FF00" stroke-width="1.5"/><rect x="8" y="18" width="8" height="3" fill="#888888" stroke="#000000" stroke-width="1"/></svg>`,
+            'FLOPPY': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><rect x="3" y="3" width="18" height="18" rx="2" fill="#2980B9" stroke="#000000" stroke-width="1.5"/><rect x="7" y="3" width="10" height="7" fill="#BDC3C7" stroke="#000000" stroke-width="1"/><rect x="12" y="4" width="3" height="5" fill="#7F8C8D"/><rect x="6" y="13" width="12" height="8" fill="#ECF0F1" stroke="#000000" stroke-width="1"/></svg>`
+        };
+
+        function getSvgIcon(key) {
+            return SVG_ICONS[key] || SVG_ICONS['FLOPPY'];
+        }
+
+        let soundEnabled = true;
+
+        // Preload Public Domain Hardware Audio Recordings
+        const bootAudio = new Audio('assets/boot_sound.mp3');
+        const floppyAudio = new Audio('assets/floppy_drive.mp3');
+        bootAudio.volume = 0.35;
+        floppyAudio.volume = 0.11;
+
+        let audioCtx = null;
+        let fanNode = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) audioCtx = new AudioContext();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        // BINAURAL DESKTOP SPATIALIZATION ENGINE (Localizes PC tower fan to a physical desktop box)
+        function startComputerFanHum() {
+            if (fanNode || !soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+
+                const bufferSize = ctx.sampleRate * 2;
+                const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const output = noiseBuffer.getChannelData(0);
+                let lastOut = 0.0;
+                for (let i = 0; i < bufferSize; i++) {
+                    const white = Math.random() * 2 - 1;
+                    output[i] = (lastOut + (0.05 * white)) / 1.05;
+                    lastOut = output[i];
+                    output[i] *= 1.8;
+                }
+
+                fanNode = ctx.createBufferSource();
+                fanNode.buffer = noiseBuffer;
+                fanNode.loop = true;
+
+                const hpFilter = ctx.createBiquadFilter();
+                hpFilter.type = 'highpass';
+                hpFilter.frequency.setValueAtTime(380, ctx.currentTime);
+
+                const lpFilter = ctx.createBiquadFilter();
+                lpFilter.type = 'lowpass';
+                lpFilter.frequency.setValueAtTime(720, ctx.currentTime);
+
+                const deskReflection = ctx.createDelay();
+                deskReflection.delayTime.setValueAtTime(0.014, ctx.currentTime);
+                const reflectGain = ctx.createGain();
+                reflectGain.gain.setValueAtTime(0.3, ctx.currentTime);
+
+                let panner = null;
+                if (ctx.createStereoPanner) {
+                    panner = ctx.createStereoPanner();
+                    panner.pan.setValueAtTime(0.75, ctx.currentTime);
+                }
+
+                const fanGain = ctx.createGain();
+                fanGain.gain.setValueAtTime(0.015, ctx.currentTime);
+
+                fanNode.connect(hpFilter);
+                hpFilter.connect(lpFilter);
+
+                lpFilter.connect(deskReflection);
+                deskReflection.connect(reflectGain);
+
+                if (panner) {
+                    lpFilter.connect(panner);
+                    reflectGain.connect(panner);
+                    panner.connect(fanGain);
+                } else {
+                    lpFilter.connect(fanGain);
+                    reflectGain.connect(fanGain);
+                }
+
+                fanGain.connect(ctx.destination);
+                fanNode.start(0);
+            } catch(e) {}
+        }
+
+        function stopComputerFanHum() {
+            if (fanNode) {
+                try {
+                    fanNode.stop();
+                    fanNode.disconnect();
+                } catch(e) {}
+                fanNode = null;
+            }
+        }
+
+        function playHDDSpinUp() {
+            if (!soundEnabled) return;
+            try {
+                bootAudio.volume = 0.35;
+                bootAudio.currentTime = 1.1;
+                bootAudio.play().catch(err => {});
+            } catch(e) {}
+        }
+
+        function stopBootAudio() {
+            if (!bootAudio) return;
+            let vol = bootAudio.volume;
+            const fadeInterval = setInterval(() => {
+                vol -= 0.05;
+                if (vol <= 0) {
+                    clearInterval(fadeInterval);
+                    bootAudio.pause();
+                    bootAudio.currentTime = 1.1;
+                    bootAudio.volume = 0.35;
+                } else {
+                    bootAudio.volume = vol;
+                }
+            }, 30);
+        }
 
         let floppySeekTimeout = null;
 
         function playFloppySeek() {
+            if (!soundEnabled) return;
             try {
                 if (floppySeekTimeout) clearTimeout(floppySeekTimeout);
 
+                // 1. Randomize Floppy Drive Sample Playback (Offset, Speed, Volume & Duration)
                 const startOffsets = [0.0, 0.35, 0.75, 1.15, 1.6, 2.1, 2.7, 3.2];
                 const randomOffset = startOffsets[Math.floor(Math.random() * startOffsets.length)];
-                const randomRate = 0.88 + Math.random() * 0.26;
-                const randomDuration = 450 + Math.random() * 1100;
-                const randomVolume = 0.10 + Math.random() * 0.08;
+                const randomRate = 0.88 + Math.random() * 0.26; // 0.88x to 1.14x motor speed
+                const randomDuration = 450 + Math.random() * 1100; // 450ms to 1550ms seek length
+                const randomVolume = 0.08 + Math.random() * 0.08;
 
                 floppyAudio.currentTime = randomOffset;
                 floppyAudio.playbackRate = randomRate;
                 floppyAudio.volume = randomVolume;
-                floppyAudio.play().catch(e => {});
+                floppyAudio.play().catch(err => {});
 
                 floppySeekTimeout = setTimeout(() => {
                     if (floppyAudio && !floppyAudio.paused) {
                         floppyAudio.pause();
                     }
                 }, randomDuration);
+
+                // 2. Synthesize Mechanical Stepper Motor Head Step Bursts via Web Audio API
+                const ctx = getAudioContext();
+                if (ctx) {
+                    const now = ctx.currentTime;
+                    const clickCount = 4 + Math.floor(Math.random() * 9); // 4 to 12 track step clicks
+                    const stepDelay = 0.015 + Math.random() * 0.02; // 15ms to 35ms between steps
+
+                    for (let i = 0; i < clickCount; i++) {
+                        const stepTime = now + (i * stepDelay);
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        
+                        // Alternate between low chug and high head step clicks
+                        const isHighClick = Math.random() < 0.4;
+                        osc.type = isHighClick ? 'square' : 'sawtooth';
+                        const freq = isHighClick ? (350 + Math.random() * 300) : (140 + Math.random() * 120);
+                        osc.frequency.setValueAtTime(freq, stepTime);
+
+                        gain.gain.setValueAtTime(0.04 + Math.random() * 0.03, stepTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, stepTime + 0.012);
+
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+
+                        osc.start(stepTime);
+                        osc.stop(stepTime + 0.012);
+                    }
+                }
             } catch(e) {}
         }
 
-        let activeFloppyDisk = null;
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'beep') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(880, now);
+                    gain.gain.setValueAtTime(0.06, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'click') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(800, now);
+                    osc.frequency.exponentialRampToValueAtTime(400, now + 0.04);
+                    gain.gain.setValueAtTime(0.05, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.04);
+                    osc.start(now);
+                    osc.stop(now + 0.04);
+                } else if (type === 'launch') {
+                    playFloppySeek();
+                } else if (type === 'open') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.05);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                }
+            } catch(e) {}
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btnText = document.getElementById('sfx-btn-text');
+            if (!soundEnabled) {
+                bootAudio.pause();
+                floppyAudio.pause();
+                stopComputerFanHum();
+                if (btnText) btnText.textContent = 'SFX Off';
+            } else {
+                if (systemPoweredOn) {
+                    startComputerFanHum();
+                }
+                if (btnText) btnText.textContent = 'SFX';
+            }
+        }
+
+        function toggleBrowserFullscreen() {
+            if (window.electronAPI) return; // Desktop app window is already native fullscreen
+            if (!document.fullscreenElement) {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen().catch(err => {});
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // ELECTRON NATIVE PHYSICAL FLOPPY DISK AUTO-MOUNT & INSTANT LAUNCH ENGINE
+        if (window.electronAPI && window.electronAPI.onFloppyInserted) {
+            window.electronAPI.onFloppyInserted(async (disk) => {
+                playFloppySeek();
+
+                const badge = document.getElementById('floppy-badge');
+                const badgeText = document.getElementById('floppy-badge-text');
+                const header = document.getElementById('floppy-header-status');
+
+                if (disk.isEmpty) {
+                    if (badge) badge.classList.remove('disk-inserted');
+                    if (badgeText) badgeText.textContent = `Drive A:\\ [EMPTY DISK]`;
+                    if (header) header.textContent = `DRIVE A:\\ EMPTY DISK INSERTED`;
+
+                    const diskObj = {
+                        fileName: 'EMPTY_DISK',
+                        title: 'EMPTY DISK',
+                        content: '',
+                        sizeBytes: 0,
+                        isEmpty: true
+                    };
+                    setMountedFloppy(diskObj);
+                    
+                    // Offer to burn game to empty disk
+                    openFloppyBurnModal();
+                    return;
+                }
+
+                const meta = extractGameMetadata(disk.content, disk.fileName);
+
+                if (badge) badge.classList.add('disk-inserted');
+                if (badgeText) badgeText.textContent = `Drive A:\\ ${disk.fileName}`;
+                if (header) header.textContent = `DRIVE A:\\ ${disk.fileName} [MOUNTED]`;
+
+                const diskObj = {
+                    fileName: disk.fileName,
+                    title: meta.title,
+                    content: disk.content,
+                    sizeBytes: disk.sizeBytes,
+                    isEmpty: false
+                };
+                setMountedFloppy(diskObj);
+
+                // 1. Silent Auto-Install/Update to C:\GAMES
+                const status = await window.electronAPI.checkGameInstalled({
+                    fileName: disk.fileName,
+                    content: disk.content
+                });
+
+                if (!status.installed || !status.upToDate) {
+                    await window.electronAPI.installGameToLocalDisk({
+                        fileName: disk.fileName,
+                        content: disk.content
+                    });
+                    refreshInstalledGamesCatalog();
+                }
+
+                // 2. ZERO-CLICK INSTANT AUTOMATIC GAME LAUNCH FROM DISK
+                openGameWindowFromBlob(disk.content, meta.title, `win-floppy-auto-${disk.fileName}`, meta.iconKey);
+            });
+
+            window.electronAPI.onFloppyEjected(() => {
+                const badge = document.getElementById('floppy-badge');
+                const badgeText = document.getElementById('floppy-badge-text');
+                const header = document.getElementById('floppy-header-status');
+                
+                if (badge) badge.classList.remove('disk-inserted');
+                if (badgeText) badgeText.textContent = `Drive A:\\ [NO DISK]`;
+                if (header) header.textContent = `DRIVE A:\\ 3.5" HARDWARE WATCHER ACTIVE`;
+
+                setMountedFloppy(null);
+            });
+        }
+
+        // PHYSICAL FLOPPY DISK MOUNT & DRAG-AND-DROP ENGINE
+        function promptFloppyDriveAction() {
+            playSound('click');
+            if (mountedFloppy) {
+                openFloppyModal();
+            } else {
+                if (window.electronAPI) {
+                    openFloppyBurnModal();
+                } else {
+                    mountPhysicalFloppyDrive().then(disk => {
+                        if (disk) {
+                            openFloppyModal();
+                        }
+                    });
+                }
+            }
+        }
 
         function openFloppyModal() {
-            if (!activeFloppyDisk) {
-                alert('Drive A:\\ is empty. Insert a physical USB Floppy Disk containing a game file.');
-                return;
+            if (!mountedFloppy) return;
+            const modal = document.getElementById('floppy-modal');
+            const title = document.getElementById('floppy-modal-title');
+            const body = document.getElementById('floppy-modal-body');
+            const btnRun = document.getElementById('btn-run-floppy');
+            const btnInstall = document.getElementById('btn-install-floppy');
+            
+            if (mountedFloppy.isEmpty) {
+                title.textContent = `Empty Floppy Disk Inserted - Drive A:\\`;
+                body.innerHTML = `Physical 3.5" High-Density Floppy Disk mounted successfully!<br><br>
+                    <b>Status:</b> <code>Drive A:\\ is Empty / Ready for Formatting</code><br><br>
+                    This floppy disk is blank. Would you like to write / burn a game from your hard drive collection onto this physical disk?`;
+                if (btnRun) btnRun.style.display = 'none';
+                if (btnInstall) btnInstall.style.display = 'none';
+            } else {
+                title.textContent = `Floppy Disk Inserted - A:\\${mountedFloppy.fileName}`;
+                body.innerHTML = `Physical 3.5" High-Density Floppy Disk mounted successfully!<br><br>
+                    <b>File:</b> <code>A:\\${mountedFloppy.fileName}</code><br>
+                    <b>Size:</b> ${(mountedFloppy.sizeBytes / 1024).toFixed(1)} KB<br><br>
+                    Would you like to run the program directly from Drive A:\\, copy &amp; install it to permanent local storage (C:\\GAMES), or burn a game to this disk?`;
+                if (btnRun) btnRun.style.display = 'inline-block';
+                if (btnInstall) btnInstall.style.display = 'inline-block';
             }
-            document.getElementById('floppy-modal').classList.remove('hidden');
+
+            modal.classList.remove('hidden');
         }
 
         function closeFloppyModal() {
             document.getElementById('floppy-modal').classList.add('hidden');
         }
 
-        // LISTEN FOR NATIVE ELECTRON PHYSICAL FLOPPY DISK INSERTION EVENTS
-        if (window.electronAPI) {
-            window.electronAPI.onFloppyInserted((disk) => {
-                activeFloppyDisk = disk;
-                playFloppySeek();
-
-                const badge = document.getElementById('floppy-badge');
-                const badgeText = document.getElementById('floppy-badge-text');
-                const header = document.getElementById('floppy-header-status');
-                const text = document.getElementById('floppy-modal-text');
-
-                badge.classList.add('active');
-                if (badgeText) badgeText.textContent = `DRIVE A:\\ ${disk.fileName}`;
-                header.textContent = `DRIVE A:\\ ${disk.fileName} [MOUNTED]`;
-
-                text.innerHTML = `Physical 3.5" USB Floppy Disk auto-detected in Drive A:\\!<br><br>
-                    <b>File:</b> <code>A:\\${disk.fileName}</code><br>
-                    <b>Size:</b> ${(disk.sizeBytes / 1024).toFixed(1)} KB<br><br>
-                    Would you like to run the program directly off the disk or copy &amp; install it to native local hard drive storage (C:\\GAMES)?`;
-
-                document.getElementById('floppy-modal').classList.remove('hidden');
-            });
-
-            window.electronAPI.onFloppyEjected(() => {
-                activeFloppyDisk = null;
-                const badge = document.getElementById('floppy-badge');
-                const badgeText = document.getElementById('floppy-badge-text');
-                const header = document.getElementById('floppy-header-status');
-                
-                badge.classList.remove('active');
-                if (badgeText) badgeText.textContent = `DRIVE A:\\ [NO DISK]`;
-                header.textContent = `DRIVE A:\\ [NO DISK]`;
-                closeFloppyModal();
-            });
+        function ejectFloppyDriveAction() {
+            ejectFloppyDrive();
+            closeFloppyModal();
+            playSound('click');
         }
 
         function runFloppyDirectly() {
-            if (!activeFloppyDisk) return;
+            if (!mountedFloppy) return;
             closeFloppyModal();
-            openBlobWindow(activeFloppyDisk.content, activeFloppyDisk.title, 'win-floppy-direct');
+            openGameWindowFromBlob(mountedFloppy.content, mountedFloppy.title, 'window-floppy', 'FLOPPY');
         }
 
-        async function installFloppyToDisk() {
-            if (!activeFloppyDisk || !window.electronAPI) return;
+        async function installFloppyToHardDrive() {
+            if (!mountedFloppy) return;
             closeFloppyModal();
             playFloppySeek();
+            
+            await saveGameToHardDrive(
+                mountedFloppy.fileName,
+                mountedFloppy.title,
+                mountedFloppy.content,
+                'FLOPPY',
+                'Installed Floppy Program'
+            );
 
-            const res = await window.electronAPI.installGameToLocalDisk({
-                fileName: activeFloppyDisk.fileName,
-                content: activeFloppyDisk.content
+            await refreshInstalledGamesCatalog();
+            alert(`SUCCESS: Program ${mountedFloppy.fileName} has been copied and permanently installed to C:\\GAMES!`);
+        }
+
+        // Drag and Drop Floppy Disk Files onto Body
+        const osBody = document.getElementById('os-body');
+        osBody.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        osBody.addEventListener('drop', (e) => {
+            e.preventDefault();
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                const file = e.dataTransfer.files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const diskObj = {
+                        fileName: file.name.toUpperCase(),
+                        title: file.name.replace(/\.[^/.]+$/, "").toUpperCase(),
+                        content: event.target.result,
+                        sizeBytes: file.size,
+                        lastModified: file.lastModified
+                    };
+                    setMountedFloppy(diskObj);
+                    openFloppyModal();
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        // Dynamic Executable Window Loader (Blob / Source Doc)
+        function openGameWindowFromBlob(htmlContent, title, winId, iconKey) {
+            playFloppySeek();
+            toggleBrowserFullscreen();
+
+            let win = document.getElementById(winId);
+            if (win) {
+                win.style.display = 'flex';
+                bringToFront(winId);
+                return;
+            }
+
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const blobUrl = URL.createObjectURL(blob);
+
+            win = document.createElement('div');
+            win.id = winId;
+            win.className = 'window bevel-out game-program-window maximized';
+
+            win.innerHTML = `
+                <div class="window-titlebar">
+                    <div class="window-title-text">
+                        <span>${getSvgIcon(iconKey)}</span>
+                        <span>Executing Installed Program - [${title}]</span>
+                    </div>
+                    <div class="window-controls">
+                        <button class="win-btn bevel-out" title="Minimize" onclick="minimizeWindow('${winId}')">_</button>
+                        <button class="win-btn bevel-out" title="Restore / Maximize" onclick="toggleMaximize('${winId}')">🗖</button>
+                        <button class="win-btn bevel-out" title="Close" onclick="closeWindow('${winId}')">X</button>
+                    </div>
+                </div>
+                <div class="window-body bevel-in" style="padding:0; overflow:hidden; background:#000;">
+                    <iframe class="iframe-container" src="${blobUrl}"></iframe>
+                </div>
+            `;
+
+            document.getElementById('dynamic-windows-container').appendChild(win);
+            makeDraggable(win);
+            win.style.display = 'flex';
+            bringToFront(winId);
+            addTaskbarTab(winId, title, iconKey);
+        }
+
+        async function refreshInstalledGamesCatalog() {
+            const customGames = await getInstalledGamesFromHardDrive();
+            const catalogContainer = document.getElementById('catalog-container');
+            
+            // Remove previous dynamic cards
+            document.querySelectorAll('.custom-installed-card').forEach(el => el.remove());
+            document.querySelectorAll('.custom-desktop-icon').forEach(el => el.remove());
+            document.querySelectorAll('.custom-start-item').forEach(el => el.remove());
+
+            customGames.forEach(game => {
+                // 1. Add Catalog Card
+                const card = document.createElement('div');
+                card.className = 'game-card bevel-out custom-installed-card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div>
+                            <h3 class="game-title">${game.title}</h3>
+                            <span class="game-file-name">${game.fileName}</span>
+                        </div>
+                        <span class="card-badge">INSTALLED</span>
+                    </div>
+                    <div class="card-media">
+                        <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#222;">
+                            <text x="100" y="65" fill="#00ff00" font-family="monospace" font-size="16" text-anchor="middle">DISK PROGRAM</text>
+                        </svg>
+                    </div>
+                    <div class="card-description">
+                        Installed from physical floppy disk into local hard drive storage C:\\GAMES.
+                    </div>
+                    <div class="card-meta-list">
+                        <span>SIZE: ${(game.sizeBytes / 1024).toFixed(1)} KB</span>
+                        <span>TYPE: Floppy App</span>
+                        <span>STATUS: INSTALLED</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-action primary bevel-out" onclick="launchCustomGame('${game.fileName}')">▶ RUN PROGRAM</button>
+                    </div>
+                `;
+                catalogContainer.appendChild(card);
+
+                // 2. Add Desktop Shortcut
+                const desktopContainer = document.getElementById('desktop-icons');
+                const termIcon = document.getElementById('icon-terminal');
+                const shortcut = document.createElement('div');
+                shortcut.className = 'desktop-shortcut custom-desktop-icon';
+                shortcut.onclick = () => launchCustomGame(game.fileName);
+                shortcut.innerHTML = `
+                    <div class="shortcut-icon">${getSvgIcon('FLOPPY')}</div>
+                    <div class="shortcut-label">${game.fileName.replace('.EXE', '')}</div>
+                `;
+                desktopContainer.insertBefore(shortcut, termIcon);
             });
 
-            if (res.success) {
-                alert(`SUCCESS: Program ${activeFloppyDisk.fileName} copied and installed to local AppData C:\\GAMES storage!`);
-                loadInstalledGames();
-            } else {
-                alert(`INSTALL FAILED: ${res.error}`);
+            const totalCount = 5 + customGames.length;
+            const sysHeaderCount = document.getElementById('sys-header-count');
+            if (sysHeaderCount) sysHeaderCount.textContent = `DRIVE C: ${totalCount} PROGRAMS`;
+
+            const catStatusCount = document.getElementById('catalog-status-count');
+            if (catStatusCount) catStatusCount.textContent = `${totalCount} Object(s) displayed`;
+        }
+
+        async function launchCustomGame(fileName) {
+            const game = await getInstalledGame(fileName);
+            if (game) {
+                openGameWindowFromBlob(game.codeContent, game.title, `win-custom-${game.fileName}`, 'FLOPPY');
             }
         }
 
-        async function loadInstalledGames() {
-            if (!window.electronAPI) return;
-            const games = await window.electronAPI.listLocalInstalledGames();
-            const container = document.getElementById('catalog-container');
-            container.innerHTML = '';
+        // Initialize Installed Games from Storage on Startup
+        refreshInstalledGamesCatalog();
 
-            games.forEach(g => {
-                const card = document.createElement('div');
-                card.className = 'game-card bevel-out';
-                card.innerHTML = `
-                    <h3 style="margin:0 0 6px 0; color:#000080;">${g.title}</h3>
-                    <div style="font-family:monospace; font-size:13px; margin-bottom:8px;">${g.fileName} (${(g.sizeBytes/1024).toFixed(1)} KB)</div>
-                    <button class="btn-action bevel-out" onclick="openBlobWindow(\`${encodeURIComponent(g.content)}\`, '${g.title}', 'win-${g.fileName}', true)">▶ RUN PROGRAM</button>
-                `;
-                container.appendChild(card);
+        // Massive Array of 130+ Authentic Ultra-Verbose Rapid POST Diagnostics Log Lines
+        const verbosePostLines = [
+            "CPU: Intel i486DX2 Clock at 66 MHz [33MHz Bus x2.0 Multiplier]",
+            "Math Coprocessor: Built-in 486DX FPU Active at 66 MHz",
+            "System BIOS Shadowing: Enabled at F0000h - FFFFFh",
+            "Video BIOS Shadowing: Enabled at C0000h - C7FFFh",
+            "Checking System CMOS RAM checksum ... OK (Battery Voltage: 3.2V)",
+            "Initializing Plug and Play BIOS extension v1.0a ...",
+            "VGA BIOS: S3 Vision 964 VRAM 2048 KB [VESA BIOS Ext 2.0 OK]",
+            "System RAM: Testing Base Memory 00000000h - 0009FFFFh (640 KB OK)",
+            "System RAM: Testing Extended Memory 00100000h - 00FFFFFFh (15360 KB)",
+            "Bank 0: 4096 KB EDO DRAM [70ns] ... OK",
+            "Bank 1: 4096 KB EDO DRAM [70ns] ... OK",
+            "Bank 2: 4096 KB EDO DRAM [70ns] ... OK",
+            "Bank 3: 4096 KB EDO DRAM [70ns] ... OK",
+            "Testing Memory Block 01/32 [0x00100000 - 0x0017FFFF] ... OK",
+            "Testing Memory Block 02/32 [0x00180000 - 0x001FFFFF] ... OK",
+            "Testing Memory Block 03/32 [0x00200000 - 0x0027FFFF] ... OK",
+            "Testing Memory Block 04/32 [0x00280000 - 0x002FFFFF] ... OK",
+            "Testing Memory Block 05/32 [0x00300000 - 0x0037FFFF] ... OK",
+            "Testing Memory Block 06/32 [0x00380000 - 0x003FFFFF] ... OK",
+            "Testing Memory Block 07/32 [0x00400000 - 0x0047FFFF] ... OK",
+            "Testing Memory Block 08/32 [0x00480000 - 0x004FFFFF] ... OK",
+            "L2 Cache Memory: 256 KB Write-Back SRAM [Tag RAM Verified OK]",
+            "Testing System Bus Controllers (8237 DMA, 8254 PIT, 8259 PIC) ... OK",
+            "PCI Bus #0 Slot 0: Host Bridge / Memory Controller [Device ID: 0x1234]",
+            "PCI Bus #0 Slot 1: S3 Vision 964 Graphics Accelerator [IRQ 9, MEM 0xE0000000]",
+            "PCI Bus #0 Slot 2: IDE Dual-Channel Controller [IRQ 14, IRQ 15, IO 0x1F0/0x170]",
+            "PCI Bus #0 Slot 3: Sound Blaster 16 PnP Audio [IRQ 5, DMA 1, DMA 5, IO 0x220]",
+            "ISA Bus Slot 1: 3Com EtherLink III 10Mbps NIC [IO 0x300, IRQ 10]",
+            "Testing Memory Block 09/32 [0x00500000 - 0x0057FFFF] ... OK",
+            "Testing Memory Block 10/32 [0x00580000 - 0x005FFFFF] ... OK",
+            "Testing Memory Block 11/32 [0x00600000 - 0x0067FFFF] ... OK",
+            "Testing Memory Block 12/32 [0x00680000 - 0x006FFFFF] ... OK",
+            "Testing Memory Block 13/32 [0x00700000 - 0x0077FFFF] ... OK",
+            "Testing Memory Block 14/32 [0x00780000 - 0x007FFFFF] ... OK",
+            "Probing IDE Primary Master ... WDC AC32500H (2500 MB, LBA, Sector 512)",
+            "Probing IDE Primary Slave  ... 3.5\" Floppy Disk Drive (1.44 MB High Density)",
+            "Probing IDE Secondary Master... ATAPI CD-ROM Drive (4X Speed, Drive E:)",
+            "Probing IDE Secondary Slave ... None",
+            "Testing Memory Block 15/32 [0x00800000 - 0x0087FFFF] ... OK",
+            "Testing Memory Block 16/32 [0x00880000 - 0x008FFFFF] ... OK",
+            "Testing Memory Block 17/32 [0x00900000 - 0x0097FFFF] ... OK",
+            "Testing Memory Block 18/32 [0x00980000 - 0x009FFFFF] ... OK",
+            "Keyboard Initialization ... 101-Key US Keyboard Detected OK",
+            "PS/2 Mouse Interface ... Microsoft Compatible Mouse Detected on IRQ 12",
+            "Real-Time Clock / Calendar ... Synced [2026-08-31 23:25:51]",
+            "Testing Memory Block 19/32 [0x00A00000 - 0x00A7FFFF] ... OK",
+            "Testing Memory Block 20/32 [0x00A80000 - 0x00AFFFFF] ... OK",
+            "Testing Memory Block 21/32 [0x00B00000 - 0x00B7FFFF] ... OK",
+            "Testing Memory Block 22/32 [0x00B80000 - 0x00BFFFFF] ... OK",
+            "Configuring System Interrupt Vectors IRQ 00 through IRQ 15 ... OK",
+            "Configuring Direct Memory Access Channels DMA 0 through DMA 7 ... OK",
+            "Testing Memory Block 23/32 [0x00C00000 - 0x00C7FFFF] ... OK",
+            "Testing Memory Block 24/32 [0x00C80000 - 0x00CFFFFF] ... OK",
+            "Testing Memory Block 25/32 [0x00D00000 - 0x00D7FFFF] ... OK",
+            "Testing Memory Block 26/32 [0x00D80000 - 0x00DFFFFF] ... OK",
+            "Testing Memory Block 27/32 [0x00E00000 - 0x00E7FFFF] ... OK",
+            "Testing Memory Block 28/32 [0x00E80000 - 0x00EFFFFF] ... OK",
+            "Testing Memory Block 29/32 [0x00F00000 - 0x00F7FFFF] ... OK",
+            "Testing Memory Block 30/32 [0x00F80000 - 0x00FDFFFF] ... OK",
+            "Testing Memory Block 31/32 [0x00FE0000 - 0x00FEFFFF] ... OK",
+            "Testing Memory Block 32/32 [0x00FF0000 - 0x00FFFFFF] ... OK",
+            "Memory Test Complete: 16,384 KB System RAM Verified [0 Errors]",
+            "\nLoading MS-DOS 6.22 Systems Files (IO.SYS, MSDOS.SYS) ...",
+            "Reading System Control Configuration Files ...",
+            "Executing CONFIG.SYS:",
+            "  [01] DEVICE=C:\\DOS\\HIMEM.SYS /TESTMEM:OFF /NUMHANDLES=128",
+            "       HIMEM: High Memory Area (HMA) Available (64 KB Allocated)",
+            "  [02] DEVICE=C:\\DOS\\EMM386.EXE NOEMS HIGHSCAN D=64",
+            "       EMM386: Expanded Memory Manager Active (EMS Frame at D000h)",
+            "  [03] DOS=HIGH,UMB",
+            "       UMB Region 1: 31 KB Available at C800h - D000h",
+            "       UMB Region 2: 82 KB Available at D800h - EFFFh",
+            "  [04] FILES=60",
+            "  [05] BUFFERS=30,0",
+            "  [06] LASTDRIVE=Z",
+            "  [07] DEVICEHIGH=C:\\DOS\\SB16.SYS /A220 /I5 /D1 /H5 /P330",
+            "       Sound Blaster 16 Driver Loaded (DSP Version 4.13)",
+            "  [08] DEVICEHIGH=C:\\DOS\\ANSI.SYS /X",
+            "Executing AUTOEXEC.BAT:",
+            "  [01] SET PATH=C:\\DOS;C:\\GAMES;C:\\WINDOWS",
+            "  [02] SET PROMPT=$P$G",
+            "  [03] SET SOUND=C:\\SB16",
+            "  [04] C:\\DOS\\SMARTDRV.EXE 2048 512 /E:2048",
+            "       SMARTDrive Disk Cache Installed (2048 KB Write-Through)",
+            "  [05] C:\\DOS\\MSCDEX.EXE /D:MSCD001 /M:10 /L:E",
+            "       MSCDEX Version 2.25 Loaded (Drive E: CD-ROM Mounted)",
+            "  [06] C:\\DOS\\MOUSE.COM /S20",
+            "       Microsoft Mouse Driver v8.20 Loaded",
+            "  [07] C:\\DOS\\DOSKEY.COM",
+            "       DOSKey Command Line Utility Resident",
+            "\nMounting C:\\GAMES\\*.* File Allocation Table (FAT16) ...",
+            "Checking Volume Sector Headers ... Sector Size 512 Bytes",
+            "Checking Cluster Map integrity ... 65,536 Clusters Checked [Clean]",
+            "Initializing JGLOVR-OS 3.11 Graphic Display Drivers ...",
+            "Loading Windows Graphic Engine Kernel Module [WIN386.EXE] ...",
+            "Allocating Virtual Memory Swapfile C:\\386SPART.PAR (16384 KB) ...",
+            "Starting System User Interface Core Subsystem ...",
+            "System Boot Complete. Welcome to JGLOVR-OS 3.11."
+        ];
+
+        // Interactive Rapid Power-On & POST Sequence Engine
+        let systemPoweredOn = false;
+        let bootSkipped = false;
+
+        function handlePowerOnInteraction() {
+            if (!systemPoweredOn) {
+                systemPoweredOn = true;
+                document.getElementById('power-screen-container').style.display = 'none';
+                const mainBios = document.getElementById('bios-main-content');
+                mainBios.style.display = 'flex';
+                getAudioContext();
+                startComputerFanHum();
+                toggleBrowserFullscreen();
+                runBiosBootSequence();
+            } else {
+                skipBootSequence();
+            }
+        }
+
+        function runBiosBootSequence() {
+            const memoryCounter = document.getElementById('memory-counter');
+            const biosLogContainer = document.getElementById('bios-log-text');
+            let currentMem = 0;
+            const targetMem = 16384;
+            let lineIndex = 0;
+            
+            playHDDSpinUp();
+
+            const memInterval = setInterval(() => {
+                if (bootSkipped) {
+                    clearInterval(memInterval);
+                    return;
+                }
+                
+                currentMem += 112;
+                if (currentMem > targetMem) currentMem = targetMem;
+                memoryCounter.textContent = currentMem.toLocaleString();
+
+                if (lineIndex < verbosePostLines.length) {
+                    const newDiv = document.createElement('div');
+                    newDiv.textContent = verbosePostLines[lineIndex];
+                    biosLogContainer.appendChild(newDiv);
+                    biosLogContainer.scrollTop = biosLogContainer.scrollHeight;
+                    lineIndex++;
+                }
+
+                if (currentMem === targetMem && lineIndex >= verbosePostLines.length) {
+                    clearInterval(memInterval);
+                    playSound('beep');
+                    playFloppySeek();
+                    
+                    setTimeout(() => {
+                        finishBootSequence();
+                    }, 200);
+                }
+            }, 75);
+        }
+
+        function skipBootSequence() {
+            if (!bootSkipped) {
+                bootSkipped = true;
+                stopBootAudio();
+                finishBootSequence();
+            }
+        }
+
+        function finishBootSequence() {
+            stopBootAudio();
+            const biosScreen = document.getElementById('bios-boot-screen');
+            biosScreen.style.transition = 'opacity 0.4s ease-out';
+            biosScreen.style.opacity = '0';
+            
+            const viewport = document.getElementById('os-viewport');
+            viewport.classList.add('crt-warming-up');
+
+            playSound('open');
+            setTimeout(() => {
+                biosScreen.classList.add('hidden');
+            }, 400);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (!systemPoweredOn) {
+                handlePowerOnInteraction();
+            } else if (e.key === 'Escape' || e.key === 'Enter') {
+                skipBootSequence();
+            }
+        });
+
+        // DRAGGABLE WINDOW SYSTEM
+        let highestZ = 100;
+        function makeDraggable(winElem) {
+            const titlebar = winElem.querySelector('.window-titlebar');
+            if (!titlebar) return;
+
+            let isDragging = false;
+            let offsetX = 0, offsetY = 0;
+
+            titlebar.addEventListener('mousedown', (e) => {
+                if (e.target.classList.contains('win-btn')) return;
+                isDragging = true;
+                bringToFront(winElem.id);
+                offsetX = e.clientX - winElem.offsetLeft;
+                offsetY = e.clientY - winElem.offsetTop;
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                if (winElem.classList.contains('maximized')) return;
+                winElem.style.left = Math.max(0, (e.clientX - offsetX)) + 'px';
+                winElem.style.top = Math.max(0, (e.clientY - offsetY)) + 'px';
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
             });
         }
 
-        function openBlobWindow(rawContent, title, winId, isEncoded = false) {
-            playFloppySeek();
-            const content = isEncoded ? decodeURIComponent(rawContent) : rawContent;
-            const blob = new Blob([content], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
+        document.querySelectorAll('.window').forEach(makeDraggable);
 
-            const win = document.createElement('div');
+        // MULTI-PROGRAM WINDOW MANAGER ENGINE
+        function openGameWindow(url, title, winId, iconKey, originElem) {
+            playFloppySeek();
+            toggleBrowserFullscreen();
+
+            let win = document.getElementById(winId);
+            if (win) {
+                win.style.display = 'flex';
+                bringToFront(winId);
+                return;
+            }
+
+            let startRect = { top: window.innerHeight / 2, left: window.innerWidth / 2, width: 50, height: 50 };
+            if (originElem && originElem.getBoundingClientRect) {
+                startRect = originElem.getBoundingClientRect();
+            }
+
+            const wireframe = document.createElement('div');
+            wireframe.className = 'expanding-wireframe';
+            wireframe.style.top = startRect.top + 'px';
+            wireframe.style.left = startRect.left + 'px';
+            wireframe.style.width = startRect.width + 'px';
+            wireframe.style.height = startRect.height + 'px';
+            document.body.appendChild(wireframe);
+
+            win = document.createElement('div');
             win.id = winId;
-            win.className = 'window bevel-out maximized';
+            win.className = 'window bevel-out game-program-window maximized';
+
             win.innerHTML = `
                 <div class="window-titlebar">
-                    <div>Executing Desktop Program - [${title}]</div>
-                    <button class="bevel-out" style="width:22px; height:22px;" onclick="document.getElementById('${winId}').remove()">X</button>
+                    <div class="window-title-text">
+                        <span>${getSvgIcon(iconKey)}</span>
+                        <span>Executing Program - [${title}]</span>
+                    </div>
+                    <div class="window-controls">
+                        <button class="win-btn bevel-out" title="Minimize" onclick="minimizeWindow('${winId}')">_</button>
+                        <button class="win-btn bevel-out" title="Restore / Maximize" onclick="toggleMaximize('${winId}')">🗖</button>
+                        <button class="win-btn bevel-out" title="Close" onclick="closeWindow('${winId}')">X</button>
+                    </div>
                 </div>
-                <div class="window-body bevel-in" style="padding:0; background:#000;">
-                    <iframe style="width:100%; height:100%; border:none;" src="${url}"></iframe>
+                <div class="window-body bevel-in" style="padding:0; overflow:hidden; background:#000;">
+                    <iframe class="iframe-container" src="${url}"></iframe>
                 </div>
             `;
+
             document.getElementById('dynamic-windows-container').appendChild(win);
+            makeDraggable(win);
+
+            requestAnimationFrame(() => {
+                wireframe.style.top = '0px';
+                wireframe.style.left = '0px';
+                wireframe.style.width = window.innerWidth + 'px';
+                wireframe.style.height = (window.innerHeight - 38) + 'px';
+            });
+
+            setTimeout(() => {
+                win.style.display = 'flex';
+                bringToFront(winId);
+                wireframe.style.opacity = '0';
+                setTimeout(() => wireframe.remove(), 200);
+            }, 300);
+
+            addTaskbarTab(winId, title, iconKey);
+            document.getElementById('start-menu').classList.add('hidden');
         }
 
-        loadInstalledGames();
+        function addTaskbarTab(winId, title, iconKey) {
+            const tabsContainer = document.getElementById('taskbar-tabs');
+            let tab = document.getElementById('tab-' + winId);
+            if (!tab) {
+                tab = document.createElement('div');
+                tab.id = 'tab-' + winId;
+                tab.className = 'task-tab bevel-out active';
+                tab.innerHTML = `<span>${getSvgIcon(iconKey)}</span> ${title}`;
+                tab.onclick = () => toggleTaskWindow(winId);
+                tabsContainer.appendChild(tab);
+            }
+        }
+
+        function removeTaskbarTab(winId) {
+            const tab = document.getElementById('tab-' + winId);
+            if (tab) tab.remove();
+        }
+
+        function toggleTaskWindow(winId) {
+            const win = document.getElementById(winId);
+            if (!win) return;
+            if (win.style.display === 'none') {
+                win.style.display = 'flex';
+                bringToFront(winId);
+                playFloppySeek();
+            } else if (win.style.zIndex == highestZ) {
+                win.style.display = 'none';
+            } else {
+                bringToFront(winId);
+            }
+            updateTaskbarActiveState();
+        }
+
+        function updateTaskbarActiveState() {
+            document.querySelectorAll('.task-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.window').forEach(win => {
+                if (win.style.display !== 'none' && win.style.zIndex == highestZ) {
+                    const tab = document.getElementById('tab-' + win.id);
+                    if (tab) tab.classList.add('active');
+                }
+            });
+        }
+
+        function openWindow(winId) {
+            const win = document.getElementById(winId);
+            if (win) {
+                win.style.display = 'flex';
+                bringToFront(winId);
+                playFloppySeek();
+            }
+        }
+
+        function closeWindow(winId) {
+            const win = document.getElementById(winId);
+            if (win) {
+                win.style.display = 'none';
+                if (win.parentElement.id === 'dynamic-windows-container') {
+                    win.remove();
+                    removeTaskbarTab(winId);
+                }
+                playSound('click');
+            }
+        }
+
+        function toggleWindow(winId) {
+            const win = document.getElementById(winId);
+            if (!win) return;
+            if (win.style.display === 'none' || getComputedStyle(win).display === 'none') {
+                openWindow(winId);
+            } else {
+                closeWindow(winId);
+            }
+        }
+
+        function minimizeWindow(winId) {
+            closeWindow(winId);
+        }
+
+        function toggleMaximize(winId) {
+            const win = document.getElementById(winId);
+            if (!win) return;
+            win.classList.toggle('maximized');
+            playSound('click');
+        }
+
+        function bringToFront(winId) {
+            const win = document.getElementById(winId);
+            if (win) {
+                highestZ++;
+                win.style.zIndex = highestZ;
+                updateTaskbarActiveState();
+            }
+        }
+
+        // Theme Cycling
+        const themes = ['theme-win95', 'theme-dos-green', 'theme-dos-amber', 'theme-c64'];
+        let currentThemeIdx = 0;
+
+        function cycleTheme() {
+            themes.forEach(t => document.body.classList.remove(t));
+            currentThemeIdx = (currentThemeIdx + 1) % themes.length;
+            document.body.classList.add(themes[currentThemeIdx]);
+            playSound('click');
+        }
+
+        function toggleScanlines() {
+            document.body.classList.toggle('scanlines-off');
+            playSound('click');
+        }
+
+        // Start Menu Toggle
+        function toggleStartMenu() {
+            playSound('click');
+            document.getElementById('start-menu').classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', function(e) {
+            const startBtn = document.getElementById('start-btn');
+            const startMenu = document.getElementById('start-menu');
+            if (!startBtn.contains(e.target) && !startMenu.contains(e.target)) {
+                startMenu.classList.add('hidden');
+            }
+        });
+
+        // Catalog View Mode
+        function toggleCatalogView() {
+            const container = document.getElementById('catalog-container');
+            if (container.classList.contains('catalog-grid')) {
+                container.classList.remove('catalog-grid');
+                container.style.display = 'flex';
+                container.style.flexDirection = 'column';
+            } else {
+                container.style.display = 'grid';
+                container.classList.add('catalog-grid');
+            }
+            playSound('click');
+        }
+
+        // Help / About
+        function openAboutDialog() {
+            alert("JGLOVR-OS Version 3.11\n\nPersonal Workstation Software System\n(C) 1995 JGLOVR Systems. All Rights Reserved.");
+        }
+
+        // Shutdown Simulation
+        function triggerShutdown() {
+            playSound('open');
+            stopComputerFanHum();
+            document.getElementById('shutdown-screen').classList.remove('hidden');
+        }
+
+        function restartSystem() {
+            document.getElementById('shutdown-screen').classList.add('hidden');
+            document.getElementById('os-viewport').classList.remove('crt-warming-up');
+            bootSkipped = false;
+            systemPoweredOn = false;
+            const btnText = document.getElementById('sfx-btn-text');
+            if (btnText && soundEnabled) btnText.textContent = 'SFX';
+            document.getElementById('power-screen-container').style.display = 'flex';
+            document.getElementById('bios-main-content').style.display = 'none';
+            document.getElementById('bios-boot-screen').classList.remove('hidden');
+            document.getElementById('bios-boot-screen').style.opacity = '1';
+            document.getElementById('bios-log-text').innerHTML = '';
+        }
+
+        function shutdownDesktopApp() {
+            if (window.electronAPI && window.electronAPI.shutdownApp) {
+                window.electronAPI.shutdownApp();
+            } else {
+                alert("Desktop application closed.");
+                window.close();
+            }
+        }
+
+        // Floppy Disk Burn / Writer Engine
+        function openFloppyBurnModal() {
+            playSound('click');
+            closeFloppyModal();
+            const modal = document.getElementById('floppy-burn-modal');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeFloppyBurnModal() {
+            playSound('click');
+            const modal = document.getElementById('floppy-burn-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        async function executeFloppyBurn() {
+            const select = document.getElementById('floppy-burn-select');
+            if (!select || !select.value) return;
+            const gameFileName = select.value;
+
+            const progress = document.getElementById('floppy-burn-progress');
+            progress.classList.remove('hidden');
+            progress.textContent = `Writing sector tracks to Physical Floppy Disk Drive A:\\ [=====> 0%]`;
+            
+            playFloppySeek();
+
+            let targetGame = null;
+
+            // 1. Try fetching from installed local games
+            if (window.electronAPI && window.electronAPI.listLocalInstalledGames) {
+                const installed = await window.electronAPI.listLocalInstalledGames();
+                targetGame = installed.find(g => g.fileName.toUpperCase() === gameFileName.toUpperCase());
+            }
+            
+            // 2. Try fetching from relative local HTML game file
+            if (!targetGame) {
+                try {
+                    const resp = await fetch(gameFileName.toLowerCase());
+                    if (resp.ok) {
+                        const text = await resp.text();
+                        targetGame = { fileName: gameFileName, content: text };
+                    }
+                } catch(e) {}
+            }
+
+            if (!targetGame) {
+                alert("ERROR: Game file content not found.");
+                progress.classList.add('hidden');
+                return;
+            }
+
+            setTimeout(async () => {
+                playFloppySeek();
+                progress.textContent = `Writing sector tracks to Physical Floppy Disk Drive A:\\ [==========> 100%]`;
+
+                if (window.electronAPI && window.electronAPI.writeGameToFloppyDisk) {
+                    const res = await window.electronAPI.writeGameToFloppyDisk({
+                        gameFileName: targetGame.fileName,
+                        content: targetGame.content,
+                        drivePath: 'A:\\'
+                    });
+
+                    setTimeout(() => {
+                        progress.classList.add('hidden');
+                        if (res && res.success) {
+                            alert(`SUCCESS! Written ${targetGame.fileName} and RUN_GAME.BAT to physical floppy disk Drive A:\\ !\n\nThe floppy disk is now ready to play on any PC!`);
+                            closeFloppyBurnModal();
+                        } else {
+                            alert(`ERROR Writing Floppy Disk: ${res ? res.error : 'Drive A:\\ is not accessible or floppy disk is write-protected.'}`);
+                        }
+                    }, 500);
+                } else {
+                    progress.classList.add('hidden');
+                    alert("Floppy Disk Writing is supported in the Desktop App edition.");
+                    closeFloppyBurnModal();
+                }
+            }, 1200);
+        }
+
+        // Real-Time System Clock
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            document.getElementById('system-clock').textContent = `${hours}:${minutes}:${seconds} ${ampm}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ADVANCED MS-DOS COMMAND LINE ENGINE & LIVE GITHUB README FETCH ENGINE
+        let dynamicReadmeText = `JGLOVR-OS 3.11 Personal Workstation Systems Manual
+=====================================================
+
+PROGRAM EXECUTABLES (C:\\GAMES\\*.*):
+----------------------------------
+1. CODYFROG.EXE  - Cody Frog (Logic & Instruction Sequencer)
+2. TRAIN.EXE     - 3D Rail Network Simulation & Train Dispatcher
+3. GNOMES.EXE    - 3D Meadow World Simulation
+4. SYS_VOID.EXE  - CRT Vector Space Survival Arcade Shooter
+5. GRIDMIX.EXE   - 16-Step Audio Sequencer & Live Synthesizer
+
+SPECIAL COMMAND LINE EXECUTABLES:
+---------------------------------
+- CODY26.EXE    : Cody Frog '26 (Original Modern 3D Engine)
+
+SYSTEM UTILITIES & COMMANDS:
+---------------------------
+- DIR           : List files in current directory
+- A: / C:       : Switch between Drive A:\\ (Floppy) and Drive C:\\ (Hard Drive)
+- COPY A:\\* C:  : Install program from floppy disk to hard drive
+- TYPE [file]   : Output text contents of a file (e.g. TYPE README.TXT)
+- RUN [file]    : Execute program in retro window (e.g. RUN TRAIN, RUN CODYFROG)
+- MEM           : Display MS-DOS conventional and XMS memory allocation
+- SYSINFO       : Show hardware CPU, FPU, VRAM, and BIOS summary
+- TREE          : Output ASCII system directory tree structure
+- COLOR [theme] : Switch screen phosphor theme (WIN95, GREEN, AMBER, C64)
+- AUDIO [on/off]: Control system sound effects internally
+- REBOOT        : Restart the workstation system
+- SHUTDOWN      : Power off system
+
+(C) 1995-2026 JGLOVR Systems. All Rights Reserved.`;
+
+        // Automatically fetch live README.md from GitHub repository on load
+        fetch('README.md')
+            .then(res => {
+                if (res.ok) return res.text();
+                throw new Error('Local fetch skipped');
+            })
+            .then(text => {
+                if (text && text.trim().length > 0) {
+                    dynamicReadmeText = text;
+                }
+            })
+            .catch(err => {});
+
+        let currentDir = 'C:\\GAMES';
+        const cmdHistory = [];
+        let historyIndex = -1;
+
+        const knownFiles = ['CODYFROG.EXE', 'CODY26.EXE', 'TRAIN.EXE', 'GNOMES.EXE', 'SYS_VOID.EXE', 'GRIDMIX.EXE', 'README.TXT', 'CONFIG.SYS', 'AUTOEXEC.BAT'];
+
+        function updateTerminalPrompt() {
+            const promptLabel = document.getElementById('term-prompt-label');
+            const titleText = document.getElementById('term-title-text');
+            if (promptLabel) promptLabel.textContent = `${currentDir}>`;
+            if (titleText) titleText.textContent = `MS-DOS Command Prompt - [${currentDir}]`;
+        }
+
+        function handleTerminalKey(event) {
+            const inputEl = document.getElementById('term-input');
+            const outputEl = document.getElementById('term-output');
+
+            // DOSKey: Up / Down Arrow Key Command History Navigation
+            if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                if (cmdHistory.length > 0) {
+                    if (historyIndex < cmdHistory.length - 1) {
+                        historyIndex++;
+                    }
+                    inputEl.value = cmdHistory[cmdHistory.length - 1 - historyIndex] || '';
+                }
+                return;
+            } else if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    inputEl.value = cmdHistory[cmdHistory.length - 1 - historyIndex] || '';
+                } else if (historyIndex === 0) {
+                    historyIndex = -1;
+                    inputEl.value = '';
+                }
+                return;
+            }
+
+            // Tab Auto-Completion for Filenames
+            if (event.key === 'Tab') {
+                event.preventDefault();
+                const text = inputEl.value.trim();
+                const parts = text.split(' ');
+                const lastToken = parts[parts.length - 1].toUpperCase();
+                if (lastToken) {
+                    const match = knownFiles.find(f => f.startsWith(lastToken));
+                    if (match) {
+                        parts[parts.length - 1] = match;
+                        inputEl.value = parts.join(' ');
+                    }
+                }
+                return;
+            }
+
+            if (event.key === 'Enter') {
+                const rawCmd = inputEl.value.trim();
+                inputEl.value = '';
+                historyIndex = -1;
+
+                if (rawCmd) {
+                    cmdHistory.push(rawCmd);
+                }
+
+                const cmd = rawCmd.toLowerCase();
+                let reply = `\n${currentDir}> ${rawCmd}\n`;
+
+                if (cmd === 'a:' || cmd === 'cd a:' || cmd === 'a:\\' || cmd === 'floppy' || cmd === 'burn' || cmd === 'write' || cmd === 'format' || cmd === 'install') {
+                    currentDir = 'A:\\';
+                    updateTerminalPrompt();
+                    if (mountedFloppy && !mountedFloppy.isEmpty) {
+                        openFloppyModal();
+                        reply += `Switched to Drive A:\\\nOpening Floppy Action Manager for ${mountedFloppy.fileName} ...`;
+                    } else {
+                        openFloppyBurnModal();
+                        reply += `Switched to Drive A:\\\nOpening Floppy Disk Burn & Formatting Manager ...`;
+                    }
+                } else if (cmd === 'c:' || cmd === 'cd c:' || cmd === 'c:\\') {
+                    currentDir = 'C:\\GAMES';
+                    updateTerminalPrompt();
+                    reply += `Switched to Drive C:\\GAMES (Hard Drive Storage)`;
+                } else if (cmd === 'eject') {
+                    ejectFloppyDriveAction();
+                    reply += `Drive A:\\ Floppy Disk ejected.`;
+                } else if (cmd.startsWith('copy ')) {
+                    if (mountedFloppy) {
+                        installFloppyToHardDrive();
+                        reply += `Copying A:\\${mountedFloppy.fileName} to C:\\GAMES ... Installed!`;
+                    } else {
+                        reply += `Drive A:\\ is empty. Insert a floppy disk first.`;
+                    }
+                } else if (cmd === 'dir' || cmd === 'ls') {
+                    if (currentDir === 'A:\\') {
+                        if (mountedFloppy) {
+                            reply += ` Volume in drive A is FLOPPY_DISK
+ Directory of A:\\
+
+${mountedFloppy.fileName.padEnd(12, ' ')}      ${mountedFloppy.sizeBytes.toLocaleString().padStart(8, ' ')} 08-31-26  9:44p
+        1 file(s)        ${mountedFloppy.sizeBytes.toLocaleString().padStart(8, ' ')} bytes
+        0 dir(s)           ${(1457664 - mountedFloppy.sizeBytes).toLocaleString().padStart(9, ' ')} bytes free`;
+                        } else {
+                            reply += ` Volume in drive A is FLOPPY_DISK
+ Directory of A:\\
+
+Drive A:\\ is empty. No floppy disk inserted.`;
+                        }
+                    } else if (currentDir === 'C:\\GAMES') {
+                        reply += ` Volume in drive C is SYSTEM_C
+ Volume Serial Number is 1995-2026
+ Directory of C:\\GAMES
+
+CODYFROG EXE      98,412 08-31-26  9:44p
+CODY26   EXE      91,355 08-31-26  9:44p
+TRAIN    EXE      68,620 08-31-26  9:44p
+GNOMES   EXE     639,298 08-31-26  9:30p
+SYS_VOID EXE      81,617 08-31-26  9:30p
+GRIDMIX  EXE      62,314 08-31-26  9:30p
+README   TXT       1,024 08-31-26  9:44p
+        7 file(s)      1,042,640 bytes
+        0 dir(s)     164,324,512 bytes free`;
+                    } else if (currentDir === 'C:\\DOS') {
+                        reply += ` Volume in drive C is SYSTEM_C
+ Directory of C:\\DOS
+
+HIMEM    SYS      14,210 05-31-94  6:22a
+EMM386   EXE     120,920 05-31-94  6:22a
+SMARTDRV EXE      45,310 05-31-94  6:22a
+MSCDEX   EXE      25,410 05-31-94  6:22a
+MOUSE    COM      32,100 05-31-94  6:22a
+DOSKEY   COM       5,810 05-31-94  6:22a
+ANSI     SYS       9,020 05-31-94  6:22a
+        7 file(s)        252,780 bytes
+        0 dir(s)     164,324,512 bytes free`;
+                    } else {
+                        reply += ` Volume in drive C is SYSTEM_C
+ Directory of C:\\
+
+DOS          <DIR>       08-31-26  9:30p
+DRIVERS      <DIR>       08-31-26  9:30p
+GAMES        <DIR>       08-31-26  9:30p
+CONFIG   SYS         512 08-31-26  9:30p
+AUTOEXEC BAT         380 08-31-26  9:30p
+        2 file(s)            892 bytes
+        3 dir(s)     164,324,512 bytes free`;
+                    }
+                } else if (cmd.startsWith('type ') || cmd.startsWith('cat ') || cmd.startsWith('more ')) {
+                    const target = cmd.replace('type ', '').replace('cat ', '').replace('more ', '').trim();
+                    if (target.includes('readme')) {
+                        reply += dynamicReadmeText;
+                    } else if (target.includes('config')) {
+                        reply += `[CONFIG.SYS]
+DEVICE=C:\\DOS\\HIMEM.SYS /TESTMEM:OFF
+DEVICE=C:\\DOS\\EMM386.EXE NOEMS HIGHSCAN
+DOS=HIGH,UMB
+FILES=60
+BUFFERS=30,0
+LASTDRIVE=Z
+DEVICEHIGH=C:\\DOS\\SB16.SYS /A220 /I5 /D1 /H5 /P330
+DEVICEHIGH=C:\\DOS\\ANSI.SYS /X`;
+                    } else if (target.includes('autoexec')) {
+                        reply += `[AUTOEXEC.BAT]
+@ECHO OFF
+SET PATH=C:\\DOS;C:\\GAMES;C:\\WINDOWS
+SET PROMPT=$P$G
+SET SOUND=C:\\SB16
+C:\\DOS\\SMARTDRV.EXE 2048 512
+C:\\DOS\\MSCDEX.EXE /D:MSCD001 /M:10 /L:E
+C:\\DOS\\MOUSE.COM /S20
+C:\\DOS\\DOSKEY.COM`;
+                    } else {
+                        reply += `File not found - ${target}`;
+                    }
+                } else if (cmd === 'mem') {
+                    reply += `Memory Type         Total       Used       Free
+----------------  --------   --------   --------
+Conventional        640 KB      42 KB     598 KB
+Upper (UMB)          82 KB      14 KB      68 KB
+Reserved            384 KB     384 KB       0 KB
+Extended (XMS)    15,360 KB   2,048 KB  13,312 KB
+----------------  --------   --------   --------
+Total memory      16,384 KB   2,488 KB  13,896 KB
+
+Total under 1 MB    722 KB      56 KB     666 KB
+Largest executable program size : 598 KB (612,352 bytes)
+Largest available upper memory block : 68 KB (69,632 bytes)
+MS-DOS is resident in the high memory area.`;
+                } else if (cmd === 'sysinfo' || cmd === 'systeminfo') {
+                    reply += `JGLOVR-OS System Hardware Diagnostics Summary:
+  Processor          : Intel i486DX2 @ 66 MHz (FPU Active)
+  Base Memory        : 640 KB Base RAM
+  Extended Memory    : 15,360 KB EDO DRAM (70ns)
+  L2 Cache           : 256 KB SRAM Write-Back
+  Graphics Adapter   : S3 Vision 964 VRAM 2048 KB (VESA 2.0)
+  Sound Hardware     : Sound Blaster 16 PnP (IRQ 5, DMA 1)
+  Primary Storage    : Western Digital 2.5 GB Hard Disk
+  Floppy Drive       : 3.5" Floppy Disk Drive (Drive A:\\ ${mountedFloppy ? 'Mounted' : 'Empty'})
+  OS Environment     : MS-DOS 6.22 / JGLOVR-OS 3.11 Kernel`;
+                } else if (cmd === 'tree') {
+                    reply += `Folder PATH listing for Volume SYSTEM_C
+C:\\
+├── DOS\\
+│   ├── HIMEM.SYS
+│   ├── EMM386.EXE
+│   └── MOUSE.COM
+├── DRIVERS\\
+└── GAMES\\
+    ├── CODYFROG.EXE
+    ├── CODY26.EXE
+    ├── TRAIN.EXE
+    ├── GNOMES.EXE
+    ├── SYS_VOID.EXE
+    ├── GRIDMIX.EXE
+    └── README.TXT`;
+                } else if (cmd.startsWith('cd ') || cmd.startsWith('chdir ') || cmd === 'cd' || cmd === 'pwd') {
+                    const arg = cmd.replace('chdir ', '').replace('cd ', '').trim();
+                    if (arg === '\\' || arg === '/') {
+                        currentDir = 'C:\\';
+                    } else if (arg.includes('game')) {
+                        currentDir = 'C:\\GAMES';
+                    } else if (arg.includes('dos')) {
+                        currentDir = 'C:\\DOS';
+                    } else if (arg === '..' || arg === '.') {
+                        currentDir = 'C:\\';
+                    } else if (arg === 'cd' || arg === 'pwd' || !arg) {
+                        reply += currentDir;
+                    } else {
+                        reply += `Invalid directory - ${arg}`;
+                    }
+                    updateTerminalPrompt();
+                } else if (cmd === 'help') {
+                    reply += `JGLOVR-OS MS-DOS Command Utility Index:
+  A: / C:       - Switch drive letter (A:\\ Floppy / C:\\ Hard Drive)
+  COPY A:\\* C:  - Copy & install floppy disk program to local hard drive
+  EJECT         - Eject floppy disk from Drive A:\\
+  DIR           - List files in current directory
+  TYPE [file]   - View file contents (e.g. TYPE README.TXT)
+  RUN [file]    - Execute program in retro window (RUN TRAIN or RUN CODYFROG)
+  CD [path]     - Change directory (C:\\GAMES, C:\\DOS, C:\\)
+  MEM           - Display memory allocation table
+  SYSINFO       - Display hardware diagnostic summary
+  TREE          - Display ASCII directory tree
+  COLOR [theme] - Change screen theme (WIN95, GREEN, AMBER, C64)
+  AUDIO [on/off]- Enable or mute sound effects
+  REBOOT        - Restart workstation POST boot
+  SHUTDOWN      - Power off workstation
+  DATE / TIME   - Display system clock
+  CLS           - Clear terminal screen
+  EXIT          - Close Command Prompt`;
+                } else if (cmd === 'cls') {
+                    outputEl.textContent = '';
+                    return;
+                } else if (cmd === 'ver') {
+                    reply += `JGLOVR-OS [Version 3.11.95]`;
+                } else if (cmd === 'date' || cmd === 'time') {
+                    reply += `Current System Time: ${new Date().toLocaleString()}`;
+                } else if (cmd.startsWith('echo ')) {
+                    reply += rawCmd.substring(5);
+                } else if (cmd.startsWith('audio ') || cmd.startsWith('sound ')) {
+                    const arg = cmd.replace('audio ', '').replace('sound ', '').trim();
+                    if (arg === 'off' || arg === 'mute') {
+                        if (soundEnabled) toggleSound();
+                        reply += `System audio muted.`;
+                    } else {
+                        if (!soundEnabled) toggleSound();
+                        reply += `System audio enabled.`;
+                    }
+                } else if (cmd === 'reboot' || cmd === 'restart') {
+                    location.reload();
+                    return;
+                } else if (cmd === 'shutdown') {
+                    triggerShutdown();
+                    return;
+                } else if (cmd.startsWith('run ') || cmd.startsWith('play ') || cmd.includes('train') || cmd.includes('cody')) {
+                    const target = cmd.replace('run ', '').replace('play ', '').trim();
+                    if (target.includes('train')) {
+                        openGameWindow('traingame.html', 'Train Game', 'window-traingame', 'TRAIN', document.getElementById('icon-traingame'));
+                        reply += `Launching TRAIN.EXE...`;
+                    } else if (target.includes('26') || target === 'cody26' || cmd.includes('26')) {
+                        openGameWindow('codyfrog.html', 'Cody Frog \'26', 'window-cody26', 'FROG', document.getElementById('icon-codyfrog'));
+                        reply += `Launching CODY26.EXE (Original Modern 3D Engine)...`;
+                    } else if (target.includes('cody') || cmd.includes('cody')) {
+                        openGameWindow('codyfrogclassic.html', 'Cody Frog', 'window-codyfrog', 'FROG', document.getElementById('icon-codyfrog'));
+                        reply += `Launching CODYFROG.EXE...`;
+                    } else if (target.includes('gnome')) {
+                        openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', 'GNOMES', document.getElementById('icon-gnomes'));
+                        reply += `Launching GNOMES.EXE...`;
+                    } else if (target.includes('void') || target.includes('system')) {
+                        openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', 'SYSVOID', document.getElementById('icon-sysvoid'));
+                        reply += `Launching SYS_VOID.EXE...`;
+                    } else if (target.includes('grid') || target.includes('music')) {
+                        openGameWindow('musicgridlivemix.html', 'Music Grid Synthesizer', 'window-gridmix', 'GRIDMIX', document.getElementById('icon-gridmix'));
+                        reply += `Launching GRIDMIX.EXE...`;
+                    } else {
+                        reply += `Bad command or file name. Type DIR to list files.`;
+                    }
+                } else if (cmd.startsWith('color ')) {
+                    const colorArg = cmd.replace('color ', '').trim();
+                    if (colorArg === 'green') {
+                        document.body.className = 'theme-dos-green';
+                        reply += `Color set to DOS Green Phosphor.`;
+                    } else if (colorArg === 'amber') {
+                        document.body.className = 'theme-dos-amber';
+                        reply += `Color set to DOS Amber Phosphor.`;
+                    } else if (colorArg === 'c64') {
+                        document.body.className = 'theme-c64';
+                        reply += `Color set to Commodore 64.`;
+                    } else {
+                        document.body.className = 'theme-win95';
+                        reply += `Color reset to Windows 95 Classic.`;
+                    }
+                } else if (cmd === 'exit') {
+                    closeWindow('terminal-window');
+                    return;
+                } else if (cmd === '') {
+                    reply = `\n${currentDir}>`;
+                } else {
+                    reply += `Bad command or file name. Type HELP for commands.`;
+                }
+
+                outputEl.textContent += reply + '\n';
+                outputEl.scrollTop = outputEl.scrollHeight;
+                playFloppySeek();
+            }
+        }
     </script>
 </body>
 </html>
