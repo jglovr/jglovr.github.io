@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JGLOVR OS v3.11 - HTML Games & Tools Portfolio</title>
+    <meta name="description" content="A nostalgic 90s-style computer system hosting a collection of interactive HTML5 games, 3D simulations, audio synthesizers, and web utilities.">
+    
+    <!-- Google Fonts for Retro System Aesthetics -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================================
+           RETRO OS DESIGN SYSTEM & THEMES
+           ========================================== */
+        :root {
+            --bg-teal: #008080;
+            --win-bg: #c0c0c0;
+            --win-border-light: #ffffff;
+            --win-border-dark: #808080;
+            --win-border-shadow: #000000;
+            --header-bg: #000080;
+            --header-bg-gradient: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+            --header-text: #ffffff;
+            --text-main: #000000;
+            --text-muted: #404040;
+            --highlight: #000080;
+            --highlight-text: #ffffff;
+            --screen-tint: transparent;
+            --font-sys: 'VT323', monospace;
+            --font-mono: 'Share Tech Mono', monospace;
+            --font-pixel: 'Press Start 2P', monospace;
+        }
+
+        /* CRT / Color Themes */
+        body.theme-dos-green {
+            --bg-teal: #051505;
+            --win-bg: #0a200a;
+            --win-border-light: #33ff33;
+            --win-border-dark: #116611;
+            --win-border-shadow: #002200;
+            --header-bg: #116611;
+            --header-bg-gradient: linear-gradient(90deg, #116611 0%, #22aa22 100%);
+            --header-text: #051505;
+            --text-main: #33ff33;
+            --text-muted: #1c991c;
+            --highlight: #33ff33;
+            --highlight-text: #051505;
+        }
+
+        body.theme-dos-amber {
+            --bg-teal: #1a0f00;
+            --win-bg: #291800;
+            --win-border-light: #ffb000;
+            --win-border-dark: #996600;
+            --win-border-shadow: #442800;
+            --header-bg: #996600;
+            --header-bg-gradient: linear-gradient(90deg, #996600 0%, #ffb000 100%);
+            --header-text: #1a0f00;
+            --text-main: #ffb000;
+            --text-muted: #cc8800;
+            --highlight: #ffb000;
+            --highlight-text: #1a0f00;
+        }
+
+        body.theme-c64 {
+            --bg-teal: #4040e0;
+            --win-bg: #a0a0ff;
+            --win-border-light: #ffffff;
+            --win-border-dark: #6060c0;
+            --win-border-shadow: #202080;
+            --header-bg: #202080;
+            --header-bg-gradient: linear-gradient(90deg, #202080 0%, #4040e0 100%);
+            --header-text: #ffffff;
+            --text-main: #000000;
+            --text-muted: #202080;
+            --highlight: #202080;
+            --highlight-text: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-font-smoothing: none;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--bg-teal);
+            font-family: var(--font-sys);
+            font-size: 20px;
+            color: var(--text-main);
+        }
+
+        /* Scanlines Overlay */
+        .crt-scanlines {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 99999;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 4px, 6px 100%;
+            opacity: 0.85;
+            display: block;
+        }
+        body.scanlines-off .crt-scanlines {
+            display: none;
+        }
+
+        /* Classic Retro Bevel Utilities */
+        .bevel-out {
+            background-color: var(--win-bg);
+            border-top: 2px solid var(--win-border-light);
+            border-left: 2px solid var(--win-border-light);
+            border-right: 2px solid var(--win-border-shadow);
+            border-bottom: 2px solid var(--win-border-shadow);
+            box-shadow: inset -1px -1px var(--win-border-dark), inset 1px 1px var(--win-border-light);
+        }
+
+        .bevel-in {
+            background-color: #ffffff;
+            border-top: 2px solid var(--win-border-shadow);
+            border-left: 2px solid var(--win-border-shadow);
+            border-right: 2px solid var(--win-border-light);
+            border-bottom: 2px solid var(--win-border-light);
+            box-shadow: inset 1px 1px var(--win-border-dark);
+            color: #000;
+        }
+        body.theme-dos-green .bevel-in,
+        body.theme-dos-amber .bevel-in {
+            background-color: #000000;
+            color: var(--text-main);
+        }
+
+        /* Screen Layout Structure */
+        #os-viewport {
+            display: flex;
+            flex-direction: column;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Top System Status Header */
+        #sys-header {
+            height: 32px;
+            padding: 2px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            z-index: 10;
+        }
+
+        .sys-info-group {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .badge-tag {
+            background: #000;
+            color: #00ff00;
+            padding: 1px 6px;
+            border-radius: 2px;
+            font-weight: bold;
+        }
+
+        /* Main Desktop Area */
+        #desktop {
+            flex: 1;
+            position: relative;
+            padding: 16px;
+            display: flex;
+            gap: 20px;
+            overflow: hidden;
+        }
+
+        /* Desktop Shortcuts Column */
+        #desktop-icons {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-content: flex-start;
+            z-index: 5;
+            width: 110px;
+        }
+
+        .desktop-shortcut {
+            width: 96px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            padding: 6px 4px;
+            border: 1px dashed transparent;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px #000000;
+        }
+        .desktop-shortcut:hover, .desktop-shortcut.active {
+            border-color: #ffffff;
+            background-color: rgba(0, 0, 128, 0.4);
+        }
+
+        .shortcut-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--win-bg);
+            border: 2px solid var(--win-border-light);
+            border-right-color: var(--win-border-shadow);
+            border-bottom-color: var(--win-border-shadow);
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+            font-size: 24px;
+        }
+
+        .shortcut-label {
+            font-size: 16px;
+            line-height: 1.1;
+            word-break: break-word;
+        }
+
+        /* Window Container / Main Explorer Window */
+        .window {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+            min-width: 320px;
+            box-shadow: 4px 4px 12px rgba(0,0,0,0.5);
+        }
+
+        .window-titlebar {
+            height: 30px;
+            background: var(--header-bg-gradient);
+            color: var(--header-text);
+            padding: 2px 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: move;
+        }
+
+        .window-title-text {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 3px;
+        }
+
+        .win-btn {
+            width: 22px;
+            height: 22px;
+            min-width: 22px;
+            padding: 0;
+            font-family: var(--font-pixel);
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .window-menubar {
+            display: flex;
+            gap: 12px;
+            padding: 3px 8px;
+            border-bottom: 1px solid var(--win-border-dark);
+            font-size: 17px;
+        }
+
+        .menu-item {
+            cursor: pointer;
+            padding: 0 4px;
+        }
+        .menu-item:hover {
+            background-color: var(--highlight);
+            color: var(--highlight-text);
+        }
+
+        .window-body {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .window-statusbar {
+            padding: 3px 8px;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid var(--win-border-dark);
+            background: var(--win-bg);
+        }
+
+        /* Primary Portfolio Window Positions */
+        #portfolio-window {
+            top: 20px;
+            left: 140px;
+            right: 20px;
+            bottom: 60px;
+        }
+
+        /* Portfolio Items Grid / Explorer Table */
+        .explorer-toolbar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 6px;
+            margin-bottom: 4px;
+        }
+
+        .path-box {
+            flex: 1;
+            padding: 3px 8px;
+            font-family: var(--font-mono);
+            font-size: 16px;
+        }
+
+        .view-mode-btn {
+            padding: 2px 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Catalog Layout: Grid vs List */
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .game-card {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            position: relative;
+            transition: transform 0.1s;
+        }
+        .game-card:hover {
+            border-color: #000;
+            box-shadow: inset 1px 1px #fff, inset -1px -1px #404040, 2px 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid var(--win-border-dark);
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+
+        .game-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #000080;
+            margin: 0;
+            line-height: 1.1;
+        }
+        body.theme-dos-green .game-title { color: #33ff33; }
+        body.theme-dos-amber .game-title { color: #ffb000; }
+
+        .game-file-name {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            color: #666;
+            background: #e0e0e0;
+            padding: 1px 5px;
+            border: 1px inset #888;
+        }
+        body.theme-dos-green .game-file-name,
+        body.theme-dos-amber .game-file-name {
+            background: #111;
+            color: var(--text-muted);
+        }
+
+        .card-media {
+            height: 130px;
+            width: 100%;
+            background: #000;
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px inset var(--win-border-dark);
+        }
+
+        .card-media-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.85;
+            object-fit: cover;
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: #ffcc00;
+            color: #000;
+            font-family: var(--font-pixel);
+            font-size: 9px;
+            padding: 3px 6px;
+            border: 1px solid #000;
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        .card-description {
+            font-size: 18px;
+            line-height: 1.25;
+            margin-bottom: 12px;
+            flex: 1;
+        }
+
+        .card-meta-list {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 6px;
+            margin-bottom: 10px;
+            background: rgba(0,0,0,0.05);
+            border: 1px solid var(--win-border-dark);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 6px 4px;
+            font-family: var(--font-sys);
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-action.primary {
+            background-color: #000080;
+            color: #ffffff;
+        }
+        body.theme-dos-green .btn-action.primary { background-color: #116611; color: #33ff33; }
+        body.theme-dos-amber .btn-action.primary { background-color: #996600; color: #ffb000; }
+
+        .btn-action:hover {
+            filter: brightness(1.15);
+        }
+        .btn-action:active {
+            box-shadow: inset 2px 2px var(--win-border-shadow);
+        }
+
+        /* Floating Windows (Iframe Player & Properties Dialog) */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.hidden { display: none; }
+
+        #player-window {
+            width: 90vw;
+            height: 85vh;
+            max-width: 1200px;
+            position: absolute;
+            top: 5vh;
+            left: 5vw;
+        }
+
+        .iframe-container {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border: none;
+        }
+
+        /* Terminal Window */
+        #terminal-window {
+            width: 650px;
+            height: 420px;
+            top: 60px;
+            left: 180px;
+        }
+
+        .terminal-body {
+            background-color: #000000;
+            color: #00ff00;
+            font-family: var(--font-mono);
+            font-size: 16px;
+            padding: 12px;
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal-output {
+            white-space: pre-wrap;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .terminal-prompt-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .terminal-input {
+            background: transparent;
+            border: none;
+            color: #00ff00;
+            font-family: var(--font-mono);
+            font-size: 16px;
+            flex: 1;
+            outline: none;
+        }
+
+        /* Taskbar at Bottom */
+        #taskbar {
+            height: 38px;
+            background-color: var(--win-bg);
+            border-top: 2px solid var(--win-border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2px 4px;
+            z-index: 999;
+        }
+
+        .taskbar-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        #start-btn {
+            height: 30px;
+            padding: 2px 12px 2px 8px;
+            font-weight: bold;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .taskbar-tasks {
+            display: flex;
+            gap: 4px;
+            overflow-x: auto;
+            flex: 1;
+            margin: 0 8px;
+        }
+
+        .task-tab {
+            height: 28px;
+            min-width: 140px;
+            max-width: 200px;
+            padding: 2px 8px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .task-tab.active {
+            background-color: #e0e0e0;
+            border-top: 2px solid var(--win-border-shadow);
+            border-left: 2px solid var(--win-border-shadow);
+            border-right: 2px solid var(--win-border-light);
+            border-bottom: 2px solid var(--win-border-light);
+            font-weight: bold;
+        }
+
+        .system-tray {
+            height: 30px;
+            padding: 2px 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: var(--font-mono);
+            font-size: 15px;
+        }
+
+        .tray-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0 4px;
+            color: var(--text-main);
+        }
+        .tray-btn:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        /* Start Menu Popup */
+        #start-menu {
+            position: absolute;
+            bottom: 40px;
+            left: 4px;
+            width: 240px;
+            background-color: var(--win-bg);
+            z-index: 10000;
+            display: flex;
+            flex-direction: row;
+            box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
+        }
+        #start-menu.hidden { display: none; }
+
+        .start-menu-banner {
+            width: 32px;
+            background: var(--header-bg);
+            color: #fff;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            text-align: center;
+            padding: 12px 4px;
+            font-family: var(--font-pixel);
+            font-size: 13px;
+            letter-spacing: 2px;
+        }
+
+        .start-menu-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 4px 0;
+        }
+
+        .start-item {
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .start-item:hover {
+            background-color: var(--highlight);
+            color: var(--highlight-text);
+        }
+
+        .start-divider {
+            height: 1px;
+            background: var(--win-border-dark);
+            margin: 4px 0;
+            border-bottom: 1px solid var(--win-border-light);
+        }
+
+        /* Nostalgic Shutdown Screen */
+        #shutdown-screen {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #000;
+            color: #ff9900;
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-sys);
+            text-align: center;
+        }
+        #shutdown-screen.hidden { display: none; }
+
+        /* Responsive Mobile Tweak */
+        @media (max-width: 768px) {
+            #portfolio-window {
+                top: 5px; left: 5px; right: 5px; bottom: 45px;
+            }
+            #desktop-icons {
+                display: none;
+            }
+            .catalog-grid {
+                grid-template-columns: 1fr;
+            }
+            #terminal-window {
+                width: 95vw;
+                left: 2.5vw;
+            }
+        }
+    </style>
+</head>
+<body class="theme-win95">
+
+    <!-- CRT Scanlines Overlay -->
+    <div class="crt-scanlines"></div>
+
+    <div id="os-viewport">
+
+        <!-- Top System Bar -->
+        <div id="sys-header" class="bevel-out">
+            <div class="sys-info-group">
+                <span class="badge-tag">JGLOVR-OS 3.11</span>
+                <span>CPU: i486DX2-66MHz</span>
+                <span>RAM: 16,384 KB OK</span>
+            </div>
+            <div class="sys-info-group">
+                <span>SOUND: SB16 DETECTED</span>
+                <span>DRIVE C: 5 FILES FOUND</span>
+            </div>
+        </div>
+
+        <!-- Main Desktop Area -->
+        <div id="desktop">
+
+            <!-- Desktop Icons -->
+            <div id="desktop-icons">
+                <div class="desktop-shortcut" onclick="openWindow('portfolio-window')">
+                    <div class="shortcut-icon">📁</div>
+                    <div class="shortcut-label">C:\GAMES</div>
+                </div>
+                <div class="desktop-shortcut" onclick="openGame('codyfrog.html', 'Cody Frog')">
+                    <div class="shortcut-icon">🐸</div>
+                    <div class="shortcut-label">CODYFROG</div>
+                </div>
+                <div class="desktop-shortcut" onclick="openGame('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass')">
+                    <div class="shortcut-icon">🍄</div>
+                    <div class="shortcut-label">GNOMES</div>
+                </div>
+                <div class="desktop-shortcut" onclick="openGame('systemvoid.html', 'S Y S T E M _ V O I D')">
+                    <div class="shortcut-icon">🚀</div>
+                    <div class="shortcut-label">SYS_VOID</div>
+                </div>
+                <div class="desktop-shortcut" onclick="openGame('musicgridlivemix.html', 'Music Grid Live Mixer')">
+                    <div class="shortcut-icon">🎹</div>
+                    <div class="shortcut-label">GRIDMIX</div>
+                </div>
+                <div class="desktop-shortcut" onclick="openGame('keypoplabeltool.html', 'Label & SKU Merger')">
+                    <div class="shortcut-icon">🏷️</div>
+                    <div class="shortcut-label">LABELTOOL</div>
+                </div>
+                <div class="desktop-shortcut" onclick="toggleWindow('terminal-window')">
+                    <div class="shortcut-icon">💻</div>
+                    <div class="shortcut-label">MS-DOS</div>
+                </div>
+            </div>
+
+            <!-- Primary Explorer / Portfolio Catalog Window -->
+            <div id="portfolio-window" class="window bevel-out">
+                <div class="window-titlebar">
+                    <div class="window-title-text">
+                        <span>💾</span>
+                        <span>Executing Portfolio Catalog - [C:\GAMES_AND_TOOLS\*.*]</span>
+                    </div>
+                    <div class="window-controls">
+                        <button class="win-btn bevel-out" onclick="minimizeWindow('portfolio-window')">_</button>
+                        <button class="win-btn bevel-out" onclick="toggleMaximize('portfolio-window')">🗖</button>
+                        <button class="win-btn bevel-out" onclick="closeWindow('portfolio-window')">X</button>
+                    </div>
+                </div>
+
+                <div class="window-menubar bevel-out">
+                    <span class="menu-item" onclick="playSound('click')"><u>F</u>ile</span>
+                    <span class="menu-item" onclick="playSound('click')"><u>E</u>dit</span>
+                    <span class="menu-item" onclick="playSound('click')"><u>V</u>iew</span>
+                    <span class="menu-item" onclick="toggleWindow('terminal-window')"><u>T</u>erminal</span>
+                    <span class="menu-item" onclick="openAboutDialog()"><u>H</u>elp</span>
+                </div>
+
+                <div class="explorer-toolbar bevel-out">
+                    <button class="win-btn bevel-out" style="width: auto; padding: 2px 8px;" onclick="location.reload()">↺ Refresh</button>
+                    <span style="font-size: 16px;">Address:</span>
+                    <div class="path-box bevel-in">C:\GAMES_AND_TOOLS\PORTFOLIO.DIR</div>
+                    <button class="view-mode-btn bevel-out" onclick="toggleCatalogView()">View Mode</button>
+                </div>
+
+                <div class="window-body bevel-in">
+                    <div id="catalog-container" class="catalog-grid">
+
+                        <!-- Game 1: Cody Frog -->
+                        <div class="game-card bevel-out">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="game-title">Cody Frog</h3>
+                                    <span class="game-file-name">CODYFROG.EXE</span>
+                                </div>
+                                <span class="card-badge">PUZZLE</span>
+                            </div>
+                            <div class="card-media">
+                                <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#1a252f;">
+                                    <rect x="0" y="0" width="200" height="120" fill="#0b0f19" />
+                                    <circle cx="100" cy="50" r="28" fill="#2ecc71" />
+                                    <circle cx="90" cy="40" r="6" fill="#fff" />
+                                    <circle cx="90" cy="40" r="3" fill="#000" />
+                                    <circle cx="110" cy="40" r="6" fill="#fff" />
+                                    <circle cx="110" cy="40" r="3" fill="#000" />
+                                    <path d="M 85 58 Q 100 68 115 58" stroke="#145a32" stroke-width="3" fill="none" />
+                                    <rect x="50" y="85" width="100" height="20" rx="4" fill="#34495e" stroke="#f39c12" stroke-width="2"/>
+                                    <text x="100" y="99" fill="#f1c40f" font-family="monospace" font-size="12" text-anchor="middle">PROGRAM PATH &gt;&gt;</text>
+                                </svg>
+                            </div>
+                            <div class="card-description">
+                                Guide Cody the Frog through challenging grid obstacles by building logic instruction paths and sequences!
+                            </div>
+                            <div class="card-meta-list">
+                                <span>SIZE: 91.3 KB</span>
+                                <span>TYPE: Canvas/JS</span>
+                                <span>STATUS: READY</span>
+                            </div>
+                            <div class="card-actions">
+                                <a href="codyfrog.html" class="btn-action primary bevel-out" onclick="playSound('launch')">▶ RUN FULLSCREEN</a>
+                                <button class="btn-action bevel-out" onclick="openInWindow('codyfrog.html', 'Cody Frog')">🗔 WINDOW</button>
+                            </div>
+                        </div>
+
+                        <!-- Game 2: Gnomes in the Tall Grass -->
+                        <div class="game-card bevel-out">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="game-title">Gnomes in the Tall Grass</h3>
+                                    <span class="game-file-name">GNOMES.EXE</span>
+                                </div>
+                                <span class="card-badge">3D SIM</span>
+                            </div>
+                            <div class="card-media">
+                                <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#1b2e1b;">
+                                    <rect x="0" y="70" width="200" height="50" fill="#2d4a1d" />
+                                    <!-- Tall Grass Blades -->
+                                    <path d="M 10 70 L 15 30 L 22 70 M 30 70 L 38 25 L 45 70 M 150 70 L 158 20 L 165 70" stroke="#44aa44" stroke-width="3" fill="none" />
+                                    <!-- Gnome Hat -->
+                                    <polygon points="100,15 80,60 120,60" fill="#e74c3c" />
+                                    <circle cx="100" cy="65" r="12" fill="#f5cba7" />
+                                    <ellipse cx="100" cy="72" rx="10" ry="8" fill="#ecf0f1" />
+                                    <!-- Blue Gem -->
+                                    <polygon points="160,85 168,75 176,85 168,95" fill="#00e5ff" stroke="#0077aa" />
+                                </svg>
+                            </div>
+                            <div class="card-description">
+                                A cozy 3D meadow world built with Three.js. Explore tall grass, manage gnome structures, collect gems, and speed up time.
+                            </div>
+                            <div class="card-meta-list">
+                                <span>SIZE: 639 KB</span>
+                                <span>TYPE: Three.js 3D</span>
+                                <span>STATUS: READY</span>
+                            </div>
+                            <div class="card-actions">
+                                <a href="gnomesinthetallgrass.html" class="btn-action primary bevel-out" onclick="playSound('launch')">▶ RUN FULLSCREEN</a>
+                                <button class="btn-action bevel-out" onclick="openInWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass')">🗔 WINDOW</button>
+                            </div>
+                        </div>
+
+                        <!-- Game 3: SYSTEM_VOID -->
+                        <div class="game-card bevel-out">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="game-title">S Y S T E M _ V O I D</h3>
+                                    <span class="game-file-name">SYS_VOID.EXE</span>
+                                </div>
+                                <span class="card-badge">ARCADE</span>
+                            </div>
+                            <div class="card-media">
+                                <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#050505;">
+                                    <text x="100" y="45" fill="#00ff00" font-family="monospace" font-size="16" font-weight="bold" text-anchor="middle" filter="drop-shadow(0 0 5px #00ff00)">SYSTEM_VOID</text>
+                                    <!-- Player Vector Ship -->
+                                    <polygon points="100,60 90,85 100,80 110,85" fill="none" stroke="#00ff00" stroke-width="2" />
+                                    <!-- Enemy Vector Orbs -->
+                                    <circle cx="50" cy="70" r="10" fill="none" stroke="#ff0055" stroke-width="1.5" />
+                                    <circle cx="150" cy="65" r="12" fill="none" stroke="#00e5ff" stroke-width="1.5" />
+                                    <line x1="0" y1="100" x2="200" y2="100" stroke="#00ff00" stroke-width="1" stroke-dasharray="4,4" />
+                                </svg>
+                            </div>
+                            <div class="card-description">
+                                Vector-graphics retro space survival shooter with authentic CRT barrel distortion, screen flicker, and intense arcade action.
+                            </div>
+                            <div class="card-meta-list">
+                                <span>SIZE: 81.6 KB</span>
+                                <span>TYPE: CRT Vector</span>
+                                <span>STATUS: READY</span>
+                            </div>
+                            <div class="card-actions">
+                                <a href="systemvoid.html" class="btn-action primary bevel-out" onclick="playSound('launch')">▶ RUN FULLSCREEN</a>
+                                <button class="btn-action bevel-out" onclick="openInWindow('systemvoid.html', 'S Y S T E M _ V O I D')">🗔 WINDOW</button>
+                            </div>
+                        </div>
+
+                        <!-- App 4: Music Grid Live Mixer -->
+                        <div class="game-card bevel-out">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="game-title">Music Grid Synthesizer</h3>
+                                    <span class="game-file-name">GRIDMIX.EXE</span>
+                                </div>
+                                <span class="card-badge">AUDIO</span>
+                            </div>
+                            <div class="card-media">
+                                <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#0f111a;">
+                                    <!-- Matrix grid of synth pads -->
+                                    <g fill="#202436" stroke="#262a3d" stroke-width="1">
+                                        <rect x="25" y="20" width="30" height="20" rx="3" fill="#00d2ff" />
+                                        <rect x="65" y="20" width="30" height="20" rx="3" />
+                                        <rect x="105" y="20" width="30" height="20" rx="3" fill="#ff3366" />
+                                        <rect x="145" y="20" width="30" height="20" rx="3" />
+
+                                        <rect x="25" y="50" width="30" height="20" rx="3" />
+                                        <rect x="65" y="50" width="30" height="20" rx="3" fill="#00ff7f" />
+                                        <rect x="105" y="50" width="30" height="20" rx="3" />
+                                        <rect x="145" y="50" width="30" height="20" rx="3" fill="#ffd700" />
+
+                                        <rect x="25" y="80" width="30" height="20" rx="3" fill="#ff00d4" />
+                                        <rect x="65" y="80" width="30" height="20" rx="3" />
+                                        <rect x="105" y="80" width="30" height="20" rx="3" fill="#ff9500" />
+                                        <rect x="145" y="80" width="30" height="20" rx="3" />
+                                    </g>
+                                </svg>
+                            </div>
+                            <div class="card-description">
+                                Interactive 16-step audio sequencer and live mixer using Web Audio API. Compose multi-layer synth melodies and drum beats.
+                            </div>
+                            <div class="card-meta-list">
+                                <span>SIZE: 62.3 KB</span>
+                                <span>TYPE: Web Audio</span>
+                                <span>STATUS: READY</span>
+                            </div>
+                            <div class="card-actions">
+                                <a href="musicgridlivemix.html" class="btn-action primary bevel-out" onclick="playSound('launch')">▶ RUN FULLSCREEN</a>
+                                <button class="btn-action bevel-out" onclick="openInWindow('musicgridlivemix.html', 'Music Grid Synth')">🗔 WINDOW</button>
+                            </div>
+                        </div>
+
+                        <!-- App 5: Shipping Label & SKU Merger -->
+                        <div class="game-card bevel-out">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="game-title">Label & SKU Merger</h3>
+                                    <span class="game-file-name">LABELMERGE.EXE</span>
+                                </div>
+                                <span class="card-badge">UTILITY</span>
+                            </div>
+                            <div class="card-media">
+                                <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#f4f4f4;">
+                                    <rect x="40" y="15" width="120" height="90" fill="#ffffff" stroke="#333" stroke-width="2" rx="4" />
+                                    <!-- Barcode lines -->
+                                    <rect x="55" y="30" width="4" height="35" fill="#000" />
+                                    <rect x="63" y="30" width="8" height="35" fill="#000" />
+                                    <rect x="75" y="30" width="3" height="35" fill="#000" />
+                                    <rect x="82" y="30" width="10" height="35" fill="#000" />
+                                    <rect x="96" y="30" width="4" height="35" fill="#000" />
+                                    <rect x="104" y="30" width="7" height="35" fill="#000" />
+                                    <rect x="115" y="30" width="4" height="35" fill="#000" />
+                                    <rect x="123" y="30" width="9" height="35" fill="#000" />
+                                    <rect x="136" y="30" width="5" height="35" fill="#000" />
+                                    <!-- Text Lines -->
+                                    <rect x="55" y="75" width="90" height="6" fill="#666" />
+                                    <rect x="55" y="86" width="60" height="6" fill="#999" />
+                                </svg>
+                            </div>
+                            <div class="card-description">
+                                Client-side PDF processing tool to pair e-commerce packing list SKUs directly onto shipping labels using pdf-lib and PDF.js.
+                            </div>
+                            <div class="card-meta-list">
+                                <span>SIZE: 6.7 KB</span>
+                                <span>TYPE: PDF Processor</span>
+                                <span>STATUS: READY</span>
+                            </div>
+                            <div class="card-actions">
+                                <a href="keypoplabeltool.html" class="btn-action primary bevel-out" onclick="playSound('launch')">▶ RUN FULLSCREEN</a>
+                                <button class="btn-action bevel-out" onclick="openInWindow('keypoplabeltool.html', 'Label SKU Merger')">🗔 WINDOW</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="window-statusbar">
+                    <span>5 Object(s) displayed</span>
+                    <span>Total Disk Usage: 880.6 KB</span>
+                </div>
+            </div>
+
+            <!-- Terminal Window (MS-DOS Prompt) -->
+            <div id="terminal-window" class="window bevel-out" style="display: none;">
+                <div class="window-titlebar">
+                    <div class="window-title-text">
+                        <span>💻</span>
+                        <span>MS-DOS Command Prompt - [C:\PORTFOLIO]</span>
+                    </div>
+                    <div class="window-controls">
+                        <button class="win-btn bevel-out" onclick="closeWindow('terminal-window')">X</button>
+                    </div>
+                </div>
+                <div class="terminal-body">
+                    <div class="terminal-output" id="term-output">JGLOVR-OS MS-DOS Core Version 6.22
+(C) Copyright 1981-1995 Personal Computing Corp.
+
+Type 'HELP' or 'DIR' to list available system commands and files.
+</div>
+                    <div class="terminal-prompt-line">
+                        <span>C:\GAMES&gt;</span>
+                        <input type="text" id="term-input" class="terminal-input" autofocus onkeydown="handleTerminalKey(event)">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Taskbar -->
+        <div id="taskbar">
+            <div class="taskbar-left">
+                <button id="start-btn" class="bevel-out" onclick="toggleStartMenu()">
+                    <span>🖥️</span>
+                    <span>Start</span>
+                </button>
+            </div>
+
+            <div class="taskbar-tasks" id="taskbar-tabs">
+                <div class="task-tab bevel-out active" id="tab-portfolio-window" onclick="bringToFront('portfolio-window')">
+                    <span>📁</span> C:\GAMES
+                </div>
+            </div>
+
+            <div class="system-tray bevel-in">
+                <button class="tray-btn" title="Toggle System Sound Effects" onclick="toggleSound()">🔊 SFX</button>
+                <button class="tray-btn" title="Switch Display Color Theme" onclick="cycleTheme()">🎨 Theme</button>
+                <button class="tray-btn" title="Toggle CRT Scanline Overlay" onclick="toggleScanlines()">📺 CRT</button>
+                <span id="system-clock">12:00:00 PM</span>
+            </div>
+        </div>
+
+        <!-- Start Menu -->
+        <div id="start-menu" class="bevel-out hidden">
+            <div class="start-menu-banner">
+                JGLOVR OS
+            </div>
+            <div class="start-menu-list">
+                <div class="start-item" onclick="openGame('codyfrog.html', 'Cody Frog')">
+                    <span>🐸</span> Cody Frog
+                </div>
+                <div class="start-item" onclick="openGame('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass')">
+                    <span>🍄</span> Gnomes in Tall Grass
+                </div>
+                <div class="start-item" onclick="openGame('systemvoid.html', 'S Y S T E M _ V O I D')">
+                    <span>🚀</span> S Y S T E M _ V O I D
+                </div>
+                <div class="start-item" onclick="openGame('musicgridlivemix.html', 'Music Grid Synth')">
+                    <span>🎹</span> Music Grid Synth
+                </div>
+                <div class="start-item" onclick="openGame('keypoplabeltool.html', 'Shipping Label Merger')">
+                    <span>🏷️</span> Label SKU Merger
+                </div>
+                <div class="start-divider"></div>
+                <div class="start-item" onclick="toggleWindow('terminal-window')">
+                    <span>💻</span> Command Prompt
+                </div>
+                <div class="start-item" onclick="openAboutDialog()">
+                    <span>ℹ️</span> System Information
+                </div>
+                <div class="start-divider"></div>
+                <div class="start-item" onclick="triggerShutdown()">
+                    <span>🔌</span> Shut Down System...
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Embedded Game Window Modal -->
+    <div id="player-modal" class="modal-overlay hidden">
+        <div id="player-window" class="window bevel-out">
+            <div class="window-titlebar">
+                <div class="window-title-text" id="player-title">
+                    <span>🎮</span> Executing Program...
+                </div>
+                <div class="window-controls">
+                    <button class="win-btn bevel-out" onclick="closePlayerModal()">X</button>
+                </div>
+            </div>
+            <div class="window-body" style="padding: 0; overflow: hidden;">
+                <iframe id="game-iframe" class="iframe-container" src="about:blank"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nostalgic Shutdown Screen Overlay -->
+    <div id="shutdown-screen" class="hidden">
+        <h1 style="font-size: 36px; margin-bottom: 20px;">It is now safe to turn off<br>your computer.</h1>
+        <p style="font-size: 20px; color: #888;">Or click below to restart JGLOVR-OS</p>
+        <button class="btn-action primary bevel-out" style="width: 220px; margin-top: 30px;" onclick="restartSystem()">RESTART SYSTEM</button>
+    </div>
+
+    <!-- Retro Web Audio Synthesizer -->
+    <script>
+        // Sound Engine (Web Audio API)
+        let soundEnabled = true;
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) audioCtx = new AudioContext();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                const now = ctx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(800, now);
+                    osc.frequency.exponentialRampToValueAtTime(400, now + 0.04);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.04);
+                    osc.start(now);
+                    osc.stop(now + 0.04);
+                } else if (type === 'launch') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.linearRampToValueAtTime(1200, now + 0.12);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } else if (type === 'open') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.05); // E5
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                }
+            } catch(e) {
+                console.log('Audio init on user interaction required');
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            alert(soundEnabled ? 'System Audio Enabled (SB16 Active)' : 'System Audio Muted');
+        }
+
+        // Theme Cycling Logic
+        const themes = ['theme-win95', 'theme-dos-green', 'theme-dos-amber', 'theme-c64'];
+        let currentThemeIdx = 0;
+
+        function cycleTheme() {
+            document.body.removeClass ? null : null;
+            themes.forEach(t => document.body.classList.remove(t));
+            currentThemeIdx = (currentThemeIdx + 1) % themes.length;
+            document.body.classList.add(themes[currentThemeIdx]);
+            playSound('click');
+        }
+
+        function toggleScanlines() {
+            document.body.classList.toggle('scanlines-off');
+            playSound('click');
+        }
+
+        // Window Manager Logic
+        function openWindow(winId) {
+            const win = document.getElementById(winId);
+            if (win) {
+                win.style.display = 'flex';
+                bringToFront(winId);
+                playSound('open');
+            }
+        }
+
+        function closeWindow(winId) {
+            const win = document.getElementById(winId);
+            if (win) {
+                win.style.display = 'none';
+                playSound('click');
+            }
+        }
+
+        function toggleWindow(winId) {
+            const win = document.getElementById(winId);
+            if (win.style.display === 'none' || getComputedStyle(win).display === 'none') {
+                openWindow(winId);
+            } else {
+                closeWindow(winId);
+            }
+        }
+
+        function minimizeWindow(winId) {
+            closeWindow(winId);
+        }
+
+        function toggleMaximize(winId) {
+            const win = document.getElementById(winId);
+            if (win.classList.contains('maximized')) {
+                win.classList.remove('maximized');
+                win.style.top = '20px';
+                win.style.left = '140px';
+                win.style.right = '20px';
+                win.style.bottom = '60px';
+            } else {
+                win.classList.add('maximized');
+                win.style.top = '0px';
+                win.style.left = '0px';
+                win.style.right = '0px';
+                win.style.bottom = '40px';
+            }
+            playSound('click');
+        }
+
+        let highestZ = 100;
+        function bringToFront(winId) {
+            const win = document.getElementById(winId);
+            if (win) {
+                highestZ++;
+                win.style.zIndex = highestZ;
+            }
+        }
+
+        // In-Page Player Window Modal
+        function openInWindow(url, title) {
+            playSound('launch');
+            document.getElementById('player-title').innerHTML = `<span>🎮</span> Executing: ${title} (${url})`;
+            document.getElementById('game-iframe').src = url;
+            document.getElementById('player-modal').classList.remove('hidden');
+        }
+
+        function closePlayerModal() {
+            playSound('click');
+            document.getElementById('game-iframe').src = 'about:blank';
+            document.getElementById('player-modal').classList.add('hidden');
+        }
+
+        function openGame(url, title) {
+            playSound('launch');
+            window.location.href = url;
+        }
+
+        // Start Menu Toggle
+        function toggleStartMenu() {
+            playSound('click');
+            document.getElementById('start-menu').classList.toggle('hidden');
+        }
+
+        // Close start menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const startBtn = document.getElementById('start-btn');
+            const startMenu = document.getElementById('start-menu');
+            if (!startBtn.contains(e.target) && !startMenu.contains(e.target)) {
+                startMenu.classList.add('hidden');
+            }
+        });
+
+        // Toggle Catalog View Mode (Grid vs List)
+        function toggleCatalogView() {
+            const container = document.getElementById('catalog-container');
+            if (container.classList.contains('catalog-grid')) {
+                container.classList.remove('catalog-grid');
+                container.style.display = 'flex';
+                container.style.flexDirection = 'column';
+            } else {
+                container.style.display = 'grid';
+                container.classList.add('catalog-grid');
+            }
+            playSound('click');
+        }
+
+        // System Help / About Dialog
+        function openAboutDialog() {
+            alert("JGLOVR-OS Version 3.11\n\nA retro portfolio showcasing HTML5 games, 3D simulations, and web tools.\n\nAll programs run client-side in modern web browsers.\n(C) 1995-2026 JGLOVR. All Rights Reserved.");
+        }
+
+        // System Shutdown Simulation
+        function triggerShutdown() {
+            playSound('open');
+            document.getElementById('shutdown-screen').classList.remove('hidden');
+        }
+
+        function restartSystem() {
+            document.getElementById('shutdown-screen').classList.add('hidden');
+            playSound('launch');
+        }
+
+        // Live Real-Time System Clock
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            const timeStr = `${hours}:${minutes}:${seconds} ${ampm}`;
+            document.getElementById('system-clock').textContent = timeStr;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Terminal Logic (MS-DOS Command Line Engine)
+        function handleTerminalKey(event) {
+            if (event.key === 'Enter') {
+                const inputEl = document.getElementById('term-input');
+                const outputEl = document.getElementById('term-output');
+                const cmd = inputEl.value.trim().toLowerCase();
+                inputEl.value = '';
+
+                let reply = `\nC:\\GAMES> ${cmd}\n`;
+
+                if (cmd === 'dir' || cmd === 'ls') {
+                    reply += ` Volume in drive C is PORTFOLIO
+ Volume Serial Number is 1995-2026
+ Directory of C:\\GAMES
+
+CODYFROG EXE      91,355 08-31-26  9:30p
+GNOMES   EXE     639,298 08-31-26  9:30p
+SYS_VOID EXE      81,617 08-31-26  9:30p
+GRIDMIX  EXE      62,314 08-31-26  9:30p
+LABELMRG EXE       6,699 08-31-26  9:30p
+README   TXT          18 08-31-26  9:30p
+        6 file(s)        881,299 bytes
+        0 dir(s)     164,402,176 bytes free`;
+                } else if (cmd === 'help') {
+                    reply += `Available Commands:
+  DIR          - List files in current directory
+  RUN [file]   - Execute program (e.g. RUN CODYFROG)
+  CLS          - Clear screen
+  VER          - Display system version
+  COLOR [name] - Change screen theme (WIN95, GREEN, AMBER, C64)
+  EXIT         - Close Command Prompt`;
+                } else if (cmd === 'cls') {
+                    outputEl.textContent = '';
+                    return;
+                } else if (cmd === 'ver') {
+                    reply += `JGLOVR-OS [Version 3.11.95]`;
+                } else if (cmd.startsWith('run ') || cmd.startsWith('play ')) {
+                    const target = cmd.replace('run ', '').replace('play ', '');
+                    if (target.includes('cody')) {
+                        openGame('codyfrog.html', 'Cody Frog');
+                        reply += `Launching CODYFROG.EXE...`;
+                    } else if (target.includes('gnome')) {
+                        openGame('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass');
+                        reply += `Launching GNOMES.EXE...`;
+                    } else if (target.includes('void') || target.includes('system')) {
+                        openGame('systemvoid.html', 'S Y S T E M _ V O I D');
+                        reply += `Launching SYS_VOID.EXE...`;
+                    } else if (target.includes('grid') || target.includes('music')) {
+                        openGame('musicgridlivemix.html', 'Music Grid Synth');
+                        reply += `Launching GRIDMIX.EXE...`;
+                    } else if (target.includes('label')) {
+                        openGame('keypoplabeltool.html', 'Label SKU Merger');
+                        reply += `Launching LABELMERGE.EXE...`;
+                    } else {
+                        reply += `Bad command or file name. Type DIR to list files.`;
+                    }
+                } else if (cmd.startsWith('color ')) {
+                    const colorArg = cmd.replace('color ', '').trim();
+                    if (colorArg === 'green') {
+                        document.body.className = 'theme-dos-green';
+                        reply += `Color set to DOS Green Phosphor.`;
+                    } else if (colorArg === 'amber') {
+                        document.body.className = 'theme-dos-amber';
+                        reply += `Color set to DOS Amber Phosphor.`;
+                    } else if (colorArg === 'c64') {
+                        document.body.className = 'theme-c64';
+                        reply += `Color set to Commodore 64.`;
+                    } else {
+                        document.body.className = 'theme-win95';
+                        reply += `Color reset to Windows 95 Classic.`;
+                    }
+                } else if (cmd === 'exit') {
+                    closeWindow('terminal-window');
+                    return;
+                } else if (cmd === '') {
+                    reply = `\nC:\\GAMES>`;
+                } else {
+                    reply += `Bad command or file name. Type HELP for commands.`;
+                }
+
+                outputEl.textContent += reply + '\n';
+                outputEl.scrollTop = outputEl.scrollHeight;
+                playSound('click');
+            }
+        }
+    </script>
+</body>
+</html>
