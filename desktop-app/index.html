@@ -1665,75 +1665,92 @@ Type 'TYPE README.TXT' to view system documentation manual.
         // ELECTRON NATIVE PHYSICAL FLOPPY DISK AUTO-MOUNT & INSTANT LAUNCH ENGINE
         if (window.electronAPI && window.electronAPI.onFloppyInserted) {
             window.electronAPI.onFloppyInserted(async (disk) => {
-                playFloppySeek();
+                try {
+                    playFloppySeek();
 
-                // Auto Power-On Workstation System if sleeping or at BIOS boot screen
-                if (!systemPoweredOn) {
-                    systemPoweredOn = true;
-                    const pScreen = document.getElementById('power-screen-container');
-                    if (pScreen) pScreen.style.display = 'none';
-                    const bMain = document.getElementById('bios-main-content');
-                    if (bMain) bMain.style.display = 'none';
-                    const bScreen = document.getElementById('bios-boot-screen');
-                    if (bScreen) bScreen.classList.add('hidden');
-                    startComputerFanHum();
-                }
+                    // Auto Power-On Workstation System if sleeping or at BIOS boot screen
+                    if (!systemPoweredOn) {
+                        systemPoweredOn = true;
+                        const pScreen = document.getElementById('power-screen-container');
+                        if (pScreen) pScreen.style.display = 'none';
+                        const bMain = document.getElementById('bios-main-content');
+                        if (bMain) bMain.style.display = 'none';
+                        const bScreen = document.getElementById('bios-boot-screen');
+                        if (bScreen) bScreen.classList.add('hidden');
+                        startComputerFanHum();
+                    }
 
-                const badge = document.getElementById('floppy-badge');
-                const badgeText = document.getElementById('floppy-badge-text');
-                const header = document.getElementById('floppy-header-status');
+                    const badge = document.getElementById('floppy-badge');
+                    const badgeText = document.getElementById('floppy-badge-text');
+                    const header = document.getElementById('floppy-header-status');
 
-                if (disk.isEmpty) {
-                    if (badge) badge.classList.remove('disk-inserted');
-                    if (badgeText) badgeText.textContent = `Drive A:\\ [EMPTY DISK]`;
-                    if (header) header.textContent = `DRIVE A:\\ EMPTY DISK INSERTED`;
+                    if (disk.isEmpty) {
+                        if (badge) badge.classList.remove('disk-inserted');
+                        if (badgeText) badgeText.textContent = `Drive A:\\ [EMPTY DISK]`;
+                        if (header) header.textContent = `DRIVE A:\\ EMPTY DISK INSERTED`;
+
+                        const diskObj = {
+                            fileName: 'EMPTY_DISK',
+                            title: 'EMPTY DISK',
+                            content: '',
+                            sizeBytes: 0,
+                            isEmpty: true
+                        };
+                        setMountedFloppy(diskObj);
+                        
+                        // Offer to burn game to empty disk
+                        openFloppyBurnModal();
+                        return;
+                    }
+
+                    let meta = { title: disk.title || disk.fileName, iconKey: 'FLOPPY' };
+                    try {
+                        if (typeof extractGameMetadata === 'function') {
+                            meta = extractGameMetadata(disk.content, disk.fileName) || meta;
+                        }
+                    } catch(e) {}
+
+                    if (badge) badge.classList.add('disk-inserted');
+                    if (badgeText) badgeText.textContent = `Drive A:\\ ${disk.fileName}`;
+                    if (header) header.textContent = `DRIVE A:\\ ${disk.fileName} [MOUNTED]`;
 
                     const diskObj = {
-                        fileName: 'EMPTY_DISK',
-                        title: 'EMPTY DISK',
-                        content: '',
-                        sizeBytes: 0,
-                        isEmpty: true
+                        fileName: disk.fileName,
+                        title: meta.title,
+                        content: disk.content,
+                        sizeBytes: disk.sizeBytes,
+                        isEmpty: false
                     };
                     setMountedFloppy(diskObj);
-                    
-                    // Offer to burn game to empty disk
-                    openFloppyBurnModal();
-                    return;
+
+                    // 1. INSTANT GAME LAUNCH FIRST (ZERO DELAY!)
+                    const cleanWinId = `win-floppy-auto-${disk.fileName.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                    openGameWindowFromBlob(disk.content, meta.title, cleanWinId, meta.iconKey);
+
+                    // 2. Non-Blocking Background Sync to C:\GAMES
+                    try {
+                        if (window.electronAPI.checkGameInstalled) {
+                            const status = await window.electronAPI.checkGameInstalled({
+                                fileName: disk.fileName,
+                                content: disk.content
+                            });
+
+                            if (!status || !status.installed || !status.upToDate) {
+                                await window.electronAPI.installGameToLocalDisk({
+                                    fileName: disk.fileName,
+                                    content: disk.content
+                                });
+                                if (typeof refreshInstalledGamesCatalog === 'function') {
+                                    refreshInstalledGamesCatalog();
+                                }
+                            }
+                        }
+                    } catch(err) {
+                        console.error('Background catalog sync skipped:', err);
+                    }
+                } catch(globalErr) {
+                    console.error('Error handling floppy insertion:', globalErr);
                 }
-
-                const meta = extractGameMetadata(disk.content, disk.fileName);
-
-                if (badge) badge.classList.add('disk-inserted');
-                if (badgeText) badgeText.textContent = `Drive A:\\ ${disk.fileName}`;
-                if (header) header.textContent = `DRIVE A:\\ ${disk.fileName} [MOUNTED]`;
-
-                const diskObj = {
-                    fileName: disk.fileName,
-                    title: meta.title,
-                    content: disk.content,
-                    sizeBytes: disk.sizeBytes,
-                    isEmpty: false
-                };
-                setMountedFloppy(diskObj);
-
-                // 1. Silent Auto-Install/Update to C:\GAMES
-                const status = await window.electronAPI.checkGameInstalled({
-                    fileName: disk.fileName,
-                    content: disk.content
-                });
-
-                if (!status.installed || !status.upToDate) {
-                    await window.electronAPI.installGameToLocalDisk({
-                        fileName: disk.fileName,
-                        content: disk.content
-                    });
-                    refreshInstalledGamesCatalog();
-                }
-
-                // 2. ZERO-CLICK INSTANT AUTOMATIC GAME LAUNCH FROM DISK
-                const cleanWinId = `win-floppy-auto-${disk.fileName.replace(/[^a-zA-Z0-9]/g, '_')}`;
-                openGameWindowFromBlob(disk.content, meta.title, cleanWinId, meta.iconKey);
             });
 
             window.electronAPI.onFloppyEjected(() => {
