@@ -1885,8 +1885,8 @@ Type 'TYPE README.TXT' to view system documentation manual.
         setInterval(updateClock, 1000);
         updateClock();
 
-        // ADVANCED MS-DOS COMMAND LINE ENGINE & REPOSITORY README DISPLAY
-        const readmeContent = `JGLOVR-OS 3.11 Personal Workstation Systems Manual
+        // ADVANCED MS-DOS COMMAND LINE ENGINE & LIVE GITHUB README FETCH ENGINE
+        let dynamicReadmeText = `JGLOVR-OS 3.11 Personal Workstation Systems Manual
 =====================================================
 
 PROGRAM EXECUTABLES (C:\\GAMES\\*.*):
@@ -1910,6 +1910,19 @@ SYSTEM UTILITIES & COMMANDS:
 - SHUTDOWN      : Power off system
 
 (C) 1995-2026 JGLOVR Systems. All Rights Reserved.`;
+
+        // Automatically fetch live README.md from GitHub repository on load
+        fetch('README.md')
+            .then(res => {
+                if (res.ok) return res.text();
+                throw new Error('Local fetch skipped');
+            })
+            .then(text => {
+                if (text && text.trim().length > 0) {
+                    dynamicReadmeText = text;
+                }
+            })
+            .catch(err => {});
 
         let currentDir = 'C:\\GAMES';
         const cmdHistory = [];
@@ -2019,7 +2032,7 @@ AUTOEXEC BAT         380 08-31-26  9:30p
                 } else if (cmd.startsWith('type ') || cmd.startsWith('cat ') || cmd.startsWith('more ')) {
                     const target = cmd.replace('type ', '').replace('cat ', '').replace('more ', '').trim();
                     if (target.includes('readme')) {
-                        reply += readmeContent;
+                        reply += dynamicReadmeText;
                     } else if (target.includes('config')) {
                         reply += `[CONFIG.SYS]
 DEVICE=C:\\DOS\\HIMEM.SYS /TESTMEM:OFF
