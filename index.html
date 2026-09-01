@@ -807,7 +807,7 @@ Memory Test: <span id="memory-counter" style="color: #00ff00; font-weight: bold;
                 <span>RAM: 16,384 KB OK</span>
             </div>
             <div class="sys-info-group">
-                <span>MULTI-WINDOW ENGINE: ACTIVE</span>
+                <span>AUDIO SYNTH: SB16 HARDWARE</span>
                 <span>DRIVE C: 4 GAMES</span>
             </div>
         </div>
@@ -1122,7 +1122,7 @@ Type 'HELP' or 'DIR' to list available system commands and files.
 
     <!-- System JavaScript -->
     <script>
-        // Sound Engine (Web Audio API)
+        // RETRO WEB AUDIO SYNTHESIZER ENGINE
         let soundEnabled = true;
         let audioCtx = null;
 
@@ -1137,6 +1137,83 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             return audioCtx;
         }
 
+        // Hard Disk Drive Spindle Motor Spin-Up Sound
+        function playHDDSpinUp() {
+            if (!soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+
+                // Spindle Motor Whine Sweep (60Hz -> 2200Hz)
+                const motorOsc = ctx.createOscillator();
+                const motorGain = ctx.createGain();
+                const motorFilter = ctx.createBiquadFilter();
+
+                motorOsc.type = 'sawtooth';
+                motorOsc.frequency.setValueAtTime(60, now);
+                motorOsc.frequency.exponentialRampToValueAtTime(2200, now + 1.8);
+
+                motorFilter.type = 'lowpass';
+                motorFilter.frequency.setValueAtTime(150, now);
+                motorFilter.frequency.exponentialRampToValueAtTime(1200, now + 1.8);
+
+                motorGain.gain.setValueAtTime(0.01, now);
+                motorGain.gain.linearRampToValueAtTime(0.12, now + 0.3);
+                motorGain.gain.linearRampToValueAtTime(0.08, now + 1.5);
+                motorGain.gain.linearRampToValueAtTime(0.001, now + 2.0);
+
+                motorOsc.connect(motorFilter);
+                motorFilter.connect(motorGain);
+                motorGain.connect(ctx.destination);
+
+                motorOsc.start(now);
+                motorOsc.stop(now + 2.0);
+
+                // Actuator Arm Head Clicks
+                const clickTimes = [0.2, 0.4, 0.45, 0.7, 0.85, 0.9, 1.1, 1.15, 1.3, 1.6];
+                clickTimes.forEach(t => {
+                    const clickOsc = ctx.createOscillator();
+                    const clickGain = ctx.createGain();
+                    clickOsc.type = 'square';
+                    clickOsc.frequency.setValueAtTime(800 + Math.random() * 600, now + t);
+                    clickGain.gain.setValueAtTime(0.08, now + t);
+                    clickGain.gain.linearRampToValueAtTime(0.001, now + t + 0.02);
+                    clickOsc.connect(clickGain);
+                    clickGain.connect(ctx.destination);
+                    clickOsc.start(now + t);
+                    clickOsc.stop(now + t + 0.02);
+                });
+            } catch(e) {}
+        }
+
+        // Floppy Disk Drive Stepper Motor Head Seek Sound (chug-chug-whirr)
+        function playFloppySeek() {
+            if (!soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+
+                const steps = 12;
+                for (let i = 0; i < steps; i++) {
+                    const stepTime = now + (i * 0.032) + (i > 6 ? 0.08 : 0);
+                    const stepOsc = ctx.createOscillator();
+                    const stepGain = ctx.createGain();
+                    stepOsc.type = 'triangle';
+                    stepOsc.frequency.setValueAtTime(130 + (i % 4) * 45, stepTime);
+                    stepGain.gain.setValueAtTime(0.14, stepTime);
+                    stepGain.gain.linearRampToValueAtTime(0.01, stepTime + 0.022);
+                    
+                    stepOsc.connect(stepGain);
+                    stepGain.connect(ctx.destination);
+                    stepOsc.start(stepTime);
+                    stepOsc.stop(stepTime + 0.022);
+                }
+            } catch(e) {}
+        }
+
+        // General System Audio UI Sound Generator
         function playSound(type) {
             if (!soundEnabled) return;
             try {
@@ -1166,13 +1243,7 @@ Type 'HELP' or 'DIR' to list available system commands and files.
                     osc.start(now);
                     osc.stop(now + 0.04);
                 } else if (type === 'launch') {
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(250, now);
-                    osc.frequency.exponentialRampToValueAtTime(1400, now + 0.25);
-                    gain.gain.setValueAtTime(0.18, now);
-                    gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
-                    osc.start(now);
-                    osc.stop(now + 0.25);
+                    playFloppySeek();
                 } else if (type === 'open') {
                     osc.type = 'triangle';
                     osc.frequency.setValueAtTime(523.25, now);
@@ -1187,7 +1258,7 @@ Type 'HELP' or 'DIR' to list available system commands and files.
 
         function toggleSound() {
             soundEnabled = !soundEnabled;
-            alert(soundEnabled ? 'System Audio Enabled (SB16 Active)' : 'System Audio Muted');
+            alert(soundEnabled ? 'System Audio Enabled (SB16 Hardware Active)' : 'System Audio Muted');
         }
 
         // BROWSER FULLSCREEN TRIGGER & PROMPT
@@ -1210,7 +1281,7 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             let currentMem = 0;
             const targetMem = 16384;
             
-            playSound('beep');
+            playHDDSpinUp();
 
             const memInterval = setInterval(() => {
                 if (bootSkipped) {
@@ -1225,10 +1296,11 @@ Type 'HELP' or 'DIR' to list available system commands and files.
                     clearInterval(memInterval);
                     playSound('beep');
                     appendBiosLog('\nDetecting IDE Primary Master ... CODYFROG.EXE\nDetecting IDE Primary Slave  ... GNOMES.EXE\nDetecting IDE Secondary Master... SYS_VOID.EXE\nDetecting IDE Secondary Slave ... GRIDMIX.EXE\n\nBooting from Drive C: ...\nStarting JGLOVR-OS 3.11 ...');
+                    playFloppySeek();
                     
                     setTimeout(() => {
                         finishBootSequence();
-                    }, 1000);
+                    }, 1100);
                 }
             }, 70);
         }
@@ -1289,17 +1361,15 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             });
         }
 
-        // Initialize drag capability on default windows
         document.querySelectorAll('.window').forEach(makeDraggable);
 
         // MULTI-PROGRAM WINDOW MANAGER ENGINE
         const activePrograms = {};
 
         function openGameWindow(url, title, winId, iconSymbol, originElem) {
-            playSound('launch');
-            toggleBrowserFullscreen(); // Prompt browser fullscreen on game launch if desired
+            playFloppySeek();
+            toggleBrowserFullscreen();
 
-            // If window already exists, bring it to front
             let win = document.getElementById(winId);
             if (win) {
                 win.style.display = 'flex';
@@ -1307,7 +1377,6 @@ Type 'HELP' or 'DIR' to list available system commands and files.
                 return;
             }
 
-            // Expanding wireframe animation
             let startRect = { top: window.innerHeight / 2, left: window.innerWidth / 2, width: 50, height: 50 };
             if (originElem && originElem.getBoundingClientRect) {
                 startRect = originElem.getBoundingClientRect();
@@ -1321,10 +1390,9 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             wireframe.style.height = startRect.height + 'px';
             document.body.appendChild(wireframe);
 
-            // Create new window element
             win = document.createElement('div');
             win.id = winId;
-            win.className = 'window bevel-out game-program-window maximized'; // Defaults to full screen maximized edge-to-edge
+            win.className = 'window bevel-out game-program-window maximized';
 
             win.innerHTML = `
                 <div class="window-titlebar">
@@ -1346,7 +1414,6 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             document.getElementById('dynamic-windows-container').appendChild(win);
             makeDraggable(win);
 
-            // Animate wireframe to fill the screen
             requestAnimationFrame(() => {
                 wireframe.style.top = '0px';
                 wireframe.style.left = '0px';
@@ -1361,10 +1428,7 @@ Type 'HELP' or 'DIR' to list available system commands and files.
                 setTimeout(() => wireframe.remove(), 200);
             }, 300);
 
-            // Add Taskbar Tab
             addTaskbarTab(winId, title, iconSymbol);
-
-            // Hide Start Menu if open
             document.getElementById('start-menu').classList.add('hidden');
         }
 
@@ -1392,6 +1456,7 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             if (win.style.display === 'none') {
                 win.style.display = 'flex';
                 bringToFront(winId);
+                playFloppySeek();
             } else if (win.style.zIndex == highestZ) {
                 win.style.display = 'none';
             } else {
@@ -1415,7 +1480,7 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             if (win) {
                 win.style.display = 'flex';
                 bringToFront(winId);
-                playSound('open');
+                playFloppySeek();
             }
         }
 
@@ -1617,7 +1682,7 @@ README   TXT          18 08-31-26  9:30p
 
                 outputEl.textContent += reply + '\n';
                 outputEl.scrollTop = outputEl.scrollHeight;
-                playSound('click');
+                playFloppySeek();
             }
         }
 
