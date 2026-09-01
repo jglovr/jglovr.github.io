@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JGLOVR OS v3.11 - HTML Games Portfolio</title>
-    <meta name="description" content="A nostalgic 90s-style computer system hosting a collection of interactive HTML5 games and 3D simulations.">
+    <title>JGLOVR OS v3.11 - Personal Workstation</title>
+    <meta name="description" content="JGLOVR OS v3.11 Personal Workstation Computer System.">
     
     <!-- Google Fonts for Retro System Aesthetics -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -370,7 +370,7 @@
         }
 
         /* Default Window Coordinates */
-        #portfolio-window { top: 20px; left: 140px; width: 780px; height: 560px; }
+        #catalog-window { top: 20px; left: 140px; width: 780px; height: 560px; }
         #terminal-window { top: 70px; left: 220px; width: 650px; height: 420px; }
 
         .game-program-window {
@@ -723,9 +723,9 @@
             background-color: #000000;
             color: #ffffff;
             font-family: var(--font-mono);
-            font-size: 18px;
-            line-height: 1.4;
-            padding: 24px;
+            font-size: 16px;
+            line-height: 1.35;
+            padding: 16px;
             z-index: 9999999;
             display: flex;
             flex-direction: column;
@@ -746,7 +746,7 @@
         }
 
         .power-prompt-box {
-            padding: 18px 28px;
+            padding: 20px 30px;
             border: 2px solid #00ff00;
             background: rgba(0, 40, 0, 0.4);
             color: #00ff00;
@@ -767,31 +767,38 @@
             display: flex;
             justify-content: space-between;
             border-bottom: 1px solid #666;
-            padding-bottom: 12px;
-            margin-bottom: 16px;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
         }
 
         .bios-energy-logo {
             font-family: monospace;
             color: #ffff00;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 12px;
             white-space: pre;
-            line-height: 1.1;
+            line-height: 1.05;
         }
 
         .bios-log {
             flex: 1;
             white-space: pre-wrap;
-            line-height: 1.4;
+            line-height: 1.25;
+            height: calc(100vh - 150px);
+            overflow-y: hidden;
+            font-size: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
         }
 
         .bios-footer {
             border-top: 1px solid #666;
-            padding-top: 10px;
+            padding-top: 6px;
             color: #888888;
             display: flex;
             justify-content: space-between;
+            font-size: 14px;
         }
 
         /* Shutdown Screen */
@@ -811,7 +818,7 @@
         #shutdown-screen.hidden { display: none; }
 
         @media (max-width: 768px) {
-            #portfolio-window { top: 5px; left: 5px; width: 95vw; height: 80vh; }
+            #catalog-window { top: 5px; left: 5px; width: 95vw; height: 80vh; }
             #desktop-icons { display: none; }
             .catalog-grid { grid-template-columns: 1fr; }
             #terminal-window { width: 95vw; left: 2.5vw; }
@@ -840,7 +847,7 @@
                 <div class="bios-header">
                     <div>
                         <div style="font-size: 22px; font-weight: bold; color: #00ff00;">JGLOVR Modular BIOS v4.06 (C) 1995</div>
-                        <div>Antigravity AGY-486 PCI/VLB Super Workstation</div>
+                        <div>Antigravity AGY-486 PCI/VLB Super Workstation System</div>
                     </div>
                     <div class="bios-energy-logo">
   ___________
@@ -851,15 +858,11 @@
                     </div>
                 </div>
 
-                <div class="bios-log" id="bios-log-text">
-CPU: Intel i486DX2 Clock at 66 MHz [OK]
-Math Coprocessor: Built-in 486DX Floating Point Unit Active
-Checking System CMOS RAM ... OK
-Initializing Plug and Play BIOS extension v1.0a ...
-VGA BIOS: S3 Vision 964 VRAM 2048 KB OK
-
-Memory Test: <span id="memory-counter" style="color: #00ff00; font-weight: bold;">0</span> KB OK
+                <div style="font-size: 16px; color: #00ff00; margin-bottom: 6px;">
+                    Memory Test: <span id="memory-counter" style="font-weight: bold;">0</span> KB OK
                 </div>
+
+                <div class="bios-log" id="bios-log-text"></div>
             </div>
 
             <div class="bios-footer">
@@ -882,16 +885,16 @@ Memory Test: <span id="memory-counter" style="color: #00ff00; font-weight: bold;
             </div>
             <div class="sys-info-group">
                 <span>AUDIO HARDWARE: IBM PS/55 &amp; 3.5" FLOPPY AUDIO</span>
-                <span>DRIVE C: 4 GAMES</span>
+                <span>DRIVE C: 4 PROGRAMS</span>
             </div>
         </div>
 
         <!-- Main Desktop Area -->
         <div id="desktop">
 
-            <!-- Desktop Icons -->
+            <!-- Desktop Shortcuts Column -->
             <div id="desktop-icons">
-                <div class="desktop-shortcut" id="icon-portfolio" onclick="openWindow('portfolio-window')">
+                <div class="desktop-shortcut" id="icon-catalog" onclick="openWindow('catalog-window')">
                     <div class="shortcut-icon">📁</div>
                     <div class="shortcut-label">C:\GAMES</div>
                 </div>
@@ -907,7 +910,7 @@ Memory Test: <span id="memory-counter" style="color: #00ff00; font-weight: bold;
                     <div class="shortcut-icon">🚀</div>
                     <div class="shortcut-label">SYS_VOID</div>
                 </div>
-                <div class="desktop-shortcut" id="icon-gridmix" onclick="openGameWindow('musicgridlivemix.html', 'Music Grid Live Mixer', 'window-gridmix', '🎹', this)">
+                <div class="desktop-shortcut" id="icon-gridmix" onclick="openGameWindow('musicgridlivemix.html', 'Music Grid Synthesizer', 'window-gridmix', '🎹', this)">
                     <div class="shortcut-icon">🎹</div>
                     <div class="shortcut-label">GRIDMIX</div>
                 </div>
@@ -918,16 +921,16 @@ Memory Test: <span id="memory-counter" style="color: #00ff00; font-weight: bold;
             </div>
 
             <!-- Explorer Catalog Window -->
-            <div id="portfolio-window" class="window bevel-out">
+            <div id="catalog-window" class="window bevel-out">
                 <div class="window-titlebar">
                     <div class="window-title-text">
                         <span>💾</span>
-                        <span>Executing Portfolio Catalog - [C:\GAMES\*.*]</span>
+                        <span>Executing Software Catalog - [C:\GAMES\*.*]</span>
                     </div>
                     <div class="window-controls">
-                        <button class="win-btn bevel-out" onclick="minimizeWindow('portfolio-window')">_</button>
-                        <button class="win-btn bevel-out" onclick="toggleMaximize('portfolio-window')">🗖</button>
-                        <button class="win-btn bevel-out" onclick="closeWindow('portfolio-window')">X</button>
+                        <button class="win-btn bevel-out" onclick="minimizeWindow('catalog-window')">_</button>
+                        <button class="win-btn bevel-out" onclick="toggleMaximize('catalog-window')">🗖</button>
+                        <button class="win-btn bevel-out" onclick="closeWindow('catalog-window')">X</button>
                     </div>
                 </div>
 
@@ -942,7 +945,7 @@ Memory Test: <span id="memory-counter" style="color: #00ff00; font-weight: bold;
                 <div class="explorer-toolbar bevel-out">
                     <button class="win-btn bevel-out" style="width: auto; padding: 2px 8px;" onclick="location.reload()">↺ Reboot</button>
                     <span style="font-size: 16px;">Address:</span>
-                    <div class="path-box bevel-in">C:\GAMES\PORTFOLIO.DIR</div>
+                    <div class="path-box bevel-in">C:\GAMES\CATALOG.DIR</div>
                     <button class="view-mode-btn bevel-out" onclick="toggleCatalogView()">View Mode</button>
                 </div>
 
@@ -976,11 +979,11 @@ Memory Test: <span id="memory-counter" style="color: #00ff00; font-weight: bold;
                             </div>
                             <div class="card-meta-list">
                                 <span>SIZE: 91.3 KB</span>
-                                <span>TYPE: Canvas/JS</span>
+                                <span>TYPE: 16-Bit Logic</span>
                                 <span>STATUS: READY</span>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-action primary bevel-out" onclick="openGameWindow('codyfrog.html', 'Cody Frog', 'window-codyfrog', '🐸', this)">▶ LAUNCH GAME</button>
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('codyfrog.html', 'Cody Frog', 'window-codyfrog', '🐸', this)">▶ RUN PROGRAM</button>
                             </div>
                         </div>
 
@@ -1004,15 +1007,15 @@ Memory Test: <span id="memory-counter" style="color: #00ff00; font-weight: bold;
                                 </svg>
                             </div>
                             <div class="card-description">
-                                A cozy 3D meadow world built with Three.js. Explore tall grass, manage gnome structures, collect gems, and speed up time.
+                                A cozy 3D meadow world simulation. Explore tall grass, manage gnome structures, collect gems, and speed up time.
                             </div>
                             <div class="card-meta-list">
                                 <span>SIZE: 639 KB</span>
-                                <span>TYPE: Three.js 3D</span>
+                                <span>TYPE: 3D Simulation</span>
                                 <span>STATUS: READY</span>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-action primary bevel-out" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', '🍄', this)">▶ LAUNCH GAME</button>
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', '🍄', this)">▶ RUN PROGRAM</button>
                             </div>
                         </div>
 
@@ -1035,15 +1038,15 @@ Memory Test: <span id="memory-counter" style="color: #00ff00; font-weight: bold;
                                 </svg>
                             </div>
                             <div class="card-description">
-                                Vector-graphics retro space survival shooter with authentic CRT barrel distortion, screen flicker, and intense arcade action.
+                                Vector-graphics space survival shooter with authentic CRT barrel distortion, screen flicker, and intense arcade action.
                             </div>
                             <div class="card-meta-list">
                                 <span>SIZE: 81.6 KB</span>
-                                <span>TYPE: CRT Vector</span>
+                                <span>TYPE: Vector Arcade</span>
                                 <span>STATUS: READY</span>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-action primary bevel-out" onclick="openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', '🚀', this)">▶ LAUNCH GAME</button>
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', '🚀', this)">▶ RUN PROGRAM</button>
                             </div>
                         </div>
 
@@ -1077,15 +1080,15 @@ Memory Test: <span id="memory-counter" style="color: #00ff00; font-weight: bold;
                                 </svg>
                             </div>
                             <div class="card-description">
-                                Interactive 16-step audio sequencer and live mixer using Web Audio API. Compose multi-layer synth melodies and drum beats.
+                                Interactive 16-step audio sequencer and live sound synthesizer module. Compose multi-layer melodies and drum beats.
                             </div>
                             <div class="card-meta-list">
                                 <span>SIZE: 62.3 KB</span>
-                                <span>TYPE: Web Audio</span>
+                                <span>TYPE: Audio Synthesizer</span>
                                 <span>STATUS: READY</span>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-action primary bevel-out" onclick="openGameWindow('musicgridlivemix.html', 'Music Grid Synth', 'window-gridmix', '🎹', this)">▶ LAUNCH GAME</button>
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('musicgridlivemix.html', 'Music Grid Synth', 'window-gridmix', '🎹', this)">▶ RUN PROGRAM</button>
                             </div>
                         </div>
 
@@ -1139,14 +1142,14 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             </div>
 
             <div class="taskbar-tasks" id="taskbar-tabs">
-                <div class="task-tab bevel-out active" id="tab-portfolio-window" onclick="toggleTaskWindow('portfolio-window')">
+                <div class="task-tab bevel-out active" id="tab-catalog-window" onclick="toggleTaskWindow('catalog-window')">
                     <span>📁</span> C:\GAMES
                 </div>
             </div>
 
             <div class="system-tray bevel-in">
-                <button class="tray-btn" title="Toggle Browser Fullscreen Mode" onclick="toggleBrowserFullscreen()">📺 Fullscreen</button>
-                <button class="tray-btn" title="Toggle System Sound Effects" onclick="toggleSound()">🔊 SFX</button>
+                <button class="tray-btn" title="Toggle Display Mode" onclick="toggleBrowserFullscreen()">📺 Display</button>
+                <button class="tray-btn" id="sfx-tray-btn" title="Toggle System Sound Effects" onclick="toggleSound()">🔊 SFX</button>
                 <button class="tray-btn" title="Switch Display Color Theme" onclick="cycleTheme()">🎨 Theme</button>
                 <button class="tray-btn" title="Toggle CRT Scanline Overlay" onclick="toggleScanlines()">📺 CRT</button>
                 <span id="system-clock">12:00:00 PM</span>
@@ -1199,12 +1202,14 @@ Type 'HELP' or 'DIR' to list available system commands and files.
         let soundEnabled = true;
 
         // Preload Public Domain Hardware Audio Recordings
-        const bootAudio = new Audio('assets/boot_sound.mp3'); // IBM PC POST & Hard Drive Boot
-        const floppyAudio = new Audio('assets/floppy_drive.mp3'); // 3.5" Floppy Disk Stepper Motor Seek
+        const bootAudio = new Audio('assets/boot_sound.mp3');
+        const floppyAudio = new Audio('assets/floppy_drive.mp3');
         bootAudio.volume = 0.35;
-        floppyAudio.volume = 0.22;
+        floppyAudio.volume = 0.11;
 
         let audioCtx = null;
+        let fanNode = null;
+
         function getAudioContext() {
             if (!audioCtx) {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -1216,12 +1221,92 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             return audioCtx;
         }
 
+        // BINAURAL DESKTOP SPATIALIZATION ENGINE (Localizes PC tower fan to a physical desktop box)
+        function startComputerFanHum() {
+            if (fanNode || !soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+
+                // 1. Noise Generator
+                const bufferSize = ctx.sampleRate * 2;
+                const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const output = noiseBuffer.getChannelData(0);
+                let lastOut = 0.0;
+                for (let i = 0; i < bufferSize; i++) {
+                    const white = Math.random() * 2 - 1;
+                    output[i] = (lastOut + (0.05 * white)) / 1.05;
+                    lastOut = output[i];
+                    output[i] *= 1.8;
+                }
+
+                fanNode = ctx.createBufferSource();
+                fanNode.buffer = noiseBuffer;
+                fanNode.loop = true;
+
+                // 2. Highpass Filter (Eliminates sub-bass head-wrapping to prevent in-head perception)
+                const hpFilter = ctx.createBiquadFilter();
+                hpFilter.type = 'highpass';
+                hpFilter.frequency.setValueAtTime(380, ctx.currentTime);
+
+                // 3. Lowpass Filter (Enclosure fan whir body around 720Hz)
+                const lpFilter = ctx.createBiquadFilter();
+                lpFilter.type = 'lowpass';
+                lpFilter.frequency.setValueAtTime(720, ctx.currentTime);
+
+                // 4. Desk Surface Early Reflection (Short 14ms delay creates acoustic room boundary)
+                const deskReflection = ctx.createDelay();
+                deskReflection.delayTime.setValueAtTime(0.014, ctx.currentTime);
+                const reflectGain = ctx.createGain();
+                reflectGain.gain.setValueAtTime(0.3, ctx.currentTime);
+
+                // 5. Spatial Stereo Panning (Positions PC tower off-center to the right on desk)
+                let panner = null;
+                if (ctx.createStereoPanner) {
+                    panner = ctx.createStereoPanner();
+                    panner.pan.setValueAtTime(0.38, ctx.currentTime);
+                }
+
+                const fanGain = ctx.createGain();
+                fanGain.gain.setValueAtTime(0.015, ctx.currentTime);
+
+                // Signal Routing: Noise -> HP -> LP -> (Desk Reflection + Panner) -> Output
+                fanNode.connect(hpFilter);
+                hpFilter.connect(lpFilter);
+
+                lpFilter.connect(deskReflection);
+                deskReflection.connect(reflectGain);
+
+                if (panner) {
+                    lpFilter.connect(panner);
+                    reflectGain.connect(panner);
+                    panner.connect(fanGain);
+                } else {
+                    lpFilter.connect(fanGain);
+                    reflectGain.connect(fanGain);
+                }
+
+                fanGain.connect(ctx.destination);
+                fanNode.start(0);
+            } catch(e) {}
+        }
+
+        function stopComputerFanHum() {
+            if (fanNode) {
+                try {
+                    fanNode.stop();
+                    fanNode.disconnect();
+                } catch(e) {}
+                fanNode = null;
+            }
+        }
+
         // Play Hard Drive Spin-Up & POST Audio Recording (Starts at 1.1s to skip finger switch click)
         function playHDDSpinUp() {
             if (!soundEnabled) return;
             try {
                 bootAudio.volume = 0.35;
-                bootAudio.currentTime = 1.1; // Skips human interaction button click sound!
+                bootAudio.currentTime = 1.1;
                 bootAudio.play().catch(err => {});
             } catch(e) {}
         }
@@ -1243,7 +1328,7 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             }, 30);
         }
 
-        // Play Floppy Drive Stepper Motor Seek Audio Recording (Gentle 0.22 volume)
+        // Play Floppy Drive Stepper Motor Seek Audio Recording (Quiet 0.11 volume for software launch)
         function playFloppySeek() {
             if (!soundEnabled) return;
             try {
@@ -1274,7 +1359,7 @@ Type 'HELP' or 'DIR' to list available system commands and files.
                 if (type === 'beep') {
                     osc.type = 'square';
                     osc.frequency.setValueAtTime(880, now);
-                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.setValueAtTime(0.06, now);
                     gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
                     osc.start(now);
                     osc.stop(now + 0.08);
@@ -1282,7 +1367,7 @@ Type 'HELP' or 'DIR' to list available system commands and files.
                     osc.type = 'square';
                     osc.frequency.setValueAtTime(800, now);
                     osc.frequency.exponentialRampToValueAtTime(400, now + 0.04);
-                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.setValueAtTime(0.05, now);
                     gain.gain.linearRampToValueAtTime(0.01, now + 0.04);
                     osc.start(now);
                     osc.stop(now + 0.04);
@@ -1292,7 +1377,7 @@ Type 'HELP' or 'DIR' to list available system commands and files.
                     osc.type = 'triangle';
                     osc.frequency.setValueAtTime(523.25, now);
                     osc.frequency.setValueAtTime(659.25, now + 0.05);
-                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.setValueAtTime(0.08, now);
                     gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
                     osc.start(now);
                     osc.stop(now + 0.12);
@@ -1300,13 +1385,21 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             } catch(e) {}
         }
 
+        // SILENT INTERNAL SFX TOGGLE (NO BROWSER POPUPS)
         function toggleSound() {
             soundEnabled = !soundEnabled;
+            const trayBtn = document.getElementById('sfx-tray-btn');
             if (!soundEnabled) {
                 bootAudio.pause();
                 floppyAudio.pause();
+                stopComputerFanHum();
+                if (trayBtn) trayBtn.textContent = '🔇 SFX Off';
+            } else {
+                if (systemPoweredOn) {
+                    startComputerFanHum();
+                }
+                if (trayBtn) trayBtn.textContent = '🔊 SFX';
             }
-            alert(soundEnabled ? 'System Audio Enabled (Hardware Recording Active)' : 'System Audio Muted');
         }
 
         // BROWSER FULLSCREEN TRIGGER & PROMPT
@@ -1322,7 +1415,109 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             }
         }
 
-        // Extended Authentic Retro BIOS Memory & Verbose POST Sequence Engine (~11 seconds total)
+        // Massive Array of 130+ Authentic Ultra-Verbose Rapid POST Diagnostics Log Lines
+        const verbosePostLines = [
+            "CPU: Intel i486DX2 Clock at 66 MHz [33MHz Bus x2.0 Multiplier]",
+            "Math Coprocessor: Built-in 486DX FPU Active at 66 MHz",
+            "System BIOS Shadowing: Enabled at F0000h - FFFFFh",
+            "Video BIOS Shadowing: Enabled at C0000h - C7FFFh",
+            "Checking System CMOS RAM checksum ... OK (Battery Voltage: 3.2V)",
+            "Initializing Plug and Play BIOS extension v1.0a ...",
+            "VGA BIOS: S3 Vision 964 VRAM 2048 KB [VESA BIOS Ext 2.0 OK]",
+            "System RAM: Testing Base Memory 00000000h - 0009FFFFh (640 KB OK)",
+            "System RAM: Testing Extended Memory 00100000h - 00FFFFFFh (15360 KB)",
+            "Bank 0: 4096 KB EDO DRAM [70ns] ... OK",
+            "Bank 1: 4096 KB EDO DRAM [70ns] ... OK",
+            "Bank 2: 4096 KB EDO DRAM [70ns] ... OK",
+            "Bank 3: 4096 KB EDO DRAM [70ns] ... OK",
+            "Testing Memory Block 01/32 [0x00100000 - 0x0017FFFF] ... OK",
+            "Testing Memory Block 02/32 [0x00180000 - 0x001FFFFF] ... OK",
+            "Testing Memory Block 03/32 [0x00200000 - 0x0027FFFF] ... OK",
+            "Testing Memory Block 04/32 [0x00280000 - 0x002FFFFF] ... OK",
+            "Testing Memory Block 05/32 [0x00300000 - 0x0037FFFF] ... OK",
+            "Testing Memory Block 06/32 [0x00380000 - 0x003FFFFF] ... OK",
+            "Testing Memory Block 07/32 [0x00400000 - 0x0047FFFF] ... OK",
+            "Testing Memory Block 08/32 [0x00480000 - 0x004FFFFF] ... OK",
+            "L2 Cache Memory: 256 KB Write-Back SRAM [Tag RAM Verified OK]",
+            "Testing System Bus Controllers (8237 DMA, 8254 PIT, 8259 PIC) ... OK",
+            "PCI Bus #0 Slot 0: Host Bridge / Memory Controller [Device ID: 0x1234]",
+            "PCI Bus #0 Slot 1: S3 Vision 964 Graphics Accelerator [IRQ 9, MEM 0xE0000000]",
+            "PCI Bus #0 Slot 2: IDE Dual-Channel Controller [IRQ 14, IRQ 15, IO 0x1F0/0x170]",
+            "PCI Bus #0 Slot 3: Sound Blaster 16 PnP Audio [IRQ 5, DMA 1, DMA 5, IO 0x220]",
+            "ISA Bus Slot 1: 3Com EtherLink III 10Mbps NIC [IO 0x300, IRQ 10]",
+            "Testing Memory Block 09/32 [0x00500000 - 0x0057FFFF] ... OK",
+            "Testing Memory Block 10/32 [0x00580000 - 0x005FFFFF] ... OK",
+            "Testing Memory Block 11/32 [0x00600000 - 0x0067FFFF] ... OK",
+            "Testing Memory Block 12/32 [0x00680000 - 0x006FFFFF] ... OK",
+            "Testing Memory Block 13/32 [0x00700000 - 0x0077FFFF] ... OK",
+            "Testing Memory Block 14/32 [0x00780000 - 0x007FFFFF] ... OK",
+            "Probing IDE Primary Master ... WDC AC32500H (2500 MB, LBA, Sector 512)",
+            "Probing IDE Primary Slave  ... 3.5\" Floppy Disk Drive (1.44 MB High Density)",
+            "Probing IDE Secondary Master... ATAPI CD-ROM Drive (4X Speed, Drive E:)",
+            "Probing IDE Secondary Slave ... None",
+            "Testing Memory Block 15/32 [0x00800000 - 0x0087FFFF] ... OK",
+            "Testing Memory Block 16/32 [0x00880000 - 0x008FFFFF] ... OK",
+            "Testing Memory Block 17/32 [0x00900000 - 0x0097FFFF] ... OK",
+            "Testing Memory Block 18/32 [0x00980000 - 0x009FFFFF] ... OK",
+            "Keyboard Initialization ... 101-Key US Keyboard Detected OK",
+            "PS/2 Mouse Interface ... Microsoft Compatible Mouse Detected on IRQ 12",
+            "Real-Time Clock / Calendar ... Synced [2026-08-31 23:25:51]",
+            "Testing Memory Block 19/32 [0x00A00000 - 0x00A7FFFF] ... OK",
+            "Testing Memory Block 20/32 [0x00A80000 - 0x00AFFFFF] ... OK",
+            "Testing Memory Block 21/32 [0x00B00000 - 0x00B7FFFF] ... OK",
+            "Testing Memory Block 22/32 [0x00B80000 - 0x00BFFFFF] ... OK",
+            "Configuring System Interrupt Vectors IRQ 00 through IRQ 15 ... OK",
+            "Configuring Direct Memory Access Channels DMA 0 through DMA 7 ... OK",
+            "Testing Memory Block 23/32 [0x00C00000 - 0x00C7FFFF] ... OK",
+            "Testing Memory Block 24/32 [0x00C80000 - 0x00CFFFFF] ... OK",
+            "Testing Memory Block 25/32 [0x00D00000 - 0x00D7FFFF] ... OK",
+            "Testing Memory Block 26/32 [0x00D80000 - 0x00DFFFFF] ... OK",
+            "Testing Memory Block 27/32 [0x00E00000 - 0x00E7FFFF] ... OK",
+            "Testing Memory Block 28/32 [0x00E80000 - 0x00EFFFFF] ... OK",
+            "Testing Memory Block 29/32 [0x00F00000 - 0x00F7FFFF] ... OK",
+            "Testing Memory Block 30/32 [0x00F80000 - 0x00FDFFFF] ... OK",
+            "Testing Memory Block 31/32 [0x00FE0000 - 0x00FEFFFF] ... OK",
+            "Testing Memory Block 32/32 [0x00FF0000 - 0x00FFFFFF] ... OK",
+            "Memory Test Complete: 16,384 KB System RAM Verified [0 Errors]",
+            "\nLoading MS-DOS 6.22 Systems Files (IO.SYS, MSDOS.SYS) ...",
+            "Reading System Control Configuration Files ...",
+            "Executing CONFIG.SYS:",
+            "  [01] DEVICE=C:\\DOS\\HIMEM.SYS /TESTMEM:OFF /NUMHANDLES=128",
+            "       HIMEM: High Memory Area (HMA) Available (64 KB Allocated)",
+            "  [02] DEVICE=C:\\DOS\\EMM386.EXE NOEMS HIGHSCAN D=64",
+            "       EMM386: Expanded Memory Manager Active (EMS Frame at D000h)",
+            "  [03] DOS=HIGH,UMB",
+            "       UMB Region 1: 31 KB Available at C800h - D000h",
+            "       UMB Region 2: 82 KB Available at D800h - EFFFh",
+            "  [04] FILES=60",
+            "  [05] BUFFERS=30,0",
+            "  [06] LASTDRIVE=Z",
+            "  [07] DEVICEHIGH=C:\\DOS\\SB16.SYS /A220 /I5 /D1 /H5 /P330",
+            "       Sound Blaster 16 Driver Loaded (DSP Version 4.13)",
+            "  [08] DEVICEHIGH=C:\\DOS\\ANSI.SYS /X",
+            "Executing AUTOEXEC.BAT:",
+            "  [01] SET PATH=C:\\DOS;C:\\GAMES;C:\\WINDOWS",
+            "  [02] SET PROMPT=$P$G",
+            "  [03] SET SOUND=C:\\SB16",
+            "  [04] C:\\DOS\\SMARTDRV.EXE 2048 512 /E:2048",
+            "       SMARTDrive Disk Cache Installed (2048 KB Write-Through)",
+            "  [05] C:\\DOS\\MSCDEX.EXE /D:MSCD001 /M:10 /L:E",
+            "       MSCDEX Version 2.25 Loaded (Drive E: CD-ROM Mounted)",
+            "  [06] C:\\DOS\\MOUSE.COM /S20",
+            "       Microsoft Mouse Driver v8.20 Loaded",
+            "  [07] C:\\DOS\\DOSKEY.COM",
+            "       DOSKey Command Line Utility Resident",
+            "\nMounting C:\\GAMES\\*.* File Allocation Table (FAT16) ...",
+            "Checking Volume Sector Headers ... Sector Size 512 Bytes",
+            "Checking Cluster Map integrity ... 65,536 Clusters Checked [Clean]",
+            "Initializing JGLOVR-OS 3.11 Graphic Display Drivers ...",
+            "Loading Windows Graphic Engine Kernel Module [WIN386.EXE] ...",
+            "Allocating Virtual Memory Swapfile C:\\386SPART.PAR (16384 KB) ...",
+            "Starting System User Interface Core Subsystem ...",
+            "System Boot Complete. Welcome to JGLOVR-OS 3.11."
+        ];
+
+        // Interactive Rapid Power-On & POST Sequence Engine
         let systemPoweredOn = false;
         let bootSkipped = false;
 
@@ -1333,6 +1528,7 @@ Type 'HELP' or 'DIR' to list available system commands and files.
                 const mainBios = document.getElementById('bios-main-content');
                 mainBios.style.display = 'flex';
                 getAudioContext();
+                startComputerFanHum();
                 toggleBrowserFullscreen();
                 runBiosBootSequence();
             } else {
@@ -1342,59 +1538,42 @@ Type 'HELP' or 'DIR' to list available system commands and files.
 
         function runBiosBootSequence() {
             const memoryCounter = document.getElementById('memory-counter');
+            const biosLogContainer = document.getElementById('bios-log-text');
             let currentMem = 0;
             const targetMem = 16384;
-            let loggedSteps = {
-                step1: false,
-                step2: false,
-                step3: false,
-                step4: false,
-                step5: false
-            };
+            let lineIndex = 0;
             
             playHDDSpinUp();
 
-            // Count up memory (+128 KB every 85ms) for an extended, highly verbose ~11 second POST boot test
             const memInterval = setInterval(() => {
                 if (bootSkipped) {
                     clearInterval(memInterval);
                     return;
                 }
-                currentMem += 128;
+                
+                currentMem += 112;
                 if (currentMem > targetMem) currentMem = targetMem;
                 memoryCounter.textContent = currentMem.toLocaleString();
 
-                // Verbose POST hardware log steps printed line by line as memory tests
-                if (currentMem >= 3072 && !loggedSteps.step1) {
-                    loggedSteps.step1 = true;
-                    appendBiosLog('\nL2 Cache Memory: 256 KB Write-Back SRAM OK\nTesting System Bus Controllers ... OK');
-                } else if (currentMem >= 7168 && !loggedSteps.step2) {
-                    loggedSteps.step2 = true;
-                    appendBiosLog('\nPCI Bus #0 Slot 1: IDE Hard Disk Controller OK\nPCI Bus #0 Slot 2: Sound Blaster 16 PnP Audio Interface OK');
-                } else if (currentMem >= 11264 && !loggedSteps.step3) {
-                    loggedSteps.step3 = true;
-                    appendBiosLog('\nDetecting IDE Primary Master ... WDC AC32500H Hard Disk (2500 MB)');
-                } else if (currentMem >= 14336 && !loggedSteps.step4) {
-                    loggedSteps.step4 = true;
-                    appendBiosLog('\nDetecting IDE Primary Slave  ... 3.5" Floppy Disk Drive (1.44 MB)\nDetecting IDE Secondary Master... ATAPI CD-ROM Drive (4X)');
+                if (lineIndex < verbosePostLines.length) {
+                    const newDiv = document.createElement('div');
+                    newDiv.textContent = verbosePostLines[lineIndex];
+                    biosLogContainer.appendChild(newDiv);
+                    biosLogContainer.scrollTop = biosLogContainer.scrollHeight;
+                    lineIndex++;
                 }
 
-                if (currentMem === targetMem) {
+                if (currentMem === targetMem && lineIndex >= verbosePostLines.length) {
                     clearInterval(memInterval);
                     playSound('beep');
-                    appendBiosLog('\n\nLoading MS-DOS 6.22 Systems Files (IO.SYS, MSDOS.SYS) ...\nExecuting CONFIG.SYS [HIMEM.SYS, EMM386.EXE, SB16.SYS] ...\nExecuting AUTOEXEC.BAT [SMARTDRV.EXE, MOUSE.COM] ...\n\nBooting from Drive C: ...\nStarting JGLOVR-OS 3.11 ...');
                     playFloppySeek();
                     
+                    // Reduced end delay from 1400ms to 200ms for instantaneous desktop transition
                     setTimeout(() => {
                         finishBootSequence();
-                    }, 1600);
+                    }, 200);
                 }
-            }, 85);
-        }
-
-        function appendBiosLog(msg) {
-            const biosLog = document.getElementById('bios-log-text');
-            biosLog.textContent += msg;
+            }, 75);
         }
 
         function skipBootSequence() {
@@ -1667,12 +1846,13 @@ Type 'HELP' or 'DIR' to list available system commands and files.
 
         // Help / About
         function openAboutDialog() {
-            alert("JGLOVR-OS Version 3.11\n\nA retro portfolio showcasing HTML5 games and 3D simulations.\n\nAll programs execute client-side inside modern web browsers.\n(C) 1995-2026 JGLOVR. All Rights Reserved.");
+            alert("JGLOVR-OS Version 3.11\n\nPersonal Workstation Software System\n(C) 1995 JGLOVR Systems. All Rights Reserved.");
         }
 
         // Shutdown Simulation
         function triggerShutdown() {
             playSound('open');
+            stopComputerFanHum();
             document.getElementById('shutdown-screen').classList.remove('hidden');
         }
 
@@ -1681,11 +1861,13 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             document.getElementById('os-viewport').classList.remove('crt-warming-up');
             bootSkipped = false;
             systemPoweredOn = false;
+            const trayBtn = document.getElementById('sfx-tray-btn');
+            if (trayBtn && soundEnabled) trayBtn.textContent = '🔊 SFX';
             document.getElementById('power-screen-container').style.display = 'flex';
             document.getElementById('bios-main-content').style.display = 'none';
             document.getElementById('bios-boot-screen').classList.remove('hidden');
             document.getElementById('bios-boot-screen').style.opacity = '1';
-            document.getElementById('bios-log-text').innerHTML = `CPU: Intel i486DX2 Clock at 66 MHz [OK]\nMath Coprocessor: Built-in 486DX Floating Point Unit Active\nChecking System CMOS RAM ... OK\nInitializing Plug and Play BIOS extension v1.0a ...\nVGA BIOS: S3 Vision 964 VRAM 2048 KB OK\n\nMemory Test: <span id="memory-counter" style="color: #00ff00; font-weight: bold;">0</span> KB OK`;
+            document.getElementById('bios-log-text').innerHTML = '';
         }
 
         // Real-Time System Clock
@@ -1713,7 +1895,7 @@ Type 'HELP' or 'DIR' to list available system commands and files.
                 let reply = `\nC:\\GAMES> ${cmd}\n`;
 
                 if (cmd === 'dir' || cmd === 'ls') {
-                    reply += ` Volume in drive C is PORTFOLIO
+                    reply += ` Volume in drive C is SYSTEM_C
  Volume Serial Number is 1995-2026
  Directory of C:\\GAMES
 
@@ -1749,7 +1931,7 @@ README   TXT          18 08-31-26  9:30p
                         openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', '🚀', document.getElementById('icon-sysvoid'));
                         reply += `Launching SYS_VOID.EXE...`;
                     } else if (target.includes('grid') || target.includes('music')) {
-                        openGameWindow('musicgridlivemix.html', 'Music Grid Synth', 'window-gridmix', '🎹', document.getElementById('icon-gridmix'));
+                        openGameWindow('musicgridlivemix.html', 'Music Grid Synthesizer', 'window-gridmix', '🎹', document.getElementById('icon-gridmix'));
                         reply += `Launching GRIDMIX.EXE...`;
                     } else {
                         reply += `Bad command or file name. Type DIR to list files.`;
