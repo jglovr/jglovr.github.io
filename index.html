@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JGLOVR OS v3.11 - HTML Games & Tools Portfolio</title>
-    <meta name="description" content="A nostalgic 90s-style computer system hosting a collection of interactive HTML5 games, 3D simulations, audio synthesizers, and web utilities.">
+    <title>JGLOVR OS v3.11 - HTML Games Portfolio</title>
+    <meta name="description" content="A nostalgic 90s-style computer system hosting a collection of interactive HTML5 games and 3D simulations.">
     
     <!-- Google Fonts for Retro System Aesthetics -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,7 +28,6 @@
             --text-muted: #404040;
             --highlight: #000080;
             --highlight-text: #ffffff;
-            --screen-tint: transparent;
             --font-sys: 'VT323', monospace;
             --font-mono: 'Share Tech Mono', monospace;
             --font-pixel: 'Press Start 2P', monospace;
@@ -117,9 +116,7 @@
             opacity: 0.85;
             display: block;
         }
-        body.scanlines-off .crt-scanlines {
-            display: none;
-        }
+        body.scanlines-off .crt-scanlines { display: none; }
 
         /* Classic Retro Bevel Utilities */
         .bevel-out {
@@ -213,6 +210,7 @@
             border: 1px dashed transparent;
             color: #ffffff;
             text-shadow: 1px 1px 2px #000000;
+            transition: transform 0.1s;
         }
         .desktop-shortcut:hover, .desktop-shortcut.active {
             border-color: #ffffff;
@@ -240,18 +238,33 @@
             word-break: break-word;
         }
 
-        /* Window Container / Main Explorer Window */
+        /* DRAGGABLE & RESIZABLE RETRO WINDOW SYSTEM */
         .window {
             position: absolute;
             display: flex;
             flex-direction: column;
             z-index: 10;
-            min-width: 320px;
-            box-shadow: 4px 4px 12px rgba(0,0,0,0.5);
+            min-width: 340px;
+            min-height: 240px;
+            box-shadow: 4px 4px 14px rgba(0,0,0,0.6);
+            resize: both;
+            overflow: hidden;
+        }
+
+        /* Maximized Windows (Fill whole area edge-to-edge above taskbar) */
+        .window.maximized {
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: calc(100vh - 38px) !important;
+            box-shadow: none !important;
+            resize: none !important;
+            border-radius: 0 !important;
         }
 
         .window-titlebar {
             height: 30px;
+            min-height: 30px;
             background: var(--header-bg-gradient);
             color: var(--header-text);
             padding: 2px 6px;
@@ -315,6 +328,7 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+            height: 100%;
         }
 
         .window-statusbar {
@@ -326,15 +340,19 @@
             background: var(--win-bg);
         }
 
-        /* Primary Portfolio Window Positions */
-        #portfolio-window {
+        /* Default Window Coordinates */
+        #portfolio-window { top: 20px; left: 140px; width: 780px; height: 560px; }
+        #terminal-window { top: 70px; left: 220px; width: 650px; height: 420px; }
+
+        /* Program Specific Floating Windows */
+        .game-program-window {
             top: 20px;
-            left: 140px;
-            right: 20px;
-            bottom: 60px;
+            left: 100px;
+            width: 900px;
+            height: 600px;
         }
 
-        /* Portfolio Items Grid / Explorer Table */
+        /* Explorer Toolbar */
         .explorer-toolbar {
             display: flex;
             gap: 10px;
@@ -356,7 +374,7 @@
             cursor: pointer;
         }
 
-        /* Catalog Layout: Grid vs List */
+        /* Catalog Layout */
         .catalog-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -421,14 +439,6 @@
             border: 2px inset var(--win-border-dark);
         }
 
-        .card-media-bg {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0.85;
-            object-fit: cover;
-        }
-
         .card-badge {
             position: absolute;
             top: 6px;
@@ -473,12 +483,12 @@
             font-weight: bold;
             cursor: pointer;
             text-align: center;
-            text-decoration: none;
             color: var(--text-main);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
+            border: 2px solid var(--win-border-light);
         }
         .btn-action.primary {
             background-color: #000080;
@@ -487,49 +497,29 @@
         body.theme-dos-green .btn-action.primary { background-color: #116611; color: #33ff33; }
         body.theme-dos-amber .btn-action.primary { background-color: #996600; color: #ffb000; }
 
-        .btn-action:hover {
-            filter: brightness(1.15);
-        }
-        .btn-action:active {
-            box-shadow: inset 2px 2px var(--win-border-shadow);
-        }
-
-        /* Floating Windows (Iframe Player & Properties Dialog) */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.4);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-overlay.hidden { display: none; }
-
-        #player-window {
-            width: 90vw;
-            height: 85vh;
-            max-width: 1200px;
-            position: absolute;
-            top: 5vh;
-            left: 5vw;
-        }
+        .btn-action:hover { filter: brightness(1.15); }
+        .btn-action:active { box-shadow: inset 2px 2px var(--win-border-shadow); }
 
         .iframe-container {
             width: 100%;
             height: 100%;
             background: #000;
             border: none;
+            display: block;
         }
 
-        /* Terminal Window */
-        #terminal-window {
-            width: 650px;
-            height: 420px;
-            top: 60px;
-            left: 180px;
+        /* Expanding Wireframe Box Animation Element */
+        .expanding-wireframe {
+            position: fixed;
+            border: 3px double var(--win-border-light);
+            background: rgba(0, 0, 128, 0.35);
+            box-shadow: 0 0 15px rgba(255,255,255,0.6), inset 0 0 15px rgba(255,255,255,0.4);
+            pointer-events: none;
+            z-index: 999999;
+            transition: all 0.3s cubic-bezier(0.05, 0.85, 0.2, 1);
         }
 
+        /* Terminal Body */
         .terminal-body {
             background-color: #000000;
             color: #00ff00;
@@ -573,7 +563,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 2px 4px;
-            z-index: 999;
+            z-index: 99999;
         }
 
         .taskbar-left {
@@ -629,7 +619,7 @@
             padding: 2px 10px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             font-family: var(--font-mono);
             font-size: 15px;
         }
@@ -642,9 +632,7 @@
             padding: 0 4px;
             color: var(--text-main);
         }
-        .tray-btn:hover {
-            background: rgba(0,0,0,0.1);
-        }
+        .tray-btn:hover { background: rgba(0,0,0,0.1); }
 
         /* Start Menu Popup */
         #start-menu {
@@ -653,7 +641,7 @@
             left: 4px;
             width: 240px;
             background-color: var(--win-bg);
-            z-index: 10000;
+            z-index: 100000;
             display: flex;
             flex-direction: row;
             box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
@@ -700,7 +688,55 @@
             border-bottom: 1px solid var(--win-border-light);
         }
 
-        /* Nostalgic Shutdown Screen */
+        /* Authentic Retro BIOS / POST Boot Screen Overlay */
+        #bios-boot-screen {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #000000;
+            color: #ffffff;
+            font-family: var(--font-mono);
+            font-size: 18px;
+            line-height: 1.4;
+            padding: 24px;
+            z-index: 9999999;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        #bios-boot-screen.hidden { display: none; }
+
+        .bios-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #666;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .bios-energy-logo {
+            font-family: monospace;
+            color: #ffff00;
+            font-weight: bold;
+            font-size: 14px;
+            white-space: pre;
+            line-height: 1.1;
+        }
+
+        .bios-log {
+            flex: 1;
+            white-space: pre-wrap;
+        }
+
+        .bios-footer {
+            border-top: 1px solid #666;
+            padding-top: 10px;
+            color: #888888;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Shutdown Screen */
         #shutdown-screen {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -716,21 +752,11 @@
         }
         #shutdown-screen.hidden { display: none; }
 
-        /* Responsive Mobile Tweak */
         @media (max-width: 768px) {
-            #portfolio-window {
-                top: 5px; left: 5px; right: 5px; bottom: 45px;
-            }
-            #desktop-icons {
-                display: none;
-            }
-            .catalog-grid {
-                grid-template-columns: 1fr;
-            }
-            #terminal-window {
-                width: 95vw;
-                left: 2.5vw;
-            }
+            #portfolio-window { top: 5px; left: 5px; width: 95vw; height: 80vh; }
+            #desktop-icons { display: none; }
+            .catalog-grid { grid-template-columns: 1fr; }
+            #terminal-window { width: 95vw; left: 2.5vw; }
         }
     </style>
 </head>
@@ -739,6 +765,38 @@
     <!-- CRT Scanlines Overlay -->
     <div class="crt-scanlines"></div>
 
+    <!-- RETRO BIOS / POST BOOT SCREEN -->
+    <div id="bios-boot-screen" onclick="skipBootSequence()">
+        <div>
+            <div class="bios-header">
+                <div>
+                    <div style="font-size: 22px; font-weight: bold; color: #00ff00;">JGLOVR Modular BIOS v4.06 (C) 1995</div>
+                    <div>Antigravity AGY-486 PCI/VLB Super Workstation</div>
+                </div>
+                <div class="bios-energy-logo">
+  ___________
+ /   EPA     \
+|  POLLUTION |
+|  PREVENTER |
+ \___________/
+                </div>
+            </div>
+
+            <div class="bios-log" id="bios-log-text">
+CPU: Intel i486DX2 Clock at 66 MHz
+VGA BIOS: Sound Blaster / S3 Vision 964 VRAM OK
+
+Memory Test: <span id="memory-counter" style="color: #00ff00; font-weight: bold;">0</span> KB OK
+            </div>
+        </div>
+
+        <div class="bios-footer">
+            <span>Click or Press <b>[ENTER / ESC]</b> to Boot (Requests Browser Fullscreen)</span>
+            <span>(C) JGLOVR Systems 1995-2026</span>
+        </div>
+    </div>
+
+    <!-- MAIN OS VIEWPORT -->
     <div id="os-viewport">
 
         <!-- Top System Bar -->
@@ -749,8 +807,8 @@
                 <span>RAM: 16,384 KB OK</span>
             </div>
             <div class="sys-info-group">
-                <span>SOUND: SB16 DETECTED</span>
-                <span>DRIVE C: 5 FILES FOUND</span>
+                <span>MULTI-WINDOW ENGINE: ACTIVE</span>
+                <span>DRIVE C: 4 GAMES</span>
             </div>
         </div>
 
@@ -759,42 +817,38 @@
 
             <!-- Desktop Icons -->
             <div id="desktop-icons">
-                <div class="desktop-shortcut" onclick="openWindow('portfolio-window')">
+                <div class="desktop-shortcut" id="icon-portfolio" onclick="openWindow('portfolio-window')">
                     <div class="shortcut-icon">📁</div>
                     <div class="shortcut-label">C:\GAMES</div>
                 </div>
-                <div class="desktop-shortcut" onclick="openGame('codyfrog.html', 'Cody Frog')">
+                <div class="desktop-shortcut" id="icon-codyfrog" onclick="openGameWindow('codyfrog.html', 'Cody Frog', 'window-codyfrog', '🐸', this)">
                     <div class="shortcut-icon">🐸</div>
                     <div class="shortcut-label">CODYFROG</div>
                 </div>
-                <div class="desktop-shortcut" onclick="openGame('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass')">
+                <div class="desktop-shortcut" id="icon-gnomes" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', '🍄', this)">
                     <div class="shortcut-icon">🍄</div>
                     <div class="shortcut-label">GNOMES</div>
                 </div>
-                <div class="desktop-shortcut" onclick="openGame('systemvoid.html', 'S Y S T E M _ V O I D')">
+                <div class="desktop-shortcut" id="icon-sysvoid" onclick="openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', '🚀', this)">
                     <div class="shortcut-icon">🚀</div>
                     <div class="shortcut-label">SYS_VOID</div>
                 </div>
-                <div class="desktop-shortcut" onclick="openGame('musicgridlivemix.html', 'Music Grid Live Mixer')">
+                <div class="desktop-shortcut" id="icon-gridmix" onclick="openGameWindow('musicgridlivemix.html', 'Music Grid Live Mixer', 'window-gridmix', '🎹', this)">
                     <div class="shortcut-icon">🎹</div>
                     <div class="shortcut-label">GRIDMIX</div>
                 </div>
-                <div class="desktop-shortcut" onclick="openGame('keypoplabeltool.html', 'Label & SKU Merger')">
-                    <div class="shortcut-icon">🏷️</div>
-                    <div class="shortcut-label">LABELTOOL</div>
-                </div>
-                <div class="desktop-shortcut" onclick="toggleWindow('terminal-window')">
+                <div class="desktop-shortcut" id="icon-terminal" onclick="toggleWindow('terminal-window')">
                     <div class="shortcut-icon">💻</div>
                     <div class="shortcut-label">MS-DOS</div>
                 </div>
             </div>
 
-            <!-- Primary Explorer / Portfolio Catalog Window -->
+            <!-- Explorer Catalog Window -->
             <div id="portfolio-window" class="window bevel-out">
                 <div class="window-titlebar">
                     <div class="window-title-text">
                         <span>💾</span>
-                        <span>Executing Portfolio Catalog - [C:\GAMES_AND_TOOLS\*.*]</span>
+                        <span>Executing Portfolio Catalog - [C:\GAMES\*.*]</span>
                     </div>
                     <div class="window-controls">
                         <button class="win-btn bevel-out" onclick="minimizeWindow('portfolio-window')">_</button>
@@ -812,9 +866,9 @@
                 </div>
 
                 <div class="explorer-toolbar bevel-out">
-                    <button class="win-btn bevel-out" style="width: auto; padding: 2px 8px;" onclick="location.reload()">↺ Refresh</button>
+                    <button class="win-btn bevel-out" style="width: auto; padding: 2px 8px;" onclick="location.reload()">↺ Reboot</button>
                     <span style="font-size: 16px;">Address:</span>
-                    <div class="path-box bevel-in">C:\GAMES_AND_TOOLS\PORTFOLIO.DIR</div>
+                    <div class="path-box bevel-in">C:\GAMES\PORTFOLIO.DIR</div>
                     <button class="view-mode-btn bevel-out" onclick="toggleCatalogView()">View Mode</button>
                 </div>
 
@@ -822,7 +876,7 @@
                     <div id="catalog-container" class="catalog-grid">
 
                         <!-- Game 1: Cody Frog -->
-                        <div class="game-card bevel-out">
+                        <div class="game-card bevel-out" id="card-codyfrog">
                             <div class="card-header">
                                 <div>
                                     <h3 class="game-title">Cody Frog</h3>
@@ -852,13 +906,12 @@
                                 <span>STATUS: READY</span>
                             </div>
                             <div class="card-actions">
-                                <a href="codyfrog.html" class="btn-action primary bevel-out" onclick="playSound('launch')">▶ RUN FULLSCREEN</a>
-                                <button class="btn-action bevel-out" onclick="openInWindow('codyfrog.html', 'Cody Frog')">🗔 WINDOW</button>
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('codyfrog.html', 'Cody Frog', 'window-codyfrog', '🐸', this)">▶ LAUNCH GAME</button>
                             </div>
                         </div>
 
                         <!-- Game 2: Gnomes in the Tall Grass -->
-                        <div class="game-card bevel-out">
+                        <div class="game-card bevel-out" id="card-gnomes">
                             <div class="card-header">
                                 <div>
                                     <h3 class="game-title">Gnomes in the Tall Grass</h3>
@@ -869,13 +922,10 @@
                             <div class="card-media">
                                 <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#1b2e1b;">
                                     <rect x="0" y="70" width="200" height="50" fill="#2d4a1d" />
-                                    <!-- Tall Grass Blades -->
                                     <path d="M 10 70 L 15 30 L 22 70 M 30 70 L 38 25 L 45 70 M 150 70 L 158 20 L 165 70" stroke="#44aa44" stroke-width="3" fill="none" />
-                                    <!-- Gnome Hat -->
                                     <polygon points="100,15 80,60 120,60" fill="#e74c3c" />
                                     <circle cx="100" cy="65" r="12" fill="#f5cba7" />
                                     <ellipse cx="100" cy="72" rx="10" ry="8" fill="#ecf0f1" />
-                                    <!-- Blue Gem -->
                                     <polygon points="160,85 168,75 176,85 168,95" fill="#00e5ff" stroke="#0077aa" />
                                 </svg>
                             </div>
@@ -888,13 +938,12 @@
                                 <span>STATUS: READY</span>
                             </div>
                             <div class="card-actions">
-                                <a href="gnomesinthetallgrass.html" class="btn-action primary bevel-out" onclick="playSound('launch')">▶ RUN FULLSCREEN</a>
-                                <button class="btn-action bevel-out" onclick="openInWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass')">🗔 WINDOW</button>
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', '🍄', this)">▶ LAUNCH GAME</button>
                             </div>
                         </div>
 
                         <!-- Game 3: SYSTEM_VOID -->
-                        <div class="game-card bevel-out">
+                        <div class="game-card bevel-out" id="card-sysvoid">
                             <div class="card-header">
                                 <div>
                                     <h3 class="game-title">S Y S T E M _ V O I D</h3>
@@ -905,9 +954,7 @@
                             <div class="card-media">
                                 <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#050505;">
                                     <text x="100" y="45" fill="#00ff00" font-family="monospace" font-size="16" font-weight="bold" text-anchor="middle" filter="drop-shadow(0 0 5px #00ff00)">SYSTEM_VOID</text>
-                                    <!-- Player Vector Ship -->
                                     <polygon points="100,60 90,85 100,80 110,85" fill="none" stroke="#00ff00" stroke-width="2" />
-                                    <!-- Enemy Vector Orbs -->
                                     <circle cx="50" cy="70" r="10" fill="none" stroke="#ff0055" stroke-width="1.5" />
                                     <circle cx="150" cy="65" r="12" fill="none" stroke="#00e5ff" stroke-width="1.5" />
                                     <line x1="0" y1="100" x2="200" y2="100" stroke="#00ff00" stroke-width="1" stroke-dasharray="4,4" />
@@ -922,13 +969,12 @@
                                 <span>STATUS: READY</span>
                             </div>
                             <div class="card-actions">
-                                <a href="systemvoid.html" class="btn-action primary bevel-out" onclick="playSound('launch')">▶ RUN FULLSCREEN</a>
-                                <button class="btn-action bevel-out" onclick="openInWindow('systemvoid.html', 'S Y S T E M _ V O I D')">🗔 WINDOW</button>
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', '🚀', this)">▶ LAUNCH GAME</button>
                             </div>
                         </div>
 
-                        <!-- App 4: Music Grid Live Mixer -->
-                        <div class="game-card bevel-out">
+                        <!-- Game 4: Music Grid Live Mixer -->
+                        <div class="game-card bevel-out" id="card-gridmix">
                             <div class="card-header">
                                 <div>
                                     <h3 class="game-title">Music Grid Synthesizer</h3>
@@ -938,7 +984,6 @@
                             </div>
                             <div class="card-media">
                                 <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#0f111a;">
-                                    <!-- Matrix grid of synth pads -->
                                     <g fill="#202436" stroke="#262a3d" stroke-width="1">
                                         <rect x="25" y="20" width="30" height="20" rx="3" fill="#00d2ff" />
                                         <rect x="65" y="20" width="30" height="20" rx="3" />
@@ -966,49 +1011,7 @@
                                 <span>STATUS: READY</span>
                             </div>
                             <div class="card-actions">
-                                <a href="musicgridlivemix.html" class="btn-action primary bevel-out" onclick="playSound('launch')">▶ RUN FULLSCREEN</a>
-                                <button class="btn-action bevel-out" onclick="openInWindow('musicgridlivemix.html', 'Music Grid Synth')">🗔 WINDOW</button>
-                            </div>
-                        </div>
-
-                        <!-- App 5: Shipping Label & SKU Merger -->
-                        <div class="game-card bevel-out">
-                            <div class="card-header">
-                                <div>
-                                    <h3 class="game-title">Label & SKU Merger</h3>
-                                    <span class="game-file-name">LABELMERGE.EXE</span>
-                                </div>
-                                <span class="card-badge">UTILITY</span>
-                            </div>
-                            <div class="card-media">
-                                <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#f4f4f4;">
-                                    <rect x="40" y="15" width="120" height="90" fill="#ffffff" stroke="#333" stroke-width="2" rx="4" />
-                                    <!-- Barcode lines -->
-                                    <rect x="55" y="30" width="4" height="35" fill="#000" />
-                                    <rect x="63" y="30" width="8" height="35" fill="#000" />
-                                    <rect x="75" y="30" width="3" height="35" fill="#000" />
-                                    <rect x="82" y="30" width="10" height="35" fill="#000" />
-                                    <rect x="96" y="30" width="4" height="35" fill="#000" />
-                                    <rect x="104" y="30" width="7" height="35" fill="#000" />
-                                    <rect x="115" y="30" width="4" height="35" fill="#000" />
-                                    <rect x="123" y="30" width="9" height="35" fill="#000" />
-                                    <rect x="136" y="30" width="5" height="35" fill="#000" />
-                                    <!-- Text Lines -->
-                                    <rect x="55" y="75" width="90" height="6" fill="#666" />
-                                    <rect x="55" y="86" width="60" height="6" fill="#999" />
-                                </svg>
-                            </div>
-                            <div class="card-description">
-                                Client-side PDF processing tool to pair e-commerce packing list SKUs directly onto shipping labels using pdf-lib and PDF.js.
-                            </div>
-                            <div class="card-meta-list">
-                                <span>SIZE: 6.7 KB</span>
-                                <span>TYPE: PDF Processor</span>
-                                <span>STATUS: READY</span>
-                            </div>
-                            <div class="card-actions">
-                                <a href="keypoplabeltool.html" class="btn-action primary bevel-out" onclick="playSound('launch')">▶ RUN FULLSCREEN</a>
-                                <button class="btn-action bevel-out" onclick="openInWindow('keypoplabeltool.html', 'Label SKU Merger')">🗔 WINDOW</button>
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('musicgridlivemix.html', 'Music Grid Synth', 'window-gridmix', '🎹', this)">▶ LAUNCH GAME</button>
                             </div>
                         </div>
 
@@ -1016,19 +1019,24 @@
                 </div>
 
                 <div class="window-statusbar">
-                    <span>5 Object(s) displayed</span>
-                    <span>Total Disk Usage: 880.6 KB</span>
+                    <span>4 Object(s) displayed</span>
+                    <span>Total Disk Usage: 874.2 KB</span>
                 </div>
             </div>
+
+            <!-- Dynamic Window Container (Multi-Program Support) -->
+            <div id="dynamic-windows-container"></div>
 
             <!-- Terminal Window (MS-DOS Prompt) -->
             <div id="terminal-window" class="window bevel-out" style="display: none;">
                 <div class="window-titlebar">
                     <div class="window-title-text">
                         <span>💻</span>
-                        <span>MS-DOS Command Prompt - [C:\PORTFOLIO]</span>
+                        <span>MS-DOS Command Prompt - [C:\GAMES]</span>
                     </div>
                     <div class="window-controls">
+                        <button class="win-btn bevel-out" onclick="minimizeWindow('terminal-window')">_</button>
+                        <button class="win-btn bevel-out" onclick="toggleMaximize('terminal-window')">🗖</button>
                         <button class="win-btn bevel-out" onclick="closeWindow('terminal-window')">X</button>
                     </div>
                 </div>
@@ -1057,12 +1065,13 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             </div>
 
             <div class="taskbar-tasks" id="taskbar-tabs">
-                <div class="task-tab bevel-out active" id="tab-portfolio-window" onclick="bringToFront('portfolio-window')">
+                <div class="task-tab bevel-out active" id="tab-portfolio-window" onclick="toggleTaskWindow('portfolio-window')">
                     <span>📁</span> C:\GAMES
                 </div>
             </div>
 
             <div class="system-tray bevel-in">
+                <button class="tray-btn" title="Toggle Browser Fullscreen Mode" onclick="toggleBrowserFullscreen()">📺 Fullscreen</button>
                 <button class="tray-btn" title="Toggle System Sound Effects" onclick="toggleSound()">🔊 SFX</button>
                 <button class="tray-btn" title="Switch Display Color Theme" onclick="cycleTheme()">🎨 Theme</button>
                 <button class="tray-btn" title="Toggle CRT Scanline Overlay" onclick="toggleScanlines()">📺 CRT</button>
@@ -1076,20 +1085,17 @@ Type 'HELP' or 'DIR' to list available system commands and files.
                 JGLOVR OS
             </div>
             <div class="start-menu-list">
-                <div class="start-item" onclick="openGame('codyfrog.html', 'Cody Frog')">
+                <div class="start-item" onclick="openGameWindow('codyfrog.html', 'Cody Frog', 'window-codyfrog', '🐸', this)">
                     <span>🐸</span> Cody Frog
                 </div>
-                <div class="start-item" onclick="openGame('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass')">
+                <div class="start-item" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', '🍄', this)">
                     <span>🍄</span> Gnomes in Tall Grass
                 </div>
-                <div class="start-item" onclick="openGame('systemvoid.html', 'S Y S T E M _ V O I D')">
+                <div class="start-item" onclick="openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', '🚀', this)">
                     <span>🚀</span> S Y S T E M _ V O I D
                 </div>
-                <div class="start-item" onclick="openGame('musicgridlivemix.html', 'Music Grid Synth')">
+                <div class="start-item" onclick="openGameWindow('musicgridlivemix.html', 'Music Grid Synth', 'window-gridmix', '🎹', this)">
                     <span>🎹</span> Music Grid Synth
-                </div>
-                <div class="start-item" onclick="openGame('keypoplabeltool.html', 'Shipping Label Merger')">
-                    <span>🏷️</span> Label SKU Merger
                 </div>
                 <div class="start-divider"></div>
                 <div class="start-item" onclick="toggleWindow('terminal-window')">
@@ -1107,23 +1113,6 @@ Type 'HELP' or 'DIR' to list available system commands and files.
 
     </div>
 
-    <!-- Embedded Game Window Modal -->
-    <div id="player-modal" class="modal-overlay hidden">
-        <div id="player-window" class="window bevel-out">
-            <div class="window-titlebar">
-                <div class="window-title-text" id="player-title">
-                    <span>🎮</span> Executing Program...
-                </div>
-                <div class="window-controls">
-                    <button class="win-btn bevel-out" onclick="closePlayerModal()">X</button>
-                </div>
-            </div>
-            <div class="window-body" style="padding: 0; overflow: hidden;">
-                <iframe id="game-iframe" class="iframe-container" src="about:blank"></iframe>
-            </div>
-        </div>
-    </div>
-
     <!-- Nostalgic Shutdown Screen Overlay -->
     <div id="shutdown-screen" class="hidden">
         <h1 style="font-size: 36px; margin-bottom: 20px;">It is now safe to turn off<br>your computer.</h1>
@@ -1131,7 +1120,7 @@ Type 'HELP' or 'DIR' to list available system commands and files.
         <button class="btn-action primary bevel-out" style="width: 220px; margin-top: 30px;" onclick="restartSystem()">RESTART SYSTEM</button>
     </div>
 
-    <!-- Retro Web Audio Synthesizer -->
+    <!-- System JavaScript -->
     <script>
         // Sound Engine (Web Audio API)
         let soundEnabled = true;
@@ -1161,34 +1150,39 @@ Type 'HELP' or 'DIR' to list available system commands and files.
 
                 const now = ctx.currentTime;
 
-                if (type === 'click') {
+                if (type === 'beep') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(880, now);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'click') {
                     osc.type = 'square';
                     osc.frequency.setValueAtTime(800, now);
                     osc.frequency.exponentialRampToValueAtTime(400, now + 0.04);
-                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.setValueAtTime(0.12, now);
                     gain.gain.linearRampToValueAtTime(0.01, now + 0.04);
                     osc.start(now);
                     osc.stop(now + 0.04);
                 } else if (type === 'launch') {
                     osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(300, now);
-                    osc.frequency.linearRampToValueAtTime(1200, now + 0.12);
-                    gain.gain.setValueAtTime(0.2, now);
-                    gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+                    osc.frequency.setValueAtTime(250, now);
+                    osc.frequency.exponentialRampToValueAtTime(1400, now + 0.25);
+                    gain.gain.setValueAtTime(0.18, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
                     osc.start(now);
-                    osc.stop(now + 0.12);
+                    osc.stop(now + 0.25);
                 } else if (type === 'open') {
                     osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(523.25, now); // C5
-                    osc.frequency.setValueAtTime(659.25, now + 0.05); // E5
-                    gain.gain.setValueAtTime(0.2, now);
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.05);
+                    gain.gain.setValueAtTime(0.18, now);
                     gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
                     osc.start(now);
                     osc.stop(now + 0.12);
                 }
-            } catch(e) {
-                console.log('Audio init on user interaction required');
-            }
+            } catch(e) {}
         }
 
         function toggleSound() {
@@ -1196,24 +1190,226 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             alert(soundEnabled ? 'System Audio Enabled (SB16 Active)' : 'System Audio Muted');
         }
 
-        // Theme Cycling Logic
-        const themes = ['theme-win95', 'theme-dos-green', 'theme-dos-amber', 'theme-c64'];
-        let currentThemeIdx = 0;
-
-        function cycleTheme() {
-            document.body.removeClass ? null : null;
-            themes.forEach(t => document.body.classList.remove(t));
-            currentThemeIdx = (currentThemeIdx + 1) % themes.length;
-            document.body.classList.add(themes[currentThemeIdx]);
-            playSound('click');
+        // BROWSER FULLSCREEN TRIGGER & PROMPT
+        function toggleBrowserFullscreen() {
+            if (!document.fullscreenElement) {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen().catch(err => {});
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
         }
 
-        function toggleScanlines() {
-            document.body.classList.toggle('scanlines-off');
-            playSound('click');
+        // Authentic Retro BIOS Memory & POST Boot Sequence
+        let bootSkipped = false;
+        function runBiosBootSequence() {
+            const memoryCounter = document.getElementById('memory-counter');
+            let currentMem = 0;
+            const targetMem = 16384;
+            
+            playSound('beep');
+
+            const memInterval = setInterval(() => {
+                if (bootSkipped) {
+                    clearInterval(memInterval);
+                    return;
+                }
+                currentMem += 1024;
+                if (currentMem > targetMem) currentMem = targetMem;
+                memoryCounter.textContent = currentMem.toLocaleString();
+
+                if (currentMem === targetMem) {
+                    clearInterval(memInterval);
+                    playSound('beep');
+                    appendBiosLog('\nDetecting IDE Primary Master ... CODYFROG.EXE\nDetecting IDE Primary Slave  ... GNOMES.EXE\nDetecting IDE Secondary Master... SYS_VOID.EXE\nDetecting IDE Secondary Slave ... GRIDMIX.EXE\n\nBooting from Drive C: ...\nStarting JGLOVR-OS 3.11 ...');
+                    
+                    setTimeout(() => {
+                        finishBootSequence();
+                    }, 1000);
+                }
+            }, 70);
         }
 
-        // Window Manager Logic
+        function appendBiosLog(msg) {
+            const biosLog = document.getElementById('bios-log-text');
+            biosLog.textContent += msg;
+        }
+
+        function skipBootSequence() {
+            if (!bootSkipped) {
+                bootSkipped = true;
+                toggleBrowserFullscreen();
+                finishBootSequence();
+            }
+        }
+
+        function finishBootSequence() {
+            const biosScreen = document.getElementById('bios-boot-screen');
+            biosScreen.style.transition = 'opacity 0.4s ease-out';
+            biosScreen.style.opacity = '0';
+            playSound('open');
+            setTimeout(() => {
+                biosScreen.classList.add('hidden');
+            }, 400);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' || e.key === 'Enter') skipBootSequence();
+        });
+
+        // DRAGGABLE WINDOW SYSTEM
+        let highestZ = 100;
+        function makeDraggable(winElem) {
+            const titlebar = winElem.querySelector('.window-titlebar');
+            if (!titlebar) return;
+
+            let isDragging = false;
+            let offsetX = 0, offsetY = 0;
+
+            titlebar.addEventListener('mousedown', (e) => {
+                if (e.target.classList.contains('win-btn')) return;
+                isDragging = true;
+                bringToFront(winElem.id);
+                offsetX = e.clientX - winElem.offsetLeft;
+                offsetY = e.clientY - winElem.offsetTop;
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                if (winElem.classList.contains('maximized')) return;
+                winElem.style.left = Math.max(0, (e.clientX - offsetX)) + 'px';
+                winElem.style.top = Math.max(0, (e.clientY - offsetY)) + 'px';
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+        }
+
+        // Initialize drag capability on default windows
+        document.querySelectorAll('.window').forEach(makeDraggable);
+
+        // MULTI-PROGRAM WINDOW MANAGER ENGINE
+        const activePrograms = {};
+
+        function openGameWindow(url, title, winId, iconSymbol, originElem) {
+            playSound('launch');
+            toggleBrowserFullscreen(); // Prompt browser fullscreen on game launch if desired
+
+            // If window already exists, bring it to front
+            let win = document.getElementById(winId);
+            if (win) {
+                win.style.display = 'flex';
+                bringToFront(winId);
+                return;
+            }
+
+            // Expanding wireframe animation
+            let startRect = { top: window.innerHeight / 2, left: window.innerWidth / 2, width: 50, height: 50 };
+            if (originElem && originElem.getBoundingClientRect) {
+                startRect = originElem.getBoundingClientRect();
+            }
+
+            const wireframe = document.createElement('div');
+            wireframe.className = 'expanding-wireframe';
+            wireframe.style.top = startRect.top + 'px';
+            wireframe.style.left = startRect.left + 'px';
+            wireframe.style.width = startRect.width + 'px';
+            wireframe.style.height = startRect.height + 'px';
+            document.body.appendChild(wireframe);
+
+            // Create new window element
+            win = document.createElement('div');
+            win.id = winId;
+            win.className = 'window bevel-out game-program-window maximized'; // Defaults to full screen maximized edge-to-edge
+
+            win.innerHTML = `
+                <div class="window-titlebar">
+                    <div class="window-title-text">
+                        <span>${iconSymbol}</span>
+                        <span>Executing Program - [${title}]</span>
+                    </div>
+                    <div class="window-controls">
+                        <button class="win-btn bevel-out" title="Minimize" onclick="minimizeWindow('${winId}')">_</button>
+                        <button class="win-btn bevel-out" title="Restore / Maximize" onclick="toggleMaximize('${winId}')">🗖</button>
+                        <button class="win-btn bevel-out" title="Close" onclick="closeWindow('${winId}')">X</button>
+                    </div>
+                </div>
+                <div class="window-body bevel-in" style="padding:0; overflow:hidden; background:#000;">
+                    <iframe class="iframe-container" src="${url}"></iframe>
+                </div>
+            `;
+
+            document.getElementById('dynamic-windows-container').appendChild(win);
+            makeDraggable(win);
+
+            // Animate wireframe to fill the screen
+            requestAnimationFrame(() => {
+                wireframe.style.top = '0px';
+                wireframe.style.left = '0px';
+                wireframe.style.width = window.innerWidth + 'px';
+                wireframe.style.height = (window.innerHeight - 38) + 'px';
+            });
+
+            setTimeout(() => {
+                win.style.display = 'flex';
+                bringToFront(winId);
+                wireframe.style.opacity = '0';
+                setTimeout(() => wireframe.remove(), 200);
+            }, 300);
+
+            // Add Taskbar Tab
+            addTaskbarTab(winId, title, iconSymbol);
+
+            // Hide Start Menu if open
+            document.getElementById('start-menu').classList.add('hidden');
+        }
+
+        function addTaskbarTab(winId, title, iconSymbol) {
+            const tabsContainer = document.getElementById('taskbar-tabs');
+            let tab = document.getElementById('tab-' + winId);
+            if (!tab) {
+                tab = document.createElement('div');
+                tab.id = 'tab-' + winId;
+                tab.className = 'task-tab bevel-out active';
+                tab.innerHTML = `<span>${iconSymbol}</span> ${title}`;
+                tab.onclick = () => toggleTaskWindow(winId);
+                tabsContainer.appendChild(tab);
+            }
+        }
+
+        function removeTaskbarTab(winId) {
+            const tab = document.getElementById('tab-' + winId);
+            if (tab) tab.remove();
+        }
+
+        function toggleTaskWindow(winId) {
+            const win = document.getElementById(winId);
+            if (!win) return;
+            if (win.style.display === 'none') {
+                win.style.display = 'flex';
+                bringToFront(winId);
+            } else if (win.style.zIndex == highestZ) {
+                win.style.display = 'none';
+            } else {
+                bringToFront(winId);
+            }
+            updateTaskbarActiveState();
+        }
+
+        function updateTaskbarActiveState() {
+            document.querySelectorAll('.task-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.window').forEach(win => {
+                if (win.style.display !== 'none' && win.style.zIndex == highestZ) {
+                    const tab = document.getElementById('tab-' + win.id);
+                    if (tab) tab.classList.add('active');
+                }
+            });
+        }
+
         function openWindow(winId) {
             const win = document.getElementById(winId);
             if (win) {
@@ -1227,12 +1423,17 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             const win = document.getElementById(winId);
             if (win) {
                 win.style.display = 'none';
+                if (win.parentElement.id === 'dynamic-windows-container') {
+                    win.remove();
+                    removeTaskbarTab(winId);
+                }
                 playSound('click');
             }
         }
 
         function toggleWindow(winId) {
             const win = document.getElementById(winId);
+            if (!win) return;
             if (win.style.display === 'none' || getComputedStyle(win).display === 'none') {
                 openWindow(winId);
             } else {
@@ -1246,48 +1447,34 @@ Type 'HELP' or 'DIR' to list available system commands and files.
 
         function toggleMaximize(winId) {
             const win = document.getElementById(winId);
-            if (win.classList.contains('maximized')) {
-                win.classList.remove('maximized');
-                win.style.top = '20px';
-                win.style.left = '140px';
-                win.style.right = '20px';
-                win.style.bottom = '60px';
-            } else {
-                win.classList.add('maximized');
-                win.style.top = '0px';
-                win.style.left = '0px';
-                win.style.right = '0px';
-                win.style.bottom = '40px';
-            }
+            if (!win) return;
+            win.classList.toggle('maximized');
             playSound('click');
         }
 
-        let highestZ = 100;
         function bringToFront(winId) {
             const win = document.getElementById(winId);
             if (win) {
                 highestZ++;
                 win.style.zIndex = highestZ;
+                updateTaskbarActiveState();
             }
         }
 
-        // In-Page Player Window Modal
-        function openInWindow(url, title) {
-            playSound('launch');
-            document.getElementById('player-title').innerHTML = `<span>🎮</span> Executing: ${title} (${url})`;
-            document.getElementById('game-iframe').src = url;
-            document.getElementById('player-modal').classList.remove('hidden');
-        }
+        // Theme Cycling
+        const themes = ['theme-win95', 'theme-dos-green', 'theme-dos-amber', 'theme-c64'];
+        let currentThemeIdx = 0;
 
-        function closePlayerModal() {
+        function cycleTheme() {
+            themes.forEach(t => document.body.classList.remove(t));
+            currentThemeIdx = (currentThemeIdx + 1) % themes.length;
+            document.body.classList.add(themes[currentThemeIdx]);
             playSound('click');
-            document.getElementById('game-iframe').src = 'about:blank';
-            document.getElementById('player-modal').classList.add('hidden');
         }
 
-        function openGame(url, title) {
-            playSound('launch');
-            window.location.href = url;
+        function toggleScanlines() {
+            document.body.classList.toggle('scanlines-off');
+            playSound('click');
         }
 
         // Start Menu Toggle
@@ -1296,7 +1483,6 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             document.getElementById('start-menu').classList.toggle('hidden');
         }
 
-        // Close start menu when clicking outside
         document.addEventListener('click', function(e) {
             const startBtn = document.getElementById('start-btn');
             const startMenu = document.getElementById('start-menu');
@@ -1305,7 +1491,7 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             }
         });
 
-        // Toggle Catalog View Mode (Grid vs List)
+        // Catalog View Mode
         function toggleCatalogView() {
             const container = document.getElementById('catalog-container');
             if (container.classList.contains('catalog-grid')) {
@@ -1319,12 +1505,12 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             playSound('click');
         }
 
-        // System Help / About Dialog
+        // Help / About
         function openAboutDialog() {
-            alert("JGLOVR-OS Version 3.11\n\nA retro portfolio showcasing HTML5 games, 3D simulations, and web tools.\n\nAll programs run client-side in modern web browsers.\n(C) 1995-2026 JGLOVR. All Rights Reserved.");
+            alert("JGLOVR-OS Version 3.11\n\nA retro portfolio showcasing HTML5 games and 3D simulations.\n\nAll programs execute client-side inside modern web browsers.\n(C) 1995-2026 JGLOVR. All Rights Reserved.");
         }
 
-        // System Shutdown Simulation
+        // Shutdown Simulation
         function triggerShutdown() {
             playSound('open');
             document.getElementById('shutdown-screen').classList.remove('hidden');
@@ -1332,10 +1518,14 @@ Type 'HELP' or 'DIR' to list available system commands and files.
 
         function restartSystem() {
             document.getElementById('shutdown-screen').classList.add('hidden');
-            playSound('launch');
+            bootSkipped = false;
+            document.getElementById('bios-boot-screen').classList.remove('hidden');
+            document.getElementById('bios-boot-screen').style.opacity = '1';
+            document.getElementById('bios-log-text').innerHTML = `CPU: Intel i486DX2 Clock at 66 MHz\nVGA BIOS: Sound Blaster / S3 Vision 964 VRAM OK\n\nMemory Test: <span id="memory-counter" style="color: #00ff00; font-weight: bold;">0</span> KB OK`;
+            runBiosBootSequence();
         }
 
-        // Live Real-Time System Clock
+        // Real-Time System Clock
         function updateClock() {
             const now = new Date();
             let hours = now.getHours();
@@ -1344,13 +1534,12 @@ Type 'HELP' or 'DIR' to list available system commands and files.
             const ampm = hours >= 12 ? 'PM' : 'AM';
             hours = hours % 12;
             hours = hours ? hours : 12;
-            const timeStr = `${hours}:${minutes}:${seconds} ${ampm}`;
-            document.getElementById('system-clock').textContent = timeStr;
+            document.getElementById('system-clock').textContent = `${hours}:${minutes}:${seconds} ${ampm}`;
         }
         setInterval(updateClock, 1000);
         updateClock();
 
-        // Terminal Logic (MS-DOS Command Line Engine)
+        // Terminal Engine (MS-DOS Command Line)
         function handleTerminalKey(event) {
             if (event.key === 'Enter') {
                 const inputEl = document.getElementById('term-input');
@@ -1369,14 +1558,13 @@ CODYFROG EXE      91,355 08-31-26  9:30p
 GNOMES   EXE     639,298 08-31-26  9:30p
 SYS_VOID EXE      81,617 08-31-26  9:30p
 GRIDMIX  EXE      62,314 08-31-26  9:30p
-LABELMRG EXE       6,699 08-31-26  9:30p
 README   TXT          18 08-31-26  9:30p
-        6 file(s)        881,299 bytes
+        5 file(s)        874,602 bytes
         0 dir(s)     164,402,176 bytes free`;
                 } else if (cmd === 'help') {
                     reply += `Available Commands:
   DIR          - List files in current directory
-  RUN [file]   - Execute program (e.g. RUN CODYFROG)
+  RUN [file]   - Execute program in retro window (e.g. RUN GNOMES)
   CLS          - Clear screen
   VER          - Display system version
   COLOR [name] - Change screen theme (WIN95, GREEN, AMBER, C64)
@@ -1389,20 +1577,17 @@ README   TXT          18 08-31-26  9:30p
                 } else if (cmd.startsWith('run ') || cmd.startsWith('play ')) {
                     const target = cmd.replace('run ', '').replace('play ', '');
                     if (target.includes('cody')) {
-                        openGame('codyfrog.html', 'Cody Frog');
+                        openGameWindow('codyfrog.html', 'Cody Frog', 'window-codyfrog', '🐸', document.getElementById('icon-codyfrog'));
                         reply += `Launching CODYFROG.EXE...`;
                     } else if (target.includes('gnome')) {
-                        openGame('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass');
+                        openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', '🍄', document.getElementById('icon-gnomes'));
                         reply += `Launching GNOMES.EXE...`;
                     } else if (target.includes('void') || target.includes('system')) {
-                        openGame('systemvoid.html', 'S Y S T E M _ V O I D');
+                        openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', '🚀', document.getElementById('icon-sysvoid'));
                         reply += `Launching SYS_VOID.EXE...`;
                     } else if (target.includes('grid') || target.includes('music')) {
-                        openGame('musicgridlivemix.html', 'Music Grid Synth');
+                        openGameWindow('musicgridlivemix.html', 'Music Grid Synth', 'window-gridmix', '🎹', document.getElementById('icon-gridmix'));
                         reply += `Launching GRIDMIX.EXE...`;
-                    } else if (target.includes('label')) {
-                        openGame('keypoplabeltool.html', 'Label SKU Merger');
-                        reply += `Launching LABELMERGE.EXE...`;
                     } else {
                         reply += `Bad command or file name. Type DIR to list files.`;
                     }
@@ -1435,6 +1620,9 @@ README   TXT          18 08-31-26  9:30p
                 playSound('click');
             }
         }
+
+        // Start Boot Sequence on Page Load
+        window.addEventListener('load', runBiosBootSequence);
     </script>
 </body>
 </html>
