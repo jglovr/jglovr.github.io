@@ -371,7 +371,7 @@
 
         /* Default Window Coordinates */
         #catalog-window { top: 20px; left: 140px; width: 780px; height: 560px; }
-        #terminal-window { top: 70px; left: 220px; width: 650px; height: 420px; }
+        #terminal-window { top: 70px; left: 220px; width: 680px; height: 450px; }
 
         .game-program-window {
             top: 20px;
@@ -558,6 +558,7 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
+            cursor: text;
         }
 
         .terminal-output {
@@ -1109,7 +1110,7 @@
                 <div class="window-titlebar">
                     <div class="window-title-text">
                         <span>💻</span>
-                        <span>MS-DOS Command Prompt - [C:\GAMES]</span>
+                        <span id="term-title-text">MS-DOS Command Prompt - [C:\GAMES]</span>
                     </div>
                     <div class="window-controls">
                         <button class="win-btn bevel-out" onclick="minimizeWindow('terminal-window')">_</button>
@@ -1117,14 +1118,15 @@
                         <button class="win-btn bevel-out" onclick="closeWindow('terminal-window')">X</button>
                     </div>
                 </div>
-                <div class="terminal-body">
-                    <div class="terminal-output" id="term-output">JGLOVR-OS MS-DOS Core Version 6.22
+                <div class="terminal-body" onclick="document.getElementById('term-input').focus()">
+                    <div class="terminal-output" id="term-output">JGLOVR-OS MS-DOS Core Version 6.22 [DOSKey Active]
 (C) Copyright 1981-1995 Personal Computing Corp.
 
-Type 'HELP' or 'DIR' to list available system commands and files.
+Type 'HELP' or 'DIR' to list commands and files.
+Type 'TYPE README.TXT' to view system documentation manual.
 </div>
                     <div class="terminal-prompt-line">
-                        <span>C:\GAMES&gt;</span>
+                        <span id="term-prompt-label">C:\GAMES&gt;</span>
                         <input type="text" id="term-input" class="terminal-input" autofocus onkeydown="handleTerminalKey(event)">
                     </div>
                 </div>
@@ -1260,11 +1262,11 @@ Type 'HELP' or 'DIR' to list available system commands and files.
                 const reflectGain = ctx.createGain();
                 reflectGain.gain.setValueAtTime(0.3, ctx.currentTime);
 
-                // 5. Spatial Stereo Panning (Positions PC tower off-center to the right on desk)
+                // 5. Spatial Stereo Panning (Distinctly panned to the right side on desk)
                 let panner = null;
                 if (ctx.createStereoPanner) {
                     panner = ctx.createStereoPanner();
-                    panner.pan.setValueAtTime(0.38, ctx.currentTime);
+                    panner.pan.setValueAtTime(0.75, ctx.currentTime);
                 }
 
                 const fanGain = ctx.createGain();
@@ -1568,7 +1570,6 @@ Type 'HELP' or 'DIR' to list available system commands and files.
                     playSound('beep');
                     playFloppySeek();
                     
-                    // Reduced end delay from 1400ms to 200ms for instantaneous desktop transition
                     setTimeout(() => {
                         finishBootSequence();
                     }, 200);
@@ -1884,18 +1885,102 @@ Type 'HELP' or 'DIR' to list available system commands and files.
         setInterval(updateClock, 1000);
         updateClock();
 
-        // Terminal Engine (MS-DOS Command Line)
-        function handleTerminalKey(event) {
-            if (event.key === 'Enter') {
-                const inputEl = document.getElementById('term-input');
-                const outputEl = document.getElementById('term-output');
-                const cmd = inputEl.value.trim().toLowerCase();
-                inputEl.value = '';
+        // ADVANCED MS-DOS COMMAND LINE ENGINE & REPOSITORY README DISPLAY
+        const readmeContent = `JGLOVR-OS 3.11 Personal Workstation Systems Manual
+=====================================================
 
-                let reply = `\nC:\\GAMES> ${cmd}\n`;
+PROGRAM EXECUTABLES (C:\\GAMES\\*.*):
+----------------------------------
+1. CODYFROG.EXE  - 16-Bit Grid Logic & Instruction Sequencer
+2. GNOMES.EXE    - 3D Meadow World Simulation
+3. SYS_VOID.EXE  - CRT Vector Space Survival Arcade Shooter
+4. GRIDMIX.EXE   - 16-Step Audio Sequencer & Live Synthesizer
+
+SYSTEM UTILITIES & COMMANDS:
+---------------------------
+- DIR           : List files in current directory
+- TYPE [file]   : Output text contents of a file (e.g. TYPE README.TXT)
+- RUN [file]    : Execute program in retro window (e.g. RUN CODYFROG)
+- MEM           : Display MS-DOS conventional and XMS memory allocation
+- SYSINFO       : Show hardware CPU, FPU, VRAM, and BIOS summary
+- TREE          : Output ASCII system directory tree structure
+- COLOR [theme] : Switch screen phosphor theme (WIN95, GREEN, AMBER, C64)
+- AUDIO [on/off]: Control system sound effects internally
+- REBOOT        : Restart the workstation system
+- SHUTDOWN      : Power off system
+
+(C) 1995-2026 JGLOVR Systems. All Rights Reserved.`;
+
+        let currentDir = 'C:\\GAMES';
+        const cmdHistory = [];
+        let historyIndex = -1;
+
+        const knownFiles = ['CODYFROG.EXE', 'GNOMES.EXE', 'SYS_VOID.EXE', 'GRIDMIX.EXE', 'README.TXT', 'CONFIG.SYS', 'AUTOEXEC.BAT'];
+
+        function updateTerminalPrompt() {
+            const promptLabel = document.getElementById('term-prompt-label');
+            const titleText = document.getElementById('term-title-text');
+            if (promptLabel) promptLabel.textContent = `${currentDir}>`;
+            if (titleText) titleText.textContent = `MS-DOS Command Prompt - [${currentDir}]`;
+        }
+
+        function handleTerminalKey(event) {
+            const inputEl = document.getElementById('term-input');
+            const outputEl = document.getElementById('term-output');
+
+            // DOSKey: Up / Down Arrow Key Command History Navigation
+            if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                if (cmdHistory.length > 0) {
+                    if (historyIndex < cmdHistory.length - 1) {
+                        historyIndex++;
+                    }
+                    inputEl.value = cmdHistory[cmdHistory.length - 1 - historyIndex] || '';
+                }
+                return;
+            } else if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    inputEl.value = cmdHistory[cmdHistory.length - 1 - historyIndex] || '';
+                } else if (historyIndex === 0) {
+                    historyIndex = -1;
+                    inputEl.value = '';
+                }
+                return;
+            }
+
+            // Tab Auto-Completion for Filenames
+            if (event.key === 'Tab') {
+                event.preventDefault();
+                const text = inputEl.value.trim();
+                const parts = text.split(' ');
+                const lastToken = parts[parts.length - 1].toUpperCase();
+                if (lastToken) {
+                    const match = knownFiles.find(f => f.startsWith(lastToken));
+                    if (match) {
+                        parts[parts.length - 1] = match;
+                        inputEl.value = parts.join(' ');
+                    }
+                }
+                return;
+            }
+
+            if (event.key === 'Enter') {
+                const rawCmd = inputEl.value.trim();
+                inputEl.value = '';
+                historyIndex = -1;
+
+                if (rawCmd) {
+                    cmdHistory.push(rawCmd);
+                }
+
+                const cmd = rawCmd.toLowerCase();
+                let reply = `\n${currentDir}> ${rawCmd}\n`;
 
                 if (cmd === 'dir' || cmd === 'ls') {
-                    reply += ` Volume in drive C is SYSTEM_C
+                    if (currentDir === 'C:\\GAMES') {
+                        reply += ` Volume in drive C is SYSTEM_C
  Volume Serial Number is 1995-2026
  Directory of C:\\GAMES
 
@@ -1903,22 +1988,156 @@ CODYFROG EXE      91,355 08-31-26  9:30p
 GNOMES   EXE     639,298 08-31-26  9:30p
 SYS_VOID EXE      81,617 08-31-26  9:30p
 GRIDMIX  EXE      62,314 08-31-26  9:30p
-README   TXT          18 08-31-26  9:30p
-        5 file(s)        874,602 bytes
+README   TXT       1,024 08-31-26  9:30p
+        5 file(s)        875,608 bytes
         0 dir(s)     164,402,176 bytes free`;
+                    } else if (currentDir === 'C:\\DOS') {
+                        reply += ` Volume in drive C is SYSTEM_C
+ Directory of C:\\DOS
+
+HIMEM    SYS      14,210 05-31-94  6:22a
+EMM386   EXE     120,920 05-31-94  6:22a
+SMARTDRV EXE      45,310 05-31-94  6:22a
+MSCDEX   EXE      25,410 05-31-94  6:22a
+MOUSE    COM      32,100 05-31-94  6:22a
+DOSKEY   COM       5,810 05-31-94  6:22a
+ANSI     SYS       9,020 05-31-94  6:22a
+        7 file(s)        252,780 bytes
+        0 dir(s)     164,402,176 bytes free`;
+                    } else {
+                        reply += ` Volume in drive C is SYSTEM_C
+ Directory of C:\\
+
+DOS          <DIR>       08-31-26  9:30p
+DRIVERS      <DIR>       08-31-26  9:30p
+GAMES        <DIR>       08-31-26  9:30p
+CONFIG   SYS         512 08-31-26  9:30p
+AUTOEXEC BAT         380 08-31-26  9:30p
+        2 file(s)            892 bytes
+        3 dir(s)     164,402,176 bytes free`;
+                    }
+                } else if (cmd.startsWith('type ') || cmd.startsWith('cat ') || cmd.startsWith('more ')) {
+                    const target = cmd.replace('type ', '').replace('cat ', '').replace('more ', '').trim();
+                    if (target.includes('readme')) {
+                        reply += readmeContent;
+                    } else if (target.includes('config')) {
+                        reply += `[CONFIG.SYS]
+DEVICE=C:\\DOS\\HIMEM.SYS /TESTMEM:OFF
+DEVICE=C:\\DOS\\EMM386.EXE NOEMS HIGHSCAN
+DOS=HIGH,UMB
+FILES=60
+BUFFERS=30,0
+LASTDRIVE=Z
+DEVICEHIGH=C:\\DOS\\SB16.SYS /A220 /I5 /D1 /H5 /P330
+DEVICEHIGH=C:\\DOS\\ANSI.SYS /X`;
+                    } else if (target.includes('autoexec')) {
+                        reply += `[AUTOEXEC.BAT]
+@ECHO OFF
+SET PATH=C:\\DOS;C:\\GAMES;C:\\WINDOWS
+SET PROMPT=$P$G
+SET SOUND=C:\\SB16
+C:\\DOS\\SMARTDRV.EXE 2048 512
+C:\\DOS\\MSCDEX.EXE /D:MSCD001 /M:10 /L:E
+C:\\DOS\\MOUSE.COM /S20
+C:\\DOS\\DOSKEY.COM`;
+                    } else {
+                        reply += `File not found - ${target}`;
+                    }
+                } else if (cmd === 'mem') {
+                    reply += `Memory Type         Total       Used       Free
+----------------  --------   --------   --------
+Conventional        640 KB      42 KB     598 KB
+Upper (UMB)          82 KB      14 KB      68 KB
+Reserved            384 KB     384 KB       0 KB
+Extended (XMS)    15,360 KB   2,048 KB  13,312 KB
+----------------  --------   --------   --------
+Total memory      16,384 KB   2,488 KB  13,896 KB
+
+Total under 1 MB    722 KB      56 KB     666 KB
+Largest executable program size : 598 KB (612,352 bytes)
+Largest available upper memory block : 68 KB (69,632 bytes)
+MS-DOS is resident in the high memory area.`;
+                } else if (cmd === 'sysinfo' || cmd === 'systeminfo') {
+                    reply += `JGLOVR-OS System Hardware Diagnostics Summary:
+  Processor          : Intel i486DX2 @ 66 MHz (FPU Active)
+  Base Memory        : 640 KB Base RAM
+  Extended Memory    : 15,360 KB EDO DRAM (70ns)
+  L2 Cache           : 256 KB SRAM Write-Back
+  Graphics Adapter   : S3 Vision 964 VRAM 2048 KB (VESA 2.0)
+  Sound Hardware     : Sound Blaster 16 PnP (IRQ 5, DMA 1)
+  Primary Storage    : Western Digital 2.5 GB Hard Disk
+  Secondary Drive    : 3.5" Floppy Disk Drive (1.44 MB HD)
+  OS Environment     : MS-DOS 6.22 / JGLOVR-OS 3.11 Kernel`;
+                } else if (cmd === 'tree') {
+                    reply += `Folder PATH listing for Volume SYSTEM_C
+C:\\
+├── DOS\\
+│   ├── HIMEM.SYS
+│   ├── EMM386.EXE
+│   └── MOUSE.COM
+├── DRIVERS\\
+└── GAMES\\
+    ├── CODYFROG.EXE
+    ├── GNOMES.EXE
+    ├── SYS_VOID.EXE
+    ├── GRIDMIX.EXE
+    └── README.TXT`;
+                } else if (cmd.startsWith('cd ') || cmd.startsWith('chdir ') || cmd === 'cd' || cmd === 'pwd') {
+                    const arg = cmd.replace('chdir ', '').replace('cd ', '').trim();
+                    if (arg === '\\' || arg === '/') {
+                        currentDir = 'C:\\';
+                    } else if (arg.includes('game')) {
+                        currentDir = 'C:\\GAMES';
+                    } else if (arg.includes('dos')) {
+                        currentDir = 'C:\\DOS';
+                    } else if (arg === '..' || arg === '.') {
+                        currentDir = 'C:\\';
+                    } else if (arg === 'cd' || arg === 'pwd' || !arg) {
+                        reply += currentDir;
+                    } else {
+                        reply += `Invalid directory - ${arg}`;
+                    }
+                    updateTerminalPrompt();
                 } else if (cmd === 'help') {
-                    reply += `Available Commands:
-  DIR          - List files in current directory
-  RUN [file]   - Execute program in retro window (e.g. RUN GNOMES)
-  CLS          - Clear screen
-  VER          - Display system version
-  COLOR [name] - Change screen theme (WIN95, GREEN, AMBER, C64)
-  EXIT         - Close Command Prompt`;
+                    reply += `JGLOVR-OS MS-DOS Command Utility Index:
+  DIR           - List files in current directory
+  TYPE [file]   - View file contents (e.g. TYPE README.TXT)
+  RUN [file]    - Execute program in retro window (e.g. RUN GNOMES)
+  CD [path]     - Change directory (C:\\GAMES, C:\\DOS, C:\\)
+  MEM           - Display memory allocation table
+  SYSINFO       - Display hardware diagnostic summary
+  TREE          - Display ASCII directory tree
+  COLOR [theme] - Change screen theme (WIN95, GREEN, AMBER, C64)
+  AUDIO [on/off]- Enable or mute sound effects
+  REBOOT        - Restart workstation POST boot
+  SHUTDOWN      - Power off workstation
+  DATE / TIME   - Display system clock
+  CLS           - Clear terminal screen
+  EXIT          - Close Command Prompt`;
                 } else if (cmd === 'cls') {
                     outputEl.textContent = '';
                     return;
                 } else if (cmd === 'ver') {
                     reply += `JGLOVR-OS [Version 3.11.95]`;
+                } else if (cmd === 'date' || cmd === 'time') {
+                    reply += `Current System Time: ${new Date().toLocaleString()}`;
+                } else if (cmd.startsWith('echo ')) {
+                    reply += rawCmd.substring(5);
+                } else if (cmd.startsWith('audio ') || cmd.startsWith('sound ')) {
+                    const arg = cmd.replace('audio ', '').replace('sound ', '').trim();
+                    if (arg === 'off' || arg === 'mute') {
+                        if (soundEnabled) toggleSound();
+                        reply += `System audio muted.`;
+                    } else {
+                        if (!soundEnabled) toggleSound();
+                        reply += `System audio enabled.`;
+                    }
+                } else if (cmd === 'reboot' || cmd === 'restart') {
+                    location.reload();
+                    return;
+                } else if (cmd === 'shutdown') {
+                    triggerShutdown();
+                    return;
                 } else if (cmd.startsWith('run ') || cmd.startsWith('play ')) {
                     const target = cmd.replace('run ', '').replace('play ', '');
                     if (target.includes('cody')) {
@@ -1955,7 +2174,7 @@ README   TXT          18 08-31-26  9:30p
                     closeWindow('terminal-window');
                     return;
                 } else if (cmd === '') {
-                    reply = `\nC:\\GAMES>`;
+                    reply = `\n${currentDir}>`;
                 } else {
                     reply += `Bad command or file name. Type HELP for commands.`;
                 }
