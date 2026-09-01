@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JGLOVR OS v3.11 - Personal Workstation</title>
-    <meta name="description" content="JGLOVR OS v3.11 Personal Workstation Computer System.">
+    <meta name="description" content="JGLOVR OS v3.11 Personal Workstation Computer System with Physical Floppy Drive Support.">
     
     <!-- Google Fonts for Retro System Aesthetics -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -88,8 +88,8 @@
         html, body {
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             overflow: hidden;
             background-color: #000000;
             font-family: var(--font-sys);
@@ -663,6 +663,26 @@
         }
         .tray-btn:hover { background: rgba(0,0,0,0.1); }
 
+        .floppy-tray-btn {
+            padding: 2px 8px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 2px solid var(--win-border-light);
+            background-color: var(--win-bg);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .floppy-tray-btn.disk-inserted {
+            background-color: #008000;
+            color: #ffffff;
+            animation: diskBlink 1s infinite alternate;
+        }
+        @keyframes diskBlink {
+            0% { filter: brightness(1); }
+            100% { filter: brightness(1.3); }
+        }
+
         /* Start Menu Popup */
         #start-menu {
             position: absolute;
@@ -818,6 +838,24 @@
         }
         #shutdown-screen.hidden { display: none; }
 
+        /* FLOPPY DISK INSTALLER MODAL OVERLAY */
+        #floppy-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #floppy-modal.hidden { display: none; }
+
+        .floppy-modal-card {
+            width: 480px;
+            padding: 16px;
+            background: var(--win-bg);
+        }
+
         @media (max-width: 768px) {
             #catalog-window { top: 5px; left: 5px; width: 95vw; height: 80vh; }
             #desktop-icons { display: none; }
@@ -826,7 +864,7 @@
         }
     </style>
 </head>
-<body class="theme-win95">
+<body class="theme-win95" id="os-body">
 
     <!-- CRT Scanlines Overlay -->
     <div class="crt-scanlines"></div>
@@ -885,8 +923,8 @@
                 <span>RAM: 16,384 KB OK</span>
             </div>
             <div class="sys-info-group">
-                <span>AUDIO HARDWARE: IBM PS/55 &amp; 3.5" FLOPPY AUDIO</span>
-                <span>DRIVE C: 4 PROGRAMS</span>
+                <span>DRIVE A: 3.5" FLOPPY</span>
+                <span id="sys-header-count">DRIVE C: 5 PROGRAMS</span>
             </div>
         </div>
 
@@ -902,6 +940,10 @@
                 <div class="desktop-shortcut" id="icon-codyfrog" onclick="openGameWindow('codyfrog.html', 'Cody Frog', 'window-codyfrog', '🐸', this)">
                     <div class="shortcut-icon">🐸</div>
                     <div class="shortcut-label">CODYFROG</div>
+                </div>
+                <div class="desktop-shortcut" id="icon-codyclassic" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog Classic', 'window-codyclassic', '🐸', this)">
+                    <div class="shortcut-icon">🐸</div>
+                    <div class="shortcut-label">CODYCLASS</div>
                 </div>
                 <div class="desktop-shortcut" id="icon-gnomes" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', '🍄', this)">
                     <div class="shortcut-icon">🍄</div>
@@ -953,14 +995,49 @@
                 <div class="window-body bevel-in">
                     <div id="catalog-container" class="catalog-grid">
 
-                        <!-- Game 1: Cody Frog -->
+                        <!-- Game 1: Cody Frog (Mac II Edition) -->
                         <div class="game-card bevel-out" id="card-codyfrog">
                             <div class="card-header">
                                 <div>
                                     <h3 class="game-title">Cody Frog</h3>
                                     <span class="game-file-name">CODYFROG.EXE</span>
                                 </div>
-                                <span class="card-badge">PUZZLE</span>
+                                <span class="card-badge">MAC II</span>
+                            </div>
+                            <div class="card-media">
+                                <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#55aaff;">
+                                    <rect x="0" y="0" width="200" height="120" fill="#336699" />
+                                    <circle cx="100" cy="50" r="28" fill="#00aa00" stroke="#000" stroke-width="2" />
+                                    <circle cx="90" cy="40" r="6" fill="#fff" stroke="#000" stroke-width="1.5" />
+                                    <circle cx="90" cy="40" r="3" fill="#000" />
+                                    <circle cx="110" cy="40" r="6" fill="#fff" stroke="#000" stroke-width="1.5" />
+                                    <circle cx="110" cy="40" r="3" fill="#000" />
+                                    <path d="M 85 58 Q 100 68 115 58" stroke="#000" stroke-width="3" fill="none" />
+                                    <rect x="40" y="85" width="120" height="22" rx="2" fill="#e6e6e6" stroke="#000000" stroke-width="2"/>
+                                    <text x="100" y="100" fill="#000000" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">MAC SYSTEM 7 &gt;&gt;</text>
+                                </svg>
+                            </div>
+                            <div class="card-description">
+                                Macintosh System 7 edition of Cody Frog. Build logic instruction sequences with classic Macintosh II GUI styling!
+                            </div>
+                            <div class="card-meta-list">
+                                <span>SIZE: 98.4 KB</span>
+                                <span>TYPE: 16-Bit Logic</span>
+                                <span>STATUS: READY</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('codyfrog.html', 'Cody Frog', 'window-codyfrog', '🐸', this)">▶ RUN PROGRAM</button>
+                            </div>
+                        </div>
+
+                        <!-- Game 2: Cody Frog Classic -->
+                        <div class="game-card bevel-out" id="card-codyclassic">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="game-title">Cody Frog Classic</h3>
+                                    <span class="game-file-name">CODYCLASS.EXE</span>
+                                </div>
+                                <span class="card-badge">CLASSIC</span>
                             </div>
                             <div class="card-media">
                                 <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#1a252f;">
@@ -972,11 +1049,11 @@
                                     <circle cx="110" cy="40" r="3" fill="#000" />
                                     <path d="M 85 58 Q 100 68 115 58" stroke="#145a32" stroke-width="3" fill="none" />
                                     <rect x="50" y="85" width="100" height="20" rx="4" fill="#34495e" stroke="#f39c12" stroke-width="2"/>
-                                    <text x="100" y="99" fill="#f1c40f" font-family="monospace" font-size="12" text-anchor="middle">PROGRAM PATH &gt;&gt;</text>
+                                    <text x="100" y="99" fill="#f1c40f" font-family="monospace" font-size="12" text-anchor="middle">CLASSIC 486 &gt;&gt;</text>
                                 </svg>
                             </div>
                             <div class="card-description">
-                                Guide Cody the Frog through challenging grid obstacles by building logic instruction paths and sequences!
+                                The original 486 workstation version of Cody Frog. Solve grid movement puzzles and bridge mechanics.
                             </div>
                             <div class="card-meta-list">
                                 <span>SIZE: 91.3 KB</span>
@@ -984,11 +1061,11 @@
                                 <span>STATUS: READY</span>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-action primary bevel-out" onclick="openGameWindow('codyfrog.html', 'Cody Frog', 'window-codyfrog', '🐸', this)">▶ RUN PROGRAM</button>
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog Classic', 'window-codyclassic', '🐸', this)">▶ RUN PROGRAM</button>
                             </div>
                         </div>
 
-                        <!-- Game 2: Gnomes in the Tall Grass -->
+                        <!-- Game 3: Gnomes in the Tall Grass -->
                         <div class="game-card bevel-out" id="card-gnomes">
                             <div class="card-header">
                                 <div>
@@ -1020,7 +1097,7 @@
                             </div>
                         </div>
 
-                        <!-- Game 3: SYSTEM_VOID -->
+                        <!-- Game 4: SYSTEM_VOID -->
                         <div class="game-card bevel-out" id="card-sysvoid">
                             <div class="card-header">
                                 <div>
@@ -1051,7 +1128,7 @@
                             </div>
                         </div>
 
-                        <!-- Game 4: Music Grid Live Mixer -->
+                        <!-- Game 5: Music Grid Live Mixer -->
                         <div class="game-card bevel-out" id="card-gridmix">
                             <div class="card-header">
                                 <div>
@@ -1097,8 +1174,8 @@
                 </div>
 
                 <div class="window-statusbar">
-                    <span>4 Object(s) displayed</span>
-                    <span>Total Disk Usage: 874.2 KB</span>
+                    <span id="catalog-status-count">5 Object(s) displayed</span>
+                    <span id="catalog-status-usage">Total Disk Usage: 965.5 KB</span>
                 </div>
             </div>
 
@@ -1123,6 +1200,7 @@
 (C) Copyright 1981-1995 Personal Computing Corp.
 
 Type 'HELP' or 'DIR' to list commands and files.
+Type 'A:' to switch to physical USB Floppy Disk Drive A:.
 Type 'TYPE README.TXT' to view system documentation manual.
 </div>
                     <div class="terminal-prompt-line">
@@ -1150,6 +1228,9 @@ Type 'TYPE README.TXT' to view system documentation manual.
             </div>
 
             <div class="system-tray bevel-in">
+                <button class="floppy-tray-btn bevel-out" id="floppy-drive-btn" title="Mount Physical USB Floppy Drive or Drop Floppy Disk" onclick="promptFloppyDriveAction()">
+                    <span id="floppy-status-text">💾 Drive A: [Empty]</span>
+                </button>
                 <button class="tray-btn" title="Toggle Display Mode" onclick="toggleBrowserFullscreen()">📺 Display</button>
                 <button class="tray-btn" id="sfx-tray-btn" title="Toggle System Sound Effects" onclick="toggleSound()">🔊 SFX</button>
                 <button class="tray-btn" title="Switch Display Color Theme" onclick="cycleTheme()">🎨 Theme</button>
@@ -1165,7 +1246,10 @@ Type 'TYPE README.TXT' to view system documentation manual.
             </div>
             <div class="start-menu-list">
                 <div class="start-item" onclick="openGameWindow('codyfrog.html', 'Cody Frog', 'window-codyfrog', '🐸', this)">
-                    <span>🐸</span> Cody Frog
+                    <span>🐸</span> Cody Frog (Mac II)
+                </div>
+                <div class="start-item" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog Classic', 'window-codyclassic', '🐸', this)">
+                    <span>🐸</span> Cody Frog Classic
                 </div>
                 <div class="start-item" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', '🍄', this)">
                     <span>🍄</span> Gnomes in Tall Grass
@@ -1177,6 +1261,9 @@ Type 'TYPE README.TXT' to view system documentation manual.
                     <span>🎹</span> Music Grid Synth
                 </div>
                 <div class="start-divider"></div>
+                <div class="start-item" onclick="promptFloppyDriveAction()">
+                    <span>💾</span> Physical Floppy Drive A:
+                </div>
                 <div class="start-item" onclick="toggleWindow('terminal-window')">
                     <span>💻</span> Command Prompt
                 </div>
@@ -1192,6 +1279,31 @@ Type 'TYPE README.TXT' to view system documentation manual.
 
     </div>
 
+    <!-- FLOPPY DISK INSTALLER MODAL OVERLAY -->
+    <div id="floppy-modal" class="hidden">
+        <div class="floppy-modal-card bevel-out">
+            <div class="window-titlebar" style="margin:-16px -16px 12px -16px;">
+                <div class="window-title-text">
+                    <span>💾</span>
+                    <span id="floppy-modal-title">Floppy Disk Inserted - Drive A:\</span>
+                </div>
+                <div class="window-controls">
+                    <button class="win-btn bevel-out" onclick="closeFloppyModal()">X</button>
+                </div>
+            </div>
+
+            <div style="font-size: 18px; line-height: 1.4; margin-bottom: 16px;" id="floppy-modal-body">
+                Physical Floppy Disk detected in 3.5" High-Density Drive A:\
+            </div>
+
+            <div class="card-actions">
+                <button class="btn-action primary bevel-out" id="btn-run-floppy" onclick="runFloppyDirectly()">▶ RUN FROM DISK (A:\)</button>
+                <button class="btn-action primary bevel-out" id="btn-install-floppy" onclick="installFloppyToHardDrive()">📥 INSTALL TO C:\GAMES</button>
+                <button class="btn-action bevel-out" onclick="ejectFloppyDriveAction()">⏏ EJECT DISK</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Nostalgic Shutdown Screen Overlay -->
     <div id="shutdown-screen" class="hidden">
         <h1 style="font-size: 36px; margin-bottom: 20px;">It is now safe to turn off<br>your computer.</h1>
@@ -1199,6 +1311,9 @@ Type 'TYPE README.TXT' to view system documentation manual.
         <button class="btn-action primary bevel-out" style="width: 220px; margin-top: 30px;" onclick="restartSystem()">RESTART SYSTEM</button>
     </div>
 
+    <!-- Subsystem Scripts -->
+    <script src="floppy_installer.js"></script>
+    
     <!-- System JavaScript -->
     <script>
         let soundEnabled = true;
@@ -1230,7 +1345,6 @@ Type 'TYPE README.TXT' to view system documentation manual.
                 const ctx = getAudioContext();
                 if (!ctx) return;
 
-                // 1. Noise Generator
                 const bufferSize = ctx.sampleRate * 2;
                 const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
                 const output = noiseBuffer.getChannelData(0);
@@ -1246,23 +1360,19 @@ Type 'TYPE README.TXT' to view system documentation manual.
                 fanNode.buffer = noiseBuffer;
                 fanNode.loop = true;
 
-                // 2. Highpass Filter (Eliminates sub-bass head-wrapping to prevent in-head perception)
                 const hpFilter = ctx.createBiquadFilter();
                 hpFilter.type = 'highpass';
                 hpFilter.frequency.setValueAtTime(380, ctx.currentTime);
 
-                // 3. Lowpass Filter (Enclosure fan whir body around 720Hz)
                 const lpFilter = ctx.createBiquadFilter();
                 lpFilter.type = 'lowpass';
                 lpFilter.frequency.setValueAtTime(720, ctx.currentTime);
 
-                // 4. Desk Surface Early Reflection (Short 14ms delay creates acoustic room boundary)
                 const deskReflection = ctx.createDelay();
                 deskReflection.delayTime.setValueAtTime(0.014, ctx.currentTime);
                 const reflectGain = ctx.createGain();
                 reflectGain.gain.setValueAtTime(0.3, ctx.currentTime);
 
-                // 5. Spatial Stereo Panning (Distinctly panned to the right side on desk)
                 let panner = null;
                 if (ctx.createStereoPanner) {
                     panner = ctx.createStereoPanner();
@@ -1272,7 +1382,6 @@ Type 'TYPE README.TXT' to view system documentation manual.
                 const fanGain = ctx.createGain();
                 fanGain.gain.setValueAtTime(0.015, ctx.currentTime);
 
-                // Signal Routing: Noise -> HP -> LP -> (Desk Reflection + Panner) -> Output
                 fanNode.connect(hpFilter);
                 hpFilter.connect(lpFilter);
 
@@ -1303,7 +1412,6 @@ Type 'TYPE README.TXT' to view system documentation manual.
             }
         }
 
-        // Play Hard Drive Spin-Up & POST Audio Recording (Starts at 1.1s to skip finger switch click)
         function playHDDSpinUp() {
             if (!soundEnabled) return;
             try {
@@ -1313,7 +1421,6 @@ Type 'TYPE README.TXT' to view system documentation manual.
             } catch(e) {}
         }
 
-        // Smoothly Stop Boot Audio when boot completes
         function stopBootAudio() {
             if (!bootAudio) return;
             let vol = bootAudio.volume;
@@ -1330,7 +1437,6 @@ Type 'TYPE README.TXT' to view system documentation manual.
             }, 30);
         }
 
-        // Play Floppy Drive Stepper Motor Seek Audio Recording (Quiet 0.11 volume for software launch)
         function playFloppySeek() {
             if (!soundEnabled) return;
             try {
@@ -1345,7 +1451,6 @@ Type 'TYPE README.TXT' to view system documentation manual.
             } catch(e) {}
         }
 
-        // UI Beeps & Clicks
         function playSound(type) {
             if (!soundEnabled) return;
             try {
@@ -1387,7 +1492,6 @@ Type 'TYPE README.TXT' to view system documentation manual.
             } catch(e) {}
         }
 
-        // SILENT INTERNAL SFX TOGGLE (NO BROWSER POPUPS)
         function toggleSound() {
             soundEnabled = !soundEnabled;
             const trayBtn = document.getElementById('sfx-tray-btn');
@@ -1404,7 +1508,6 @@ Type 'TYPE README.TXT' to view system documentation manual.
             }
         }
 
-        // BROWSER FULLSCREEN TRIGGER & PROMPT
         function toggleBrowserFullscreen() {
             if (!document.fullscreenElement) {
                 if (document.documentElement.requestFullscreen) {
@@ -1416,6 +1519,208 @@ Type 'TYPE README.TXT' to view system documentation manual.
                 }
             }
         }
+
+        // PHYSICAL FLOPPY DISK MOUNT & DRAG-AND-DROP ENGINE
+        function promptFloppyDriveAction() {
+            playSound('click');
+            if (mountedFloppy) {
+                openFloppyModal();
+            } else {
+                mountPhysicalFloppyDrive().then(disk => {
+                    if (disk) {
+                        openFloppyModal();
+                    }
+                });
+            }
+        }
+
+        function openFloppyModal() {
+            if (!mountedFloppy) return;
+            const modal = document.getElementById('floppy-modal');
+            const title = document.getElementById('floppy-modal-title');
+            const body = document.getElementById('floppy-modal-body');
+            
+            title.textContent = `Floppy Disk Inserted - A:\\${mountedFloppy.fileName}`;
+            body.innerHTML = `Physical 3.5" High-Density Floppy Disk mounted successfully!<br><br>
+                <b>File:</b> <code>A:\\${mountedFloppy.fileName}</code><br>
+                <b>Size:</b> ${(mountedFloppy.sizeBytes / 1024).toFixed(1)} KB<br><br>
+                Would you like to run the program directly from Drive A:\\ or copy &amp; install it to permanent local hard drive storage (C:\\GAMES)?`;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeFloppyModal() {
+            document.getElementById('floppy-modal').classList.add('hidden');
+        }
+
+        function ejectFloppyDriveAction() {
+            ejectFloppyDrive();
+            closeFloppyModal();
+            playSound('click');
+        }
+
+        function runFloppyDirectly() {
+            if (!mountedFloppy) return;
+            closeFloppyModal();
+            openGameWindowFromBlob(mountedFloppy.content, mountedFloppy.title, 'window-floppy', '💾');
+        }
+
+        async function installFloppyToHardDrive() {
+            if (!mountedFloppy) return;
+            closeFloppyModal();
+            playFloppySeek();
+            
+            await saveGameToHardDrive(
+                mountedFloppy.fileName,
+                mountedFloppy.title,
+                mountedFloppy.content,
+                '💾',
+                'Installed Floppy Program'
+            );
+
+            await refreshInstalledGamesCatalog();
+            alert(`SUCCESS: Program ${mountedFloppy.fileName} has been copied and permanently installed to C:\\GAMES!`);
+        }
+
+        // Drag and Drop Floppy Disk Files onto Body
+        const osBody = document.getElementById('os-body');
+        osBody.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        osBody.addEventListener('drop', (e) => {
+            e.preventDefault();
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                const file = e.dataTransfer.files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const diskObj = {
+                        fileName: file.name.toUpperCase(),
+                        title: file.name.replace(/\.[^/.]+$/, "").toUpperCase(),
+                        content: event.target.result,
+                        sizeBytes: file.size,
+                        lastModified: file.lastModified
+                    };
+                    setMountedFloppy(diskObj);
+                    openFloppyModal();
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        // Dynamic Executable Window Loader (Blob / Source Doc)
+        function openGameWindowFromBlob(htmlContent, title, winId, iconSymbol) {
+            playFloppySeek();
+            toggleBrowserFullscreen();
+
+            let win = document.getElementById(winId);
+            if (win) {
+                win.style.display = 'flex';
+                bringToFront(winId);
+                return;
+            }
+
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const blobUrl = URL.createObjectURL(blob);
+
+            win = document.createElement('div');
+            win.id = winId;
+            win.className = 'window bevel-out game-program-window maximized';
+
+            win.innerHTML = `
+                <div class="window-titlebar">
+                    <div class="window-title-text">
+                        <span>${iconSymbol}</span>
+                        <span>Executing Installed Program - [${title}]</span>
+                    </div>
+                    <div class="window-controls">
+                        <button class="win-btn bevel-out" title="Minimize" onclick="minimizeWindow('${winId}')">_</button>
+                        <button class="win-btn bevel-out" title="Restore / Maximize" onclick="toggleMaximize('${winId}')">🗖</button>
+                        <button class="win-btn bevel-out" title="Close" onclick="closeWindow('${winId}')">X</button>
+                    </div>
+                </div>
+                <div class="window-body bevel-in" style="padding:0; overflow:hidden; background:#000;">
+                    <iframe class="iframe-container" src="${blobUrl}"></iframe>
+                </div>
+            `;
+
+            document.getElementById('dynamic-windows-container').appendChild(win);
+            makeDraggable(win);
+            win.style.display = 'flex';
+            bringToFront(winId);
+            addTaskbarTab(winId, title, iconSymbol);
+        }
+
+        async function refreshInstalledGamesCatalog() {
+            const customGames = await getInstalledGamesFromHardDrive();
+            const catalogContainer = document.getElementById('catalog-container');
+            
+            // Remove previous dynamic cards
+            document.querySelectorAll('.custom-installed-card').forEach(el => el.remove());
+            document.querySelectorAll('.custom-desktop-icon').forEach(el => el.remove());
+            document.querySelectorAll('.custom-start-item').forEach(el => el.remove());
+
+            customGames.forEach(game => {
+                // 1. Add Catalog Card
+                const card = document.createElement('div');
+                card.className = 'game-card bevel-out custom-installed-card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div>
+                            <h3 class="game-title">${game.title}</h3>
+                            <span class="game-file-name">${game.fileName}</span>
+                        </div>
+                        <span class="card-badge">INSTALLED</span>
+                    </div>
+                    <div class="card-media">
+                        <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#222;">
+                            <text x="100" y="65" fill="#00ff00" font-family="monospace" font-size="16" text-anchor="middle">DISK PROGRAM</text>
+                        </svg>
+                    </div>
+                    <div class="card-description">
+                        Installed from physical floppy disk into local hard drive storage C:\\GAMES.
+                    </div>
+                    <div class="card-meta-list">
+                        <span>SIZE: ${(game.sizeBytes / 1024).toFixed(1)} KB</span>
+                        <span>TYPE: Floppy App</span>
+                        <span>STATUS: INSTALLED</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-action primary bevel-out" onclick="launchCustomGame('${game.fileName}')">▶ RUN PROGRAM</button>
+                    </div>
+                `;
+                catalogContainer.appendChild(card);
+
+                // 2. Add Desktop Shortcut
+                const desktopContainer = document.getElementById('desktop-icons');
+                const termIcon = document.getElementById('icon-terminal');
+                const shortcut = document.createElement('div');
+                shortcut.className = 'desktop-shortcut custom-desktop-icon';
+                shortcut.onclick = () => launchCustomGame(game.fileName);
+                shortcut.innerHTML = `
+                    <div class="shortcut-icon">💾</div>
+                    <div class="shortcut-label">${game.fileName.replace('.EXE', '')}</div>
+                `;
+                desktopContainer.insertBefore(shortcut, termIcon);
+            });
+
+            const totalCount = 5 + customGames.length;
+            const sysHeaderCount = document.getElementById('sys-header-count');
+            if (sysHeaderCount) sysHeaderCount.textContent = `DRIVE C: ${totalCount} PROGRAMS`;
+
+            const catStatusCount = document.getElementById('catalog-status-count');
+            if (catStatusCount) catStatusCount.textContent = `${totalCount} Object(s) displayed`;
+        }
+
+        async function launchCustomGame(fileName) {
+            const game = await getInstalledGame(fileName);
+            if (game) {
+                openGameWindowFromBlob(game.codeContent, game.title, `win-custom-${game.fileName}`, '💾');
+            }
+        }
+
+        // Initialize Installed Games from Storage on Startup
+        refreshInstalledGamesCatalog();
 
         // Massive Array of 130+ Authentic Ultra-Verbose Rapid POST Diagnostics Log Lines
         const verbosePostLines = [
@@ -1591,7 +1896,6 @@ Type 'TYPE README.TXT' to view system documentation manual.
             biosScreen.style.transition = 'opacity 0.4s ease-out';
             biosScreen.style.opacity = '0';
             
-            // Trigger Nostalgic CRT Monitor Warming Up animation on viewport
             const viewport = document.getElementById('os-viewport');
             viewport.classList.add('crt-warming-up');
 
@@ -1891,14 +2195,17 @@ Type 'TYPE README.TXT' to view system documentation manual.
 
 PROGRAM EXECUTABLES (C:\\GAMES\\*.*):
 ----------------------------------
-1. CODYFROG.EXE  - 16-Bit Grid Logic & Instruction Sequencer
-2. GNOMES.EXE    - 3D Meadow World Simulation
-3. SYS_VOID.EXE  - CRT Vector Space Survival Arcade Shooter
-4. GRIDMIX.EXE   - 16-Step Audio Sequencer & Live Synthesizer
+1. CODYFROG.EXE  - Cody Frog (Macintosh II System 7 Edition)
+2. CODYCLASS.EXE - Cody Frog Classic (16-Bit Logic Edition)
+3. GNOMES.EXE    - 3D Meadow World Simulation
+4. SYS_VOID.EXE  - CRT Vector Space Survival Arcade Shooter
+5. GRIDMIX.EXE   - 16-Step Audio Sequencer & Live Synthesizer
 
 SYSTEM UTILITIES & COMMANDS:
 ---------------------------
 - DIR           : List files in current directory
+- A: / C:       : Switch between Drive A:\\ (Floppy) and Drive C:\\ (Hard Drive)
+- COPY A:\\* C:  : Install program from floppy disk to hard drive
 - TYPE [file]   : Output text contents of a file (e.g. TYPE README.TXT)
 - RUN [file]    : Execute program in retro window (e.g. RUN CODYFROG)
 - MEM           : Display MS-DOS conventional and XMS memory allocation
@@ -1928,7 +2235,7 @@ SYSTEM UTILITIES & COMMANDS:
         const cmdHistory = [];
         let historyIndex = -1;
 
-        const knownFiles = ['CODYFROG.EXE', 'GNOMES.EXE', 'SYS_VOID.EXE', 'GRIDMIX.EXE', 'README.TXT', 'CONFIG.SYS', 'AUTOEXEC.BAT'];
+        const knownFiles = ['CODYFROG.EXE', 'CODYCLASS.EXE', 'GNOMES.EXE', 'SYS_VOID.EXE', 'GRIDMIX.EXE', 'README.TXT', 'CONFIG.SYS', 'AUTOEXEC.BAT'];
 
         function updateTerminalPrompt() {
             const promptLabel = document.getElementById('term-prompt-label');
@@ -1991,18 +2298,51 @@ SYSTEM UTILITIES & COMMANDS:
                 const cmd = rawCmd.toLowerCase();
                 let reply = `\n${currentDir}> ${rawCmd}\n`;
 
-                if (cmd === 'dir' || cmd === 'ls') {
-                    if (currentDir === 'C:\\GAMES') {
+                if (cmd === 'a:' || cmd === 'cd a:' || cmd === 'a:\\') {
+                    currentDir = 'A:\\';
+                    updateTerminalPrompt();
+                    reply += `Switched to Drive A:\\ (3.5" High Density Floppy Disk)`;
+                } else if (cmd === 'c:' || cmd === 'cd c:' || cmd === 'c:\\') {
+                    currentDir = 'C:\\GAMES';
+                    updateTerminalPrompt();
+                    reply += `Switched to Drive C:\\GAMES (Hard Drive Storage)`;
+                } else if (cmd === 'eject') {
+                    ejectFloppyDriveAction();
+                    reply += `Drive A:\\ Floppy Disk ejected.`;
+                } else if (cmd.startsWith('copy ')) {
+                    if (mountedFloppy) {
+                        installFloppyToHardDrive();
+                        reply += `Copying A:\\${mountedFloppy.fileName} to C:\\GAMES ... Installed!`;
+                    } else {
+                        reply += `Drive A:\\ is empty. Insert a floppy disk first.`;
+                    }
+                } else if (cmd === 'dir' || cmd === 'ls') {
+                    if (currentDir === 'A:\\') {
+                        if (mountedFloppy) {
+                            reply += ` Volume in drive A is FLOPPY_DISK
+ Directory of A:\\
+
+${mountedFloppy.fileName.padEnd(12, ' ')}      ${mountedFloppy.sizeBytes.toLocaleString().padStart(8, ' ')} 08-31-26  9:44p
+        1 file(s)        ${mountedFloppy.sizeBytes.toLocaleString().padStart(8, ' ')} bytes
+        0 dir(s)           ${(1457664 - mountedFloppy.sizeBytes).toLocaleString().padStart(9, ' ')} bytes free`;
+                        } else {
+                            reply += ` Volume in drive A is FLOPPY_DISK
+ Directory of A:\\
+
+Drive A:\\ is empty. No floppy disk inserted.`;
+                        }
+                    } else if (currentDir === 'C:\\GAMES') {
                         reply += ` Volume in drive C is SYSTEM_C
  Volume Serial Number is 1995-2026
  Directory of C:\\GAMES
 
-CODYFROG EXE      91,355 08-31-26  9:30p
+CODYFROG EXE      98,412 08-31-26  9:44p
+CODYCLASS EXE     91,355 08-31-26  9:44p
 GNOMES   EXE     639,298 08-31-26  9:30p
 SYS_VOID EXE      81,617 08-31-26  9:30p
 GRIDMIX  EXE      62,314 08-31-26  9:30p
-README   TXT       1,024 08-31-26  9:30p
-        5 file(s)        875,608 bytes
+README   TXT       1,024 08-31-26  9:44p
+        6 file(s)        964,020 bytes
         0 dir(s)     164,402,176 bytes free`;
                     } else if (currentDir === 'C:\\DOS') {
                         reply += ` Volume in drive C is SYSTEM_C
@@ -2079,7 +2419,7 @@ MS-DOS is resident in the high memory area.`;
   Graphics Adapter   : S3 Vision 964 VRAM 2048 KB (VESA 2.0)
   Sound Hardware     : Sound Blaster 16 PnP (IRQ 5, DMA 1)
   Primary Storage    : Western Digital 2.5 GB Hard Disk
-  Secondary Drive    : 3.5" Floppy Disk Drive (1.44 MB HD)
+  Floppy Drive       : 3.5" Floppy Disk Drive (Drive A:\\ ${mountedFloppy ? 'Mounted' : 'Empty'})
   OS Environment     : MS-DOS 6.22 / JGLOVR-OS 3.11 Kernel`;
                 } else if (cmd === 'tree') {
                     reply += `Folder PATH listing for Volume SYSTEM_C
@@ -2091,6 +2431,7 @@ C:\\
 ├── DRIVERS\\
 └── GAMES\\
     ├── CODYFROG.EXE
+    ├── CODYCLASS.EXE
     ├── GNOMES.EXE
     ├── SYS_VOID.EXE
     ├── GRIDMIX.EXE
@@ -2113,9 +2454,12 @@ C:\\
                     updateTerminalPrompt();
                 } else if (cmd === 'help') {
                     reply += `JGLOVR-OS MS-DOS Command Utility Index:
+  A: / C:       - Switch drive letter (A:\\ Floppy / C:\\ Hard Drive)
+  COPY A:\\* C:  - Copy & install floppy disk program to local hard drive
+  EJECT         - Eject floppy disk from Drive A:\\
   DIR           - List files in current directory
   TYPE [file]   - View file contents (e.g. TYPE README.TXT)
-  RUN [file]    - Execute program in retro window (e.g. RUN GNOMES)
+  RUN [file]    - Execute program in retro window (e.g. RUN CODYFROG)
   CD [path]     - Change directory (C:\\GAMES, C:\\DOS, C:\\)
   MEM           - Display memory allocation table
   SYSINFO       - Display hardware diagnostic summary
@@ -2153,7 +2497,10 @@ C:\\
                     return;
                 } else if (cmd.startsWith('run ') || cmd.startsWith('play ')) {
                     const target = cmd.replace('run ', '').replace('play ', '');
-                    if (target.includes('cody')) {
+                    if (target.includes('codyclass') || target.includes('classic')) {
+                        openGameWindow('codyfrogclassic.html', 'Cody Frog Classic', 'window-codyclassic', '🐸', document.getElementById('icon-codyclassic'));
+                        reply += `Launching CODYCLASS.EXE...`;
+                    } else if (target.includes('cody')) {
                         openGameWindow('codyfrog.html', 'Cody Frog', 'window-codyfrog', '🐸', document.getElementById('icon-codyfrog'));
                         reply += `Launching CODYFROG.EXE...`;
                     } else if (target.includes('gnome')) {

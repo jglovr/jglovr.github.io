@@ -4,10 +4,11 @@ Welcome to JGLOVR-OS v3.11 Personal Workstation System.
 
 PROGRAM EXECUTABLES (C:\GAMES\*.*):
 ----------------------------------
-1. CODYFROG.EXE  - 16-Bit Grid Logic & Instruction Sequencer
-2. GNOMES.EXE    - 3D Meadow World Simulation
-3. SYS_VOID.EXE  - CRT Vector Space Survival Arcade Shooter
-4. GRIDMIX.EXE   - 16-Step Audio Sequencer & Live Synthesizer
+1. CODYFROG.EXE  - Cody Frog (Macintosh II System 7 Edition)
+2. CODYCLASS.EXE - Cody Frog Classic (16-Bit Logic Edition)
+3. GNOMES.EXE    - 3D Meadow World Simulation
+4. SYS_VOID.EXE  - CRT Vector Space Survival Arcade Shooter
+5. GRIDMIX.EXE   - 16-Step Audio Sequencer & Live Synthesizer
 
 SYSTEM UTILITIES & COMMANDS:
 ---------------------------

@@ -1,0 +1,22 @@
+{
+  "name": "jglovr-os-desktop",
+  "version": "3.11.0",
+  "description": "JGLOVR-OS 3.11 Personal Workstation Standalone Desktop Application with Native Physical Floppy Drive Support",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "keywords": [
+    "retro",
+    "os",
+    "win95",
+    "floppy-disk",
+    "electron"
+  ],
+  "author": "JGLOVR Systems",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.2.0"
+  }
+}

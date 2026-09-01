@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JGLOVR OS 3.11 - Desktop Workstation</title>
+
+    <!-- Google Fonts for Retro System Aesthetics -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-teal: #008080;
+            --win-bg: #c0c0c0;
+            --win-border-light: #ffffff;
+            --win-border-dark: #808080;
+            --win-border-shadow: #000000;
+            --header-bg: #000080;
+            --header-bg-gradient: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+            --header-text: #ffffff;
+            --text-main: #000000;
+            --font-sys: 'VT323', monospace;
+            --font-mono: 'Share Tech Mono', monospace;
+            --font-pixel: 'Press Start 2P', monospace;
+        }
+
+        * { box-sizing: border-box; user-select: none; }
+
+        html, body {
+            margin: 0; padding: 0;
+            width: 100vw; height: 100vh;
+            overflow: hidden;
+            background-color: #000000;
+            font-family: var(--font-sys);
+            font-size: 20px;
+            color: var(--text-main);
+        }
+
+        .bevel-out {
+            background-color: var(--win-bg);
+            border-top: 2px solid var(--win-border-light);
+            border-left: 2px solid var(--win-border-light);
+            border-right: 2px solid var(--win-border-shadow);
+            border-bottom: 2px solid var(--win-border-shadow);
+            box-shadow: inset -1px -1px var(--win-border-dark), inset 1px 1px var(--win-border-light);
+        }
+
+        .bevel-in {
+            background-color: #ffffff;
+            border-top: 2px solid var(--win-border-shadow);
+            border-left: 2px solid var(--win-border-shadow);
+            border-right: 2px solid var(--win-border-light);
+            border-bottom: 2px solid var(--win-border-light);
+            box-shadow: inset 1px 1px var(--win-border-dark);
+            color: #000;
+        }
+
+        #os-viewport {
+            display: flex;
+            flex-direction: column;
+            width: 100vw; height: 100vh;
+            background-color: var(--bg-teal);
+        }
+
+        #sys-header {
+            height: 32px;
+            padding: 2px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 14px;
+        }
+
+        #desktop {
+            flex: 1;
+            position: relative;
+            padding: 16px;
+            display: flex;
+            gap: 20px;
+            overflow: hidden;
+        }
+
+        #desktop-icons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 110px;
+        }
+
+        .desktop-shortcut {
+            width: 96px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            padding: 6px 4px;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px #000000;
+        }
+        .desktop-shortcut:hover {
+            border: 1px dashed #ffffff;
+            background-color: rgba(0, 0, 128, 0.4);
+        }
+
+        .shortcut-icon {
+            width: 48px; height: 48px;
+            margin-bottom: 4px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--win-bg);
+            border: 2px solid var(--win-border-light);
+            font-size: 24px;
+        }
+
+        .window {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+            min-width: 340px; min-height: 240px;
+            box-shadow: 4px 4px 14px rgba(0,0,0,0.6);
+        }
+
+        .window.maximized {
+            top: 0 !important; left: 0 !important;
+            width: 100vw !important; height: calc(100vh - 38px) !important;
+            box-shadow: none !important;
+        }
+
+        .window-titlebar {
+            height: 30px;
+            background: var(--header-bg-gradient);
+            color: var(--header-text);
+            padding: 2px 6px;
+            display: flex; align-items: center; justify-content: space-between;
+            font-weight: bold; font-size: 18px;
+        }
+
+        .window-body {
+            flex: 1; padding: 12px;
+            overflow-y: auto;
+            display: flex; flex-direction: column; gap: 12px;
+        }
+
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .game-card {
+            display: flex; flex-direction: column;
+            padding: 10px;
+        }
+
+        .btn-action {
+            flex: 1; padding: 6px 4px;
+            font-family: var(--font-sys); font-size: 18px; font-weight: bold;
+            cursor: pointer; text-align: center;
+            background-color: #000080; color: #ffffff;
+            border: 2px solid var(--win-border-light);
+        }
+
+        #taskbar {
+            height: 38px;
+            background-color: var(--win-bg);
+            border-top: 2px solid var(--win-border-light);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 2px 4px;
+        }
+
+        .floppy-badge-btn {
+            padding: 2px 8px; font-weight: bold; cursor: pointer;
+            border: 2px solid var(--win-border-light);
+            background-color: var(--win-bg);
+        }
+        .floppy-badge-btn.active {
+            background-color: #008000; color: #ffffff;
+            animation: pulseDisk 1s infinite alternate;
+        }
+        @keyframes pulseDisk {
+            0% { filter: brightness(1); }
+            100% { filter: brightness(1.4); }
+        }
+
+        #floppy-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999999;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #floppy-modal.hidden { display: none; }
+
+        .floppy-card {
+            width: 500px; padding: 16px; background: var(--win-bg);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="os-viewport">
+
+        <!-- Top Header -->
+        <div id="sys-header" class="bevel-out">
+            <div>
+                <span class="badge-tag" style="background:#000; color:#00ff00; padding:1px 6px; font-weight:bold;">JGLOVR-OS DESKTOP APP</span>
+                <span>SYSTEM: Native Physical Floppy Watcher Active</span>
+            </div>
+            <div>
+                <span id="floppy-header-status">DRIVE A:\ [NO DISK]</span>
+            </div>
+        </div>
+
+        <!-- Desktop -->
+        <div id="desktop">
+            <div id="desktop-icons">
+                <div class="desktop-shortcut" onclick="openWindow('catalog-window')">
+                    <div class="shortcut-icon">📁</div>
+                    <div>C:\GAMES</div>
+                </div>
+            </div>
+
+            <!-- Catalog Window -->
+            <div id="catalog-window" class="window bevel-out" style="top:20px; left:140px; width:760px; height:540px;">
+                <div class="window-titlebar">
+                    <div>💾 Native Desktop Software Catalog - [C:\GAMES\*.*]</div>
+                </div>
+                <div class="window-body bevel-in">
+                    <div id="catalog-container" class="catalog-grid"></div>
+                </div>
+            </div>
+
+            <div id="dynamic-windows-container"></div>
+        </div>
+
+        <!-- Taskbar -->
+        <div id="taskbar">
+            <div style="display:flex; gap:6px;">
+                <button class="bevel-out" style="height:30px; font-weight:bold;" onclick="alert('JGLOVR-OS Desktop App v3.11')">🖥️ Start</button>
+            </div>
+            <div class="bevel-in" style="padding:2px 10px; font-family:var(--font-mono); font-size:15px; display:flex; gap:10px;">
+                <button class="floppy-badge-btn bevel-out" id="floppy-badge" onclick="openFloppyModal()">💾 DRIVE A:\ [NO DISK]</button>
+                <span id="system-clock">12:00 PM</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PHYSICAL FLOPPY DISK INSERTED MODAL -->
+    <div id="floppy-modal" class="hidden">
+        <div class="floppy-card bevel-out">
+            <div class="window-titlebar" style="margin:-16px -16px 12px -16px;">
+                <div>💾 PHYSICAL FLOPPY DISK DETECTED - DRIVE A:\</div>
+            </div>
+
+            <div style="font-size: 18px; line-height: 1.4; margin-bottom: 16px;" id="floppy-modal-text">
+                Detecting Physical 3.5" Floppy Disk...
+            </div>
+
+            <div style="display:flex; gap:8px;">
+                <button class="btn-action bevel-out" onclick="runFloppyDirectly()">▶ RUN FROM DISK (A:\)</button>
+                <button class="btn-action bevel-out" onclick="installFloppyToDisk()">📥 COPY TO C:\GAMES</button>
+                <button class="btn-action bevel-out" onclick="closeFloppyModal()">CLOSE</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const floppyAudio = new Audio('../assets/floppy_drive.mp3');
+        floppyAudio.volume = 0.15;
+
+        function playFloppySeek() {
+            try {
+                floppyAudio.currentTime = 0;
+                floppyAudio.play().catch(e => {});
+            } catch(e) {}
+        }
+
+        let activeFloppyDisk = null;
+
+        function openFloppyModal() {
+            if (!activeFloppyDisk) {
+                alert('Drive A:\\ is empty. Insert a physical USB Floppy Disk containing a game file.');
+                return;
+            }
+            document.getElementById('floppy-modal').classList.remove('hidden');
+        }
+
+        function closeFloppyModal() {
+            document.getElementById('floppy-modal').classList.add('hidden');
+        }
+
+        // LISTEN FOR NATIVE ELECTRON PHYSICAL FLOPPY DISK INSERTION EVENTS
+        if (window.electronAPI) {
+            window.electronAPI.onFloppyInserted((disk) => {
+                activeFloppyDisk = disk;
+                playFloppySeek();
+
+                const badge = document.getElementById('floppy-badge');
+                const header = document.getElementById('floppy-header-status');
+                const text = document.getElementById('floppy-modal-text');
+
+                badge.classList.add('active');
+                badge.textContent = `💾 DRIVE A:\\ ${disk.fileName}`;
+                header.textContent = `DRIVE A:\\ ${disk.fileName} [MOUNTED]`;
+
+                text.innerHTML = `Physical 3.5" USB Floppy Disk auto-detected in Drive A:\\!<br><br>
+                    <b>File:</b> <code>A:\\${disk.fileName}</code><br>
+                    <b>Size:</b> ${(disk.sizeBytes / 1024).toFixed(1)} KB<br><br>
+                    Would you like to run the program directly off the disk or copy &amp; install it to native local hard drive storage (C:\\GAMES)?`;
+
+                document.getElementById('floppy-modal').classList.remove('hidden');
+            });
+
+            window.electronAPI.onFloppyEjected(() => {
+                activeFloppyDisk = null;
+                const badge = document.getElementById('floppy-badge');
+                const header = document.getElementById('floppy-header-status');
+                
+                badge.classList.remove('active');
+                badge.textContent = `💾 DRIVE A:\\ [NO DISK]`;
+                header.textContent = `DRIVE A:\\ [NO DISK]`;
+                closeFloppyModal();
+            });
+        }
+
+        function runFloppyDirectly() {
+            if (!activeFloppyDisk) return;
+            closeFloppyModal();
+            openBlobWindow(activeFloppyDisk.content, activeFloppyDisk.title, 'win-floppy-direct');
+        }
+
+        async function installFloppyToDisk() {
+            if (!activeFloppyDisk || !window.electronAPI) return;
+            closeFloppyModal();
+            playFloppySeek();
+
+            const res = await window.electronAPI.installGameToLocalDisk({
+                fileName: activeFloppyDisk.fileName,
+                content: activeFloppyDisk.content
+            });
+
+            if (res.success) {
+                alert(`SUCCESS: Program ${activeFloppyDisk.fileName} copied and installed to local AppData C:\\GAMES storage!`);
+                loadInstalledGames();
+            } else {
+                alert(`INSTALL FAILED: ${res.error}`);
+            }
+        }
+
+        async function loadInstalledGames() {
+            if (!window.electronAPI) return;
+            const games = await window.electronAPI.listLocalInstalledGames();
+            const container = document.getElementById('catalog-container');
+            container.innerHTML = '';
+
+            games.forEach(g => {
+                const card = document.createElement('div');
+                card.className = 'game-card bevel-out';
+                card.innerHTML = `
+                    <h3 style="margin:0 0 6px 0; color:#000080;">${g.title}</h3>
+                    <div style="font-family:monospace; font-size:13px; margin-bottom:8px;">${g.fileName} (${(g.sizeBytes/1024).toFixed(1)} KB)</div>
+                    <button class="btn-action bevel-out" onclick="openBlobWindow(\`${encodeURIComponent(g.content)}\`, '${g.title}', 'win-${g.fileName}', true)">▶ RUN PROGRAM</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openBlobWindow(rawContent, title, winId, isEncoded = false) {
+            playFloppySeek();
+            const content = isEncoded ? decodeURIComponent(rawContent) : rawContent;
+            const blob = new Blob([content], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+
+            const win = document.createElement('div');
+            win.id = winId;
+            win.className = 'window bevel-out maximized';
+            win.innerHTML = `
+                <div class="window-titlebar">
+                    <div>Executing Desktop Program - [${title}]</div>
+                    <button class="bevel-out" style="width:22px; height:22px;" onclick="document.getElementById('${winId}').remove()">X</button>
+                </div>
+                <div class="window-body bevel-in" style="padding:0; background:#000;">
+                    <iframe style="width:100%; height:100%; border:none;" src="${url}"></iframe>
+                </div>
+            `;
+            document.getElementById('dynamic-windows-container').appendChild(win);
+        }
+
+        loadInstalledGames();
+    </script>
+</body>
+</html>
