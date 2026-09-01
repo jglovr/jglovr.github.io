@@ -258,7 +258,6 @@
             border-right-color: var(--win-border-shadow);
             border-bottom-color: var(--win-border-shadow);
             box-shadow: 2px 2px 0px rgba(0,0,0,0.5);
-            font-size: 24px;
         }
 
         .shortcut-label {
@@ -657,9 +656,12 @@
             background: transparent;
             border: none;
             cursor: pointer;
-            font-size: 16px;
-            padding: 0 4px;
+            font-size: 15px;
+            padding: 2px 6px;
             color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
         .tray-btn:hover { background: rgba(0,0,0,0.1); }
 
@@ -671,7 +673,7 @@
             background-color: var(--win-bg);
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
         .floppy-tray-btn.disk-inserted {
             background-color: #008000;
@@ -924,7 +926,7 @@
             </div>
             <div class="sys-info-group">
                 <span>DRIVE A: 3.5" FLOPPY</span>
-                <span id="sys-header-count">DRIVE C: 4 PROGRAMS</span>
+                <span id="sys-header-count">DRIVE C: 5 PROGRAMS</span>
             </div>
         </div>
 
@@ -934,27 +936,45 @@
             <!-- Desktop Shortcuts Column -->
             <div id="desktop-icons">
                 <div class="desktop-shortcut" id="icon-catalog" onclick="openWindow('catalog-window')">
-                    <div class="shortcut-icon">📁</div>
+                    <div class="shortcut-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M2 5C2 3.89 2.89 3 4 3H10L12 6H20C21.1 6 22 6.9 22 8V19C22 20.1 21.1 21 20 21H4C2.89 21 2 20.1 2 19V5Z" fill="#E6AE17" stroke="#000000" stroke-width="1.5"/><path d="M2 9H22V19C22 20.1 21.1 21 20 21H4C2.89 21 2 20.1 2 19V9Z" fill="#F1C40F" stroke="#000000" stroke-width="1.5"/></svg>
+                    </div>
                     <div class="shortcut-label">C:\GAMES</div>
                 </div>
-                <div class="desktop-shortcut" id="icon-codyfrog" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog', 'window-codyfrog', '🐸', this)">
-                    <div class="shortcut-icon">🐸</div>
+                <div class="desktop-shortcut" id="icon-codyfrog" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog', 'window-codyfrog', 'FROG', this)">
+                    <div class="shortcut-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="14" rx="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="7" cy="6" r="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="17" cy="6" r="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="7" cy="6" r="1" fill="#FFFFFF"/><circle cx="17" cy="6" r="1" fill="#FFFFFF"/><path d="M8 14Q12 18 16 14" stroke="#000000" stroke-width="1.5" fill="none"/></svg>
+                    </div>
                     <div class="shortcut-label">CODYFROG</div>
                 </div>
-                <div class="desktop-shortcut" id="icon-gnomes" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', '🍄', this)">
-                    <div class="shortcut-icon">🍄</div>
+                <div class="desktop-shortcut" id="icon-traingame" onclick="openGameWindow('traingame.html', 'Train Game', 'window-traingame', 'TRAIN', this)">
+                    <div class="shortcut-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="3" y="10" width="16" height="8" rx="2" fill="#E74C3C" stroke="#000000" stroke-width="1.5"/><rect x="13" y="6" width="6" height="12" fill="#34495E" stroke="#000000" stroke-width="1.5"/><rect x="15" y="8" width="3" height="4" fill="#AADFFF"/><rect x="5" y="6" width="3" height="4" fill="#2C3E50" stroke="#000000" stroke-width="1"/><circle cx="6" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><circle cx="12" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><circle cx="17" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><path d="M6 5C6 3 8 2 10 2" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+                    </div>
+                    <div class="shortcut-label">TRAINGAME</div>
+                </div>
+                <div class="desktop-shortcut" id="icon-gnomes" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', 'GNOMES', this)">
+                    <div class="shortcut-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 14H20L12 2Z" fill="#E74C3C" stroke="#000000" stroke-width="1.5"/><circle cx="10" cy="8" r="1" fill="#FFFFFF"/><circle cx="15" cy="11" r="1.2" fill="#FFFFFF"/><rect x="7" y="14" width="10" height="8" rx="2" fill="#F5CBA7" stroke="#000000" stroke-width="1.5"/><ellipse cx="12" cy="19" rx="4" ry="2.5" fill="#ECF0F1"/></svg>
+                    </div>
                     <div class="shortcut-label">GNOMES</div>
                 </div>
-                <div class="desktop-shortcut" id="icon-sysvoid" onclick="openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', '🚀', this)">
-                    <div class="shortcut-icon">🚀</div>
+                <div class="desktop-shortcut" id="icon-sysvoid" onclick="openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', 'SYSVOID', this)">
+                    <div class="shortcut-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" fill="#050505" stroke="#00FF00" stroke-width="1.5"/><path d="M12 5L7 17L12 14L17 17L12 5Z" fill="#00FF00" stroke="#000000" stroke-width="1"/></svg>
+                    </div>
                     <div class="shortcut-label">SYS_VOID</div>
                 </div>
-                <div class="desktop-shortcut" id="icon-gridmix" onclick="openGameWindow('musicgridlivemix.html', 'Music Grid Synthesizer', 'window-gridmix', '🎹', this)">
-                    <div class="shortcut-icon">🎹</div>
+                <div class="desktop-shortcut" id="icon-gridmix" onclick="openGameWindow('musicgridlivemix.html', 'Music Grid Synthesizer', 'window-gridmix', 'GRIDMIX', this)">
+                    <div class="shortcut-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" fill="#111525" stroke="#00D2FF" stroke-width="1.5"/><rect x="5" y="5" width="5" height="5" fill="#00D2FF"/><rect x="14" y="5" width="5" height="5" fill="#FF3366"/><rect x="9" y="14" width="5" height="5" fill="#00FF7F"/><rect x="14" y="14" width="5" height="5" fill="#FFD700"/></svg>
+                    </div>
                     <div class="shortcut-label">GRIDMIX</div>
                 </div>
                 <div class="desktop-shortcut" id="icon-terminal" onclick="toggleWindow('terminal-window')">
-                    <div class="shortcut-icon">💻</div>
+                    <div class="shortcut-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="15" rx="2" fill="#111111" stroke="#000000" stroke-width="1.5"/><rect x="4" y="5" width="16" height="11" fill="#000000"/><path d="M6 8L9 10L6 12" stroke="#00FF00" stroke-width="1.5" fill="none"/><line x1="11" y1="12" x2="14" y2="12" stroke="#00FF00" stroke-width="1.5"/><rect x="8" y="18" width="8" height="3" fill="#888888" stroke="#000000" stroke-width="1"/></svg>
+                    </div>
                     <div class="shortcut-label">MS-DOS</div>
                 </div>
             </div>
@@ -963,7 +983,7 @@
             <div id="catalog-window" class="window bevel-out">
                 <div class="window-titlebar">
                     <div class="window-title-text">
-                        <span>💾</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" fill="#2980B9" stroke="#000000" stroke-width="1.5"/><rect x="7" y="3" width="10" height="7" fill="#BDC3C7" stroke="#000000" stroke-width="1"/><rect x="12" y="4" width="3" height="5" fill="#7F8C8D"/><rect x="6" y="13" width="12" height="8" fill="#ECF0F1" stroke="#000000" stroke-width="1"/></svg>
                         <span>Executing Software Catalog - [C:\GAMES\*.*]</span>
                     </div>
                     <div class="window-controls">
@@ -1022,11 +1042,46 @@
                                 <span>STATUS: READY</span>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-action primary bevel-out" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog', 'window-codyfrog', '🐸', this)">▶ RUN PROGRAM</button>
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog', 'window-codyfrog', 'FROG', this)">▶ RUN PROGRAM</button>
                             </div>
                         </div>
 
-                        <!-- Game 2: Gnomes in the Tall Grass -->
+                        <!-- Game 2: Train Game -->
+                        <div class="game-card bevel-out" id="card-traingame">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="game-title">Train Game</h3>
+                                    <span class="game-file-name">TRAIN.EXE</span>
+                                </div>
+                                <span class="card-badge">SIMULATION</span>
+                            </div>
+                            <div class="card-media">
+                                <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#00A0A0;">
+                                    <rect x="0" y="80" width="200" height="40" fill="#48B844" />
+                                    <line x1="0" y1="90" x2="200" y2="90" stroke="#C0C0C0" stroke-width="4" />
+                                    <line x1="0" y1="100" x2="200" y2="100" stroke="#C0C0C0" stroke-width="4" />
+                                    <rect x="40" y="60" width="80" height="30" fill="#E74C3C" stroke="#000000" stroke-width="2"/>
+                                    <rect x="90" y="45" width="30" height="45" fill="#34495E" stroke="#000000" stroke-width="2"/>
+                                    <rect x="100" y="52" width="15" height="15" fill="#AADFFF"/>
+                                    <circle cx="55" cy="92" r="8" fill="#111" />
+                                    <circle cx="85" cy="92" r="8" fill="#111" />
+                                    <circle cx="105" cy="92" r="8" fill="#111" />
+                                </svg>
+                            </div>
+                            <div class="card-description">
+                                Build track networks, construct covered bridge sheds, manage passenger dispatching, and run steam locomotives!
+                            </div>
+                            <div class="card-meta-list">
+                                <span>SIZE: 68.6 KB</span>
+                                <span>TYPE: 3D Train Sim</span>
+                                <span>STATUS: READY</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('traingame.html', 'Train Game', 'window-traingame', 'TRAIN', this)">▶ RUN PROGRAM</button>
+                            </div>
+                        </div>
+
+                        <!-- Game 3: Gnomes in the Tall Grass -->
                         <div class="game-card bevel-out" id="card-gnomes">
                             <div class="card-header">
                                 <div>
@@ -1054,11 +1109,11 @@
                                 <span>STATUS: READY</span>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-action primary bevel-out" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', '🍄', this)">▶ RUN PROGRAM</button>
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', 'GNOMES', this)">▶ RUN PROGRAM</button>
                             </div>
                         </div>
 
-                        <!-- Game 3: SYSTEM_VOID -->
+                        <!-- Game 4: SYSTEM_VOID -->
                         <div class="game-card bevel-out" id="card-sysvoid">
                             <div class="card-header">
                                 <div>
@@ -1085,11 +1140,11 @@
                                 <span>STATUS: READY</span>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-action primary bevel-out" onclick="openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', '🚀', this)">▶ RUN PROGRAM</button>
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', 'SYSVOID', this)">▶ RUN PROGRAM</button>
                             </div>
                         </div>
 
-                        <!-- Game 4: Music Grid Live Mixer -->
+                        <!-- Game 5: Music Grid Live Mixer -->
                         <div class="game-card bevel-out" id="card-gridmix">
                             <div class="card-header">
                                 <div>
@@ -1127,7 +1182,7 @@
                                 <span>STATUS: READY</span>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-action primary bevel-out" onclick="openGameWindow('musicgridlivemix.html', 'Music Grid Synth', 'window-gridmix', '🎹', this)">▶ RUN PROGRAM</button>
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('musicgridlivemix.html', 'Music Grid Synth', 'window-gridmix', 'GRIDMIX', this)">▶ RUN PROGRAM</button>
                             </div>
                         </div>
 
@@ -1135,8 +1190,8 @@
                 </div>
 
                 <div class="window-statusbar">
-                    <span id="catalog-status-count">4 Object(s) displayed</span>
-                    <span id="catalog-status-usage">Total Disk Usage: 874.2 KB</span>
+                    <span id="catalog-status-count">5 Object(s) displayed</span>
+                    <span id="catalog-status-usage">Total Disk Usage: 942.8 KB</span>
                 </div>
             </div>
 
@@ -1147,7 +1202,7 @@
             <div id="terminal-window" class="window bevel-out" style="display: none;">
                 <div class="window-titlebar">
                     <div class="window-title-text">
-                        <span>💻</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="15" rx="2" fill="#111111" stroke="#000000" stroke-width="1.5"/><rect x="4" y="5" width="16" height="11" fill="#000000"/><path d="M6 8L9 10L6 12" stroke="#00FF00" stroke-width="1.5" fill="none"/><line x1="11" y1="12" x2="14" y2="12" stroke="#00FF00" stroke-width="1.5"/><rect x="8" y="18" width="8" height="3" fill="#888888" stroke="#000000" stroke-width="1"/></svg>
                         <span id="term-title-text">MS-DOS Command Prompt - [C:\GAMES]</span>
                     </div>
                     <div class="window-controls">
@@ -1177,25 +1232,39 @@ Type 'TYPE README.TXT' to view system documentation manual.
         <div id="taskbar">
             <div class="taskbar-left">
                 <button id="start-btn" class="bevel-out" onclick="toggleStartMenu()">
-                    <span>🖥️</span>
+                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" fill="#E74C3C"/><rect x="11" y="2" width="7" height="7" fill="#2ECC71"/><rect x="2" y="11" width="7" height="7" fill="#3498DB"/><rect x="11" y="11" width="7" height="7" fill="#F1C40F"/></svg>
                     <span>Start</span>
                 </button>
             </div>
 
             <div class="taskbar-tasks" id="taskbar-tabs">
                 <div class="task-tab bevel-out active" id="tab-catalog-window" onclick="toggleTaskWindow('catalog-window')">
-                    <span>📁</span> C:\GAMES
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M2 5C2 3.89 2.89 3 4 3H10L12 6H20C21.1 6 22 6.9 22 8V19C22 20.1 21.1 21 20 21H4C2.89 21 2 20.1 2 19V5Z" fill="#E6AE17" stroke="#000000" stroke-width="1.5"/><path d="M2 9H22V19C22 20.1 21.1 21 20 21H4C2.89 21 2 20.1 2 19V9Z" fill="#F1C40F" stroke="#000000" stroke-width="1.5"/></svg>
+                    <span>C:\GAMES</span>
                 </div>
             </div>
 
             <div class="system-tray bevel-in">
                 <button class="floppy-tray-btn bevel-out" id="floppy-drive-btn" title="Mount Physical USB Floppy Drive or Drop Floppy Disk" onclick="promptFloppyDriveAction()">
-                    <span id="floppy-status-text">💾 Drive A: [Empty]</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" fill="#2980B9" stroke="#000000" stroke-width="1.5"/><rect x="7" y="3" width="10" height="7" fill="#BDC3C7" stroke="#000000" stroke-width="1"/><rect x="12" y="4" width="3" height="5" fill="#7F8C8D"/><rect x="6" y="13" width="12" height="8" fill="#ECF0F1" stroke="#000000" stroke-width="1"/></svg>
+                    <span id="floppy-status-text">Drive A: [Empty]</span>
                 </button>
-                <button class="tray-btn" title="Toggle Display Mode" onclick="toggleBrowserFullscreen()">📺 Display</button>
-                <button class="tray-btn" id="sfx-tray-btn" title="Toggle System Sound Effects" onclick="toggleSound()">🔊 SFX</button>
-                <button class="tray-btn" title="Switch Display Color Theme" onclick="cycleTheme()">🎨 Theme</button>
-                <button class="tray-btn" title="Toggle CRT Scanline Overlay" onclick="toggleScanlines()">📺 CRT</button>
+                <button class="tray-btn" title="Toggle Display Mode" onclick="toggleBrowserFullscreen()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="14" rx="2" fill="#2C3E50" stroke="#000000" stroke-width="1.5"/><rect x="5" y="5" width="14" height="10" fill="#000000"/><line x1="8" y1="9" x2="16" y2="9" stroke="#00FF00" stroke-width="1"/><rect x="9" y="17" width="6" height="4" fill="#7F8C8D" stroke="#000000" stroke-width="1"/></svg>
+                    Display
+                </button>
+                <button class="tray-btn" id="sfx-tray-btn" title="Toggle System Sound Effects" onclick="toggleSound()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 9H8L13 4V20L8 15H4V9Z" fill="#27AE60" stroke="#000000" stroke-width="1.5"/><path d="M16 8C17.5 9.5 17.5 14.5 16 16" stroke="#000000" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+                    <span id="sfx-btn-text">SFX</span>
+                </button>
+                <button class="tray-btn" title="Switch Display Color Theme" onclick="cycleTheme()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3C7 3 3 7 3 12C3 17 7 21 12 21C13.5 21 14.5 19.8 14.5 18.5C14.5 17.8 14.2 17.2 13.8 16.7C13.4 16.2 13.2 15.6 13.2 15C13.2 13.6 14.3 12.5 15.7 12.5H18C19.7 12.5 21 11.2 21 9.5C21 5.9 17 3 12 3Z" fill="#8E44AD" stroke="#000000" stroke-width="1.5"/><circle cx="7.5" cy="9.5" r="1.5" fill="#E74C3C"/><circle cx="10.5" cy="6.5" r="1.5" fill="#F1C40F"/><circle cx="14.5" cy="7.5" r="1.5" fill="#2ECC71"/><circle cx="7.5" cy="14.5" r="1.5" fill="#3498DB"/></svg>
+                    Theme
+                </button>
+                <button class="tray-btn" title="Toggle CRT Scanline Overlay" onclick="toggleScanlines()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="14" rx="2" fill="#34495E" stroke="#000000" stroke-width="1.5"/><line x1="4" y1="7" x2="20" y2="7" stroke="#33FF33" stroke-width="1" stroke-dasharray="2,2"/><line x1="4" y1="11" x2="20" y2="11" stroke="#33FF33" stroke-width="1" stroke-dasharray="2,2"/></svg>
+                    CRT
+                </button>
                 <span id="system-clock">12:00:00 PM</span>
             </div>
         </div>
@@ -1206,31 +1275,43 @@ Type 'TYPE README.TXT' to view system documentation manual.
                 JGLOVR OS
             </div>
             <div class="start-menu-list">
-                <div class="start-item" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog', 'window-codyfrog', '🐸', this)">
-                    <span>🐸</span> Cody Frog
+                <div class="start-item" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog', 'window-codyfrog', 'FROG', this)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="14" rx="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="7" cy="6" r="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="17" cy="6" r="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="7" cy="6" r="1" fill="#FFFFFF"/><circle cx="17" cy="6" r="1" fill="#FFFFFF"/><path d="M8 14Q12 18 16 14" stroke="#000000" stroke-width="1.5" fill="none"/></svg>
+                    <span>Cody Frog</span>
                 </div>
-                <div class="start-item" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', '🍄', this)">
-                    <span>🍄</span> Gnomes in Tall Grass
+                <div class="start-item" onclick="openGameWindow('traingame.html', 'Train Game', 'window-traingame', 'TRAIN', this)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="10" width="16" height="8" rx="2" fill="#E74C3C" stroke="#000000" stroke-width="1.5"/><rect x="13" y="6" width="6" height="12" fill="#34495E" stroke="#000000" stroke-width="1.5"/><rect x="15" y="8" width="3" height="4" fill="#AADFFF"/><rect x="5" y="6" width="3" height="4" fill="#2C3E50" stroke="#000000" stroke-width="1"/><circle cx="6" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><circle cx="12" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><circle cx="17" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><path d="M6 5C6 3 8 2 10 2" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+                    <span>Train Game</span>
                 </div>
-                <div class="start-item" onclick="openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', '🚀', this)">
-                    <span>🚀</span> S Y S T E M _ V O I D
+                <div class="start-item" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', 'GNOMES', this)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 14H20L12 2Z" fill="#E74C3C" stroke="#000000" stroke-width="1.5"/><circle cx="10" cy="8" r="1" fill="#FFFFFF"/><circle cx="15" cy="11" r="1.2" fill="#FFFFFF"/><rect x="7" y="14" width="10" height="8" rx="2" fill="#F5CBA7" stroke="#000000" stroke-width="1.5"/><ellipse cx="12" cy="19" rx="4" ry="2.5" fill="#ECF0F1"/></svg>
+                    <span>Gnomes in Tall Grass</span>
                 </div>
-                <div class="start-item" onclick="openGameWindow('musicgridlivemix.html', 'Music Grid Synth', 'window-gridmix', '🎹', this)">
-                    <span>🎹</span> Music Grid Synth
+                <div class="start-item" onclick="openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', 'SYSVOID', this)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" fill="#050505" stroke="#00FF00" stroke-width="1.5"/><path d="M12 5L7 17L12 14L17 17L12 5Z" fill="#00FF00" stroke="#000000" stroke-width="1"/></svg>
+                    <span>S Y S T E M _ V O I D</span>
+                </div>
+                <div class="start-item" onclick="openGameWindow('musicgridlivemix.html', 'Music Grid Synth', 'window-gridmix', 'GRIDMIX', this)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" fill="#111525" stroke="#00D2FF" stroke-width="1.5"/><rect x="5" y="5" width="5" height="5" fill="#00D2FF"/><rect x="14" y="5" width="5" height="5" fill="#FF3366"/><rect x="9" y="14" width="5" height="5" fill="#00FF7F"/><rect x="14" y="14" width="5" height="5" fill="#FFD700"/></svg>
+                    <span>Music Grid Synth</span>
                 </div>
                 <div class="start-divider"></div>
                 <div class="start-item" onclick="promptFloppyDriveAction()">
-                    <span>💾</span> Physical Floppy Drive A:
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" fill="#2980B9" stroke="#000000" stroke-width="1.5"/><rect x="7" y="3" width="10" height="7" fill="#BDC3C7" stroke="#000000" stroke-width="1"/><rect x="12" y="4" width="3" height="5" fill="#7F8C8D"/><rect x="6" y="13" width="12" height="8" fill="#ECF0F1" stroke="#000000" stroke-width="1"/></svg>
+                    <span>Physical Floppy Drive A:</span>
                 </div>
                 <div class="start-item" onclick="toggleWindow('terminal-window')">
-                    <span>💻</span> Command Prompt
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="15" rx="2" fill="#111111" stroke="#000000" stroke-width="1.5"/><rect x="4" y="5" width="16" height="11" fill="#000000"/><path d="M6 8L9 10L6 12" stroke="#00FF00" stroke-width="1.5" fill="none"/><line x1="11" y1="12" x2="14" y2="12" stroke="#00FF00" stroke-width="1.5"/><rect x="8" y="18" width="8" height="3" fill="#888888" stroke="#000000" stroke-width="1"/></svg>
+                    <span>Command Prompt</span>
                 </div>
                 <div class="start-item" onclick="openAboutDialog()">
-                    <span>ℹ️</span> System Information
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#2980B9" stroke="#000000" stroke-width="1.5"/><circle cx="12" cy="8" r="1.5" fill="#FFFFFF"/><rect x="11" y="11" width="2" height="6" fill="#FFFFFF"/></svg>
+                    <span>System Information</span>
                 </div>
                 <div class="start-divider"></div>
                 <div class="start-item" onclick="triggerShutdown()">
-                    <span>🔌</span> Shut Down System...
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#C0392B" stroke="#000000" stroke-width="1.5"/><path d="M12 6V12" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/><path d="M8 8.5A6 6 0 1 0 16 8.5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+                    <span>Shut Down System...</span>
                 </div>
             </div>
         </div>
@@ -1242,7 +1323,7 @@ Type 'TYPE README.TXT' to view system documentation manual.
         <div class="floppy-modal-card bevel-out">
             <div class="window-titlebar" style="margin:-16px -16px 12px -16px;">
                 <div class="window-title-text">
-                    <span>💾</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" fill="#2980B9" stroke="#000000" stroke-width="1.5"/><rect x="7" y="3" width="10" height="7" fill="#BDC3C7" stroke="#000000" stroke-width="1"/><rect x="12" y="4" width="3" height="5" fill="#7F8C8D"/><rect x="6" y="13" width="12" height="8" fill="#ECF0F1" stroke="#000000" stroke-width="1"/></svg>
                     <span id="floppy-modal-title">Floppy Disk Inserted - Drive A:\</span>
                 </div>
                 <div class="window-controls">
@@ -1274,6 +1355,22 @@ Type 'TYPE README.TXT' to view system documentation manual.
     
     <!-- System JavaScript -->
     <script>
+        // RETRO SVG ICON REGISTRY FOR DYNAMIC WINDOWS & TASKBAR TABS
+        const SVG_ICONS = {
+            'FOLDER': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><path d="M2 5C2 3.89 2.89 3 4 3H10L12 6H20C21.1 6 22 6.9 22 8V19C22 20.1 21.1 21 20 21H4C2.89 21 2 20.1 2 19V5Z" fill="#E6AE17" stroke="#000000" stroke-width="1.5"/><path d="M2 9H22V19C22 20.1 21.1 21 20 21H4C2.89 21 2 20.1 2 19V9Z" fill="#F1C40F" stroke="#000000" stroke-width="1.5"/></svg>`,
+            'FROG': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><rect x="3" y="6" width="18" height="14" rx="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="7" cy="6" r="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="17" cy="6" r="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="7" cy="6" r="1" fill="#FFFFFF"/><circle cx="17" cy="6" r="1" fill="#FFFFFF"/><path d="M8 14Q12 18 16 14" stroke="#000000" stroke-width="1.5" fill="none"/></svg>`,
+            'TRAIN': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><rect x="3" y="10" width="16" height="8" rx="2" fill="#E74C3C" stroke="#000000" stroke-width="1.5"/><rect x="13" y="6" width="6" height="12" fill="#34495E" stroke="#000000" stroke-width="1.5"/><rect x="15" y="8" width="3" height="4" fill="#AADFFF"/><rect x="5" y="6" width="3" height="4" fill="#2C3E50" stroke="#000000" stroke-width="1"/><circle cx="6" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><circle cx="12" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><circle cx="17" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><path d="M6 5C6 3 8 2 10 2" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>`,
+            'GNOMES': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><path d="M12 2L4 14H20L12 2Z" fill="#E74C3C" stroke="#000000" stroke-width="1.5"/><circle cx="10" cy="8" r="1" fill="#FFFFFF"/><circle cx="15" cy="11" r="1.2" fill="#FFFFFF"/><rect x="7" y="14" width="10" height="8" rx="2" fill="#F5CBA7" stroke="#000000" stroke-width="1.5"/><ellipse cx="12" cy="19" rx="4" ry="2.5" fill="#ECF0F1"/></svg>`,
+            'SYSVOID': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><rect x="2" y="2" width="20" height="20" fill="#050505" stroke="#00FF00" stroke-width="1.5"/><path d="M12 5L7 17L12 14L17 17L12 5Z" fill="#00FF00" stroke="#000000" stroke-width="1"/></svg>`,
+            'GRIDMIX': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><rect x="2" y="2" width="20" height="20" fill="#111525" stroke="#00D2FF" stroke-width="1.5"/><rect x="5" y="5" width="5" height="5" fill="#00D2FF"/><rect x="14" y="5" width="5" height="5" fill="#FF3366"/><rect x="9" y="14" width="5" height="5" fill="#00FF7F"/><rect x="14" y="14" width="5" height="5" fill="#FFD700"/></svg>`,
+            'TERMINAL': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><rect x="2" y="3" width="20" height="15" rx="2" fill="#111111" stroke="#000000" stroke-width="1.5"/><rect x="4" y="5" width="16" height="11" fill="#000000"/><path d="M6 8L9 10L6 12" stroke="#00FF00" stroke-width="1.5" fill="none"/><line x1="11" y1="12" x2="14" y2="12" stroke="#00FF00" stroke-width="1.5"/><rect x="8" y="18" width="8" height="3" fill="#888888" stroke="#000000" stroke-width="1"/></svg>`,
+            'FLOPPY': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><rect x="3" y="3" width="18" height="18" rx="2" fill="#2980B9" stroke="#000000" stroke-width="1.5"/><rect x="7" y="3" width="10" height="7" fill="#BDC3C7" stroke="#000000" stroke-width="1"/><rect x="12" y="4" width="3" height="5" fill="#7F8C8D"/><rect x="6" y="13" width="12" height="8" fill="#ECF0F1" stroke="#000000" stroke-width="1"/></svg>`
+        };
+
+        function getSvgIcon(key) {
+            return SVG_ICONS[key] || SVG_ICONS['FLOPPY'];
+        }
+
         let soundEnabled = true;
 
         // Preload Public Domain Hardware Audio Recordings
@@ -1395,17 +1492,59 @@ Type 'TYPE README.TXT' to view system documentation manual.
             }, 30);
         }
 
+        let floppySeekTimeout = null;
+
         function playFloppySeek() {
             if (!soundEnabled) return;
             try {
-                floppyAudio.currentTime = 0;
+                if (floppySeekTimeout) clearTimeout(floppySeekTimeout);
+
+                // 1. Randomize Floppy Drive Sample Playback (Offset, Speed, Volume & Duration)
+                const startOffsets = [0.0, 0.35, 0.75, 1.15, 1.6, 2.1, 2.7, 3.2];
+                const randomOffset = startOffsets[Math.floor(Math.random() * startOffsets.length)];
+                const randomRate = 0.88 + Math.random() * 0.26; // 0.88x to 1.14x motor speed
+                const randomDuration = 450 + Math.random() * 1100; // 450ms to 1550ms seek length
+                const randomVolume = 0.08 + Math.random() * 0.08;
+
+                floppyAudio.currentTime = randomOffset;
+                floppyAudio.playbackRate = randomRate;
+                floppyAudio.volume = randomVolume;
                 floppyAudio.play().catch(err => {});
-                setTimeout(() => {
+
+                floppySeekTimeout = setTimeout(() => {
                     if (floppyAudio && !floppyAudio.paused) {
                         floppyAudio.pause();
-                        floppyAudio.currentTime = 0;
                     }
-                }, 1200);
+                }, randomDuration);
+
+                // 2. Synthesize Mechanical Stepper Motor Head Step Bursts via Web Audio API
+                const ctx = getAudioContext();
+                if (ctx) {
+                    const now = ctx.currentTime;
+                    const clickCount = 4 + Math.floor(Math.random() * 9); // 4 to 12 track step clicks
+                    const stepDelay = 0.015 + Math.random() * 0.02; // 15ms to 35ms between steps
+
+                    for (let i = 0; i < clickCount; i++) {
+                        const stepTime = now + (i * stepDelay);
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        
+                        // Alternate between low chug and high head step clicks
+                        const isHighClick = Math.random() < 0.4;
+                        osc.type = isHighClick ? 'square' : 'sawtooth';
+                        const freq = isHighClick ? (350 + Math.random() * 300) : (140 + Math.random() * 120);
+                        osc.frequency.setValueAtTime(freq, stepTime);
+
+                        gain.gain.setValueAtTime(0.04 + Math.random() * 0.03, stepTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, stepTime + 0.012);
+
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+
+                        osc.start(stepTime);
+                        osc.stop(stepTime + 0.012);
+                    }
+                }
             } catch(e) {}
         }
 
@@ -1452,17 +1591,17 @@ Type 'TYPE README.TXT' to view system documentation manual.
 
         function toggleSound() {
             soundEnabled = !soundEnabled;
-            const trayBtn = document.getElementById('sfx-tray-btn');
+            const btnText = document.getElementById('sfx-btn-text');
             if (!soundEnabled) {
                 bootAudio.pause();
                 floppyAudio.pause();
                 stopComputerFanHum();
-                if (trayBtn) trayBtn.textContent = '🔇 SFX Off';
+                if (btnText) btnText.textContent = 'SFX Off';
             } else {
                 if (systemPoweredOn) {
                     startComputerFanHum();
                 }
-                if (trayBtn) trayBtn.textContent = '🔊 SFX';
+                if (btnText) btnText.textContent = 'SFX';
             }
         }
 
@@ -1520,7 +1659,7 @@ Type 'TYPE README.TXT' to view system documentation manual.
         function runFloppyDirectly() {
             if (!mountedFloppy) return;
             closeFloppyModal();
-            openGameWindowFromBlob(mountedFloppy.content, mountedFloppy.title, 'window-floppy', '💾');
+            openGameWindowFromBlob(mountedFloppy.content, mountedFloppy.title, 'window-floppy', 'FLOPPY');
         }
 
         async function installFloppyToHardDrive() {
@@ -1532,7 +1671,7 @@ Type 'TYPE README.TXT' to view system documentation manual.
                 mountedFloppy.fileName,
                 mountedFloppy.title,
                 mountedFloppy.content,
-                '💾',
+                'FLOPPY',
                 'Installed Floppy Program'
             );
 
@@ -1567,7 +1706,7 @@ Type 'TYPE README.TXT' to view system documentation manual.
         });
 
         // Dynamic Executable Window Loader (Blob / Source Doc)
-        function openGameWindowFromBlob(htmlContent, title, winId, iconSymbol) {
+        function openGameWindowFromBlob(htmlContent, title, winId, iconKey) {
             playFloppySeek();
             toggleBrowserFullscreen();
 
@@ -1588,7 +1727,7 @@ Type 'TYPE README.TXT' to view system documentation manual.
             win.innerHTML = `
                 <div class="window-titlebar">
                     <div class="window-title-text">
-                        <span>${iconSymbol}</span>
+                        <span>${getSvgIcon(iconKey)}</span>
                         <span>Executing Installed Program - [${title}]</span>
                     </div>
                     <div class="window-controls">
@@ -1606,7 +1745,7 @@ Type 'TYPE README.TXT' to view system documentation manual.
             makeDraggable(win);
             win.style.display = 'flex';
             bringToFront(winId);
-            addTaskbarTab(winId, title, iconSymbol);
+            addTaskbarTab(winId, title, iconKey);
         }
 
         async function refreshInstalledGamesCatalog() {
@@ -1656,13 +1795,13 @@ Type 'TYPE README.TXT' to view system documentation manual.
                 shortcut.className = 'desktop-shortcut custom-desktop-icon';
                 shortcut.onclick = () => launchCustomGame(game.fileName);
                 shortcut.innerHTML = `
-                    <div class="shortcut-icon">💾</div>
+                    <div class="shortcut-icon">${getSvgIcon('FLOPPY')}</div>
                     <div class="shortcut-label">${game.fileName.replace('.EXE', '')}</div>
                 `;
                 desktopContainer.insertBefore(shortcut, termIcon);
             });
 
-            const totalCount = 4 + customGames.length;
+            const totalCount = 5 + customGames.length;
             const sysHeaderCount = document.getElementById('sys-header-count');
             if (sysHeaderCount) sysHeaderCount.textContent = `DRIVE C: ${totalCount} PROGRAMS`;
 
@@ -1673,7 +1812,7 @@ Type 'TYPE README.TXT' to view system documentation manual.
         async function launchCustomGame(fileName) {
             const game = await getInstalledGame(fileName);
             if (game) {
-                openGameWindowFromBlob(game.codeContent, game.title, `win-custom-${game.fileName}`, '💾');
+                openGameWindowFromBlob(game.codeContent, game.title, `win-custom-${game.fileName}`, 'FLOPPY');
             }
         }
 
@@ -1903,7 +2042,7 @@ Type 'TYPE README.TXT' to view system documentation manual.
         document.querySelectorAll('.window').forEach(makeDraggable);
 
         // MULTI-PROGRAM WINDOW MANAGER ENGINE
-        function openGameWindow(url, title, winId, iconSymbol, originElem) {
+        function openGameWindow(url, title, winId, iconKey, originElem) {
             playFloppySeek();
             toggleBrowserFullscreen();
 
@@ -1934,7 +2073,7 @@ Type 'TYPE README.TXT' to view system documentation manual.
             win.innerHTML = `
                 <div class="window-titlebar">
                     <div class="window-title-text">
-                        <span>${iconSymbol}</span>
+                        <span>${getSvgIcon(iconKey)}</span>
                         <span>Executing Program - [${title}]</span>
                     </div>
                     <div class="window-controls">
@@ -1965,18 +2104,18 @@ Type 'TYPE README.TXT' to view system documentation manual.
                 setTimeout(() => wireframe.remove(), 200);
             }, 300);
 
-            addTaskbarTab(winId, title, iconSymbol);
+            addTaskbarTab(winId, title, iconKey);
             document.getElementById('start-menu').classList.add('hidden');
         }
 
-        function addTaskbarTab(winId, title, iconSymbol) {
+        function addTaskbarTab(winId, title, iconKey) {
             const tabsContainer = document.getElementById('taskbar-tabs');
             let tab = document.getElementById('tab-' + winId);
             if (!tab) {
                 tab = document.createElement('div');
                 tab.id = 'tab-' + winId;
                 tab.className = 'task-tab bevel-out active';
-                tab.innerHTML = `<span>${iconSymbol}</span> ${title}`;
+                tab.innerHTML = `<span>${getSvgIcon(iconKey)}</span> ${title}`;
                 tab.onclick = () => toggleTaskWindow(winId);
                 tabsContainer.appendChild(tab);
             }
@@ -2124,8 +2263,8 @@ Type 'TYPE README.TXT' to view system documentation manual.
             document.getElementById('os-viewport').classList.remove('crt-warming-up');
             bootSkipped = false;
             systemPoweredOn = false;
-            const trayBtn = document.getElementById('sfx-tray-btn');
-            if (trayBtn && soundEnabled) trayBtn.textContent = '🔊 SFX';
+            const btnText = document.getElementById('sfx-btn-text');
+            if (btnText && soundEnabled) btnText.textContent = 'SFX';
             document.getElementById('power-screen-container').style.display = 'flex';
             document.getElementById('bios-main-content').style.display = 'none';
             document.getElementById('bios-boot-screen').classList.remove('hidden');
@@ -2154,13 +2293,14 @@ Type 'TYPE README.TXT' to view system documentation manual.
 PROGRAM EXECUTABLES (C:\\GAMES\\*.*):
 ----------------------------------
 1. CODYFROG.EXE  - Cody Frog (Logic & Instruction Sequencer)
-2. GNOMES.EXE    - 3D Meadow World Simulation
-3. SYS_VOID.EXE  - CRT Vector Space Survival Arcade Shooter
-4. GRIDMIX.EXE   - 16-Step Audio Sequencer & Live Synthesizer
+2. TRAIN.EXE     - 3D Rail Network Simulation & Train Dispatcher
+3. GNOMES.EXE    - 3D Meadow World Simulation
+4. SYS_VOID.EXE  - CRT Vector Space Survival Arcade Shooter
+5. GRIDMIX.EXE   - 16-Step Audio Sequencer & Live Synthesizer
 
 SPECIAL COMMAND LINE EXECUTABLES:
 ---------------------------------
-- CODY26.EXE    : Cody Frog '26 (Original 486 Legacy Engine)
+- CODY26.EXE    : Cody Frog '26 (Original Modern 3D Engine)
 
 SYSTEM UTILITIES & COMMANDS:
 ---------------------------
@@ -2168,7 +2308,7 @@ SYSTEM UTILITIES & COMMANDS:
 - A: / C:       : Switch between Drive A:\\ (Floppy) and Drive C:\\ (Hard Drive)
 - COPY A:\\* C:  : Install program from floppy disk to hard drive
 - TYPE [file]   : Output text contents of a file (e.g. TYPE README.TXT)
-- RUN [file]    : Execute program in retro window (e.g. RUN CODYFROG or RUN CODY26)
+- RUN [file]    : Execute program in retro window (e.g. RUN TRAIN, RUN CODYFROG)
 - MEM           : Display MS-DOS conventional and XMS memory allocation
 - SYSINFO       : Show hardware CPU, FPU, VRAM, and BIOS summary
 - TREE          : Output ASCII system directory tree structure
@@ -2196,7 +2336,7 @@ SYSTEM UTILITIES & COMMANDS:
         const cmdHistory = [];
         let historyIndex = -1;
 
-        const knownFiles = ['CODYFROG.EXE', 'CODY26.EXE', 'GNOMES.EXE', 'SYS_VOID.EXE', 'GRIDMIX.EXE', 'README.TXT', 'CONFIG.SYS', 'AUTOEXEC.BAT'];
+        const knownFiles = ['CODYFROG.EXE', 'CODY26.EXE', 'TRAIN.EXE', 'GNOMES.EXE', 'SYS_VOID.EXE', 'GRIDMIX.EXE', 'README.TXT', 'CONFIG.SYS', 'AUTOEXEC.BAT'];
 
         function updateTerminalPrompt() {
             const promptLabel = document.getElementById('term-prompt-label');
@@ -2299,12 +2439,13 @@ Drive A:\\ is empty. No floppy disk inserted.`;
 
 CODYFROG EXE      98,412 08-31-26  9:44p
 CODY26   EXE      91,355 08-31-26  9:44p
+TRAIN    EXE      68,620 08-31-26  9:44p
 GNOMES   EXE     639,298 08-31-26  9:30p
 SYS_VOID EXE      81,617 08-31-26  9:30p
 GRIDMIX  EXE      62,314 08-31-26  9:30p
 README   TXT       1,024 08-31-26  9:44p
-        6 file(s)        964,020 bytes
-        0 dir(s)     164,402,176 bytes free`;
+        7 file(s)      1,042,640 bytes
+        0 dir(s)     164,324,512 bytes free`;
                     } else if (currentDir === 'C:\\DOS') {
                         reply += ` Volume in drive C is SYSTEM_C
  Directory of C:\\DOS
@@ -2317,7 +2458,7 @@ MOUSE    COM      32,100 05-31-94  6:22a
 DOSKEY   COM       5,810 05-31-94  6:22a
 ANSI     SYS       9,020 05-31-94  6:22a
         7 file(s)        252,780 bytes
-        0 dir(s)     164,402,176 bytes free`;
+        0 dir(s)     164,324,512 bytes free`;
                     } else {
                         reply += ` Volume in drive C is SYSTEM_C
  Directory of C:\\
@@ -2328,7 +2469,7 @@ GAMES        <DIR>       08-31-26  9:30p
 CONFIG   SYS         512 08-31-26  9:30p
 AUTOEXEC BAT         380 08-31-26  9:30p
         2 file(s)            892 bytes
-        3 dir(s)     164,402,176 bytes free`;
+        3 dir(s)     164,324,512 bytes free`;
                     }
                 } else if (cmd.startsWith('type ') || cmd.startsWith('cat ') || cmd.startsWith('more ')) {
                     const target = cmd.replace('type ', '').replace('cat ', '').replace('more ', '').trim();
@@ -2393,6 +2534,7 @@ C:\\
 └── GAMES\\
     ├── CODYFROG.EXE
     ├── CODY26.EXE
+    ├── TRAIN.EXE
     ├── GNOMES.EXE
     ├── SYS_VOID.EXE
     ├── GRIDMIX.EXE
@@ -2420,7 +2562,7 @@ C:\\
   EJECT         - Eject floppy disk from Drive A:\\
   DIR           - List files in current directory
   TYPE [file]   - View file contents (e.g. TYPE README.TXT)
-  RUN [file]    - Execute program in retro window (RUN CODYFROG or RUN CODY26)
+  RUN [file]    - Execute program in retro window (RUN TRAIN or RUN CODYFROG)
   CD [path]     - Change directory (C:\\GAMES, C:\\DOS, C:\\)
   MEM           - Display memory allocation table
   SYSINFO       - Display hardware diagnostic summary
@@ -2456,22 +2598,25 @@ C:\\
                 } else if (cmd === 'shutdown') {
                     triggerShutdown();
                     return;
-                } else if (cmd.startsWith('run ') || cmd.startsWith('play ') || cmd.includes('cody')) {
+                } else if (cmd.startsWith('run ') || cmd.startsWith('play ') || cmd.includes('train') || cmd.includes('cody')) {
                     const target = cmd.replace('run ', '').replace('play ', '').trim();
-                    if (target.includes('26') || target === 'cody26' || cmd.includes('26')) {
-                        openGameWindow('codyfrog.html', 'Cody Frog \'26', 'window-cody26', '🐸', document.getElementById('icon-codyfrog'));
-                        reply += `Launching CODY26.EXE (Original 486 Legacy Engine)...`;
+                    if (target.includes('train')) {
+                        openGameWindow('traingame.html', 'Train Game', 'window-traingame', 'TRAIN', document.getElementById('icon-traingame'));
+                        reply += `Launching TRAIN.EXE...`;
+                    } else if (target.includes('26') || target === 'cody26' || cmd.includes('26')) {
+                        openGameWindow('codyfrog.html', 'Cody Frog \'26', 'window-cody26', 'FROG', document.getElementById('icon-codyfrog'));
+                        reply += `Launching CODY26.EXE (Original Modern 3D Engine)...`;
                     } else if (target.includes('cody') || cmd.includes('cody')) {
-                        openGameWindow('codyfrogclassic.html', 'Cody Frog', 'window-codyfrog', '🐸', document.getElementById('icon-codyfrog'));
+                        openGameWindow('codyfrogclassic.html', 'Cody Frog', 'window-codyfrog', 'FROG', document.getElementById('icon-codyfrog'));
                         reply += `Launching CODYFROG.EXE...`;
                     } else if (target.includes('gnome')) {
-                        openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', '🍄', document.getElementById('icon-gnomes'));
+                        openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', 'GNOMES', document.getElementById('icon-gnomes'));
                         reply += `Launching GNOMES.EXE...`;
                     } else if (target.includes('void') || target.includes('system')) {
-                        openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', '🚀', document.getElementById('icon-sysvoid'));
+                        openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', 'SYSVOID', document.getElementById('icon-sysvoid'));
                         reply += `Launching SYS_VOID.EXE...`;
                     } else if (target.includes('grid') || target.includes('music')) {
-                        openGameWindow('musicgridlivemix.html', 'Music Grid Synthesizer', 'window-gridmix', '🎹', document.getElementById('icon-gridmix'));
+                        openGameWindow('musicgridlivemix.html', 'Music Grid Synthesizer', 'window-gridmix', 'GRIDMIX', document.getElementById('icon-gridmix'));
                         reply += `Launching GRIDMIX.EXE...`;
                     } else {
                         reply += `Bad command or file name. Type DIR to list files.`;

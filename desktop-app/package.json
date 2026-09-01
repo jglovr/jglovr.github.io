@@ -17,6 +17,7 @@
   "author": "JGLOVR Systems",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^28.2.0"
+    "electron": "^28.2.0",
+    "electron-builder": "^24.9.0"
   }
 }
