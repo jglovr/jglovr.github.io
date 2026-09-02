@@ -139,9 +139,9 @@ function updateFloppyDriveUI() {
     
     if (mountedFloppy) {
         if (driveBtn) driveBtn.classList.add('disk-inserted');
-        if (statusText) statusText.textContent = `💾 A:\\${mountedFloppy.fileName}`;
+        if (statusText) statusText.textContent = `A:\\${mountedFloppy.fileName}`;
     } else {
         if (driveBtn) driveBtn.classList.remove('disk-inserted');
-        if (statusText) statusText.textContent = `💾 Drive A: [Empty]`;
+        if (statusText) statusText.textContent = `Drive A: [Empty]`;
     }
 }

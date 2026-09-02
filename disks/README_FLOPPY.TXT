@@ -10,6 +10,7 @@ FLOPPY DISK FOLDERS:
 📂 disks/GNOMES/    -> Copy all files to Floppy Disk for Gnomes in the Tall Grass (3D Meadow Sim)
 📂 disks/SYS_VOID/  -> Copy all files to Floppy Disk for S Y S T E M _ V O I D (Vector Space Shooter)
 📂 disks/GRIDMIX/   -> Copy all files to Floppy Disk for Music Grid Synthesizer (16-Step Audio Sequencer)
+📂 disks/APEXCAD/   -> Copy all files to Floppy Disk for ApexCAD 3D Workstation (3D CSG CAD Engine)
 
 HOW TO MAKE A PHYSICAL FLOPPY DISK:
 -----------------------------------

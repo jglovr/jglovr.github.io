@@ -871,8 +871,8 @@
         }
         #shutdown-screen.hidden { display: none; }
 
-        /* FLOPPY DISK INSTALLER MODAL OVERLAY */
-        #floppy-modal {
+        /* FLOPPY DISK INSTALLER & BURNER MODAL OVERLAY */
+        #floppy-modal, #floppy-burn-modal {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.6);
@@ -881,7 +881,7 @@
             align-items: center;
             justify-content: center;
         }
-        #floppy-modal.hidden { display: none; }
+        #floppy-modal.hidden, #floppy-burn-modal.hidden { display: none; }
 
         .floppy-modal-card {
             width: 480px;
@@ -895,7 +895,90 @@
             .catalog-grid { grid-template-columns: 1fr; }
             #terminal-window { width: 95vw; left: 2.5vw; }
         }
-    </style>
+    
+        /* RETRO DESKTOP RIGHT-CLICK CONTEXT MENU */
+        #desktop-context-menu {
+            position: fixed;
+            width: 210px;
+            background-color: var(--win-bg);
+            border: 2px solid;
+            border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+            box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
+            z-index: 999999;
+            padding: 3px;
+            display: flex;
+            flex-direction: column;
+        }
+        #desktop-context-menu.hidden { display: none; }
+        #desktop-context-menu .menu-item {
+            padding: 5px 12px;
+            font-size: 16px;
+            font-family: var(--font-sys);
+            cursor: pointer;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        #desktop-context-menu .menu-item.bold { font-weight: bold; }
+        #desktop-context-menu .menu-item:hover {
+            background-color: #000080;
+            color: #ffffff;
+        }
+        #desktop-context-menu .menu-divider {
+            height: 1px;
+            margin: 3px 2px;
+            border-bottom: 1px solid var(--win-border-light);
+            background-color: var(--win-border-dark);
+        }
+
+        .desktop-shortcut.selected {
+            border: 1px dashed #ffffff !important;
+            background-color: rgba(0, 0, 128, 0.6) !important;
+        }
+
+
+        /* PROGRAM PROPERTIES MODAL */
+        #properties-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 9999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #properties-modal.hidden { display: none; }
+        .properties-card {
+            background: var(--win-bg);
+            padding: 16px;
+        }
+        .prop-tab {
+            padding: 4px 12px;
+            font-size: 15px;
+            cursor: pointer;
+            border: 2px solid var(--win-border-light);
+            border-bottom: none;
+            background: #d0d0d0;
+        }
+        .prop-tab.active {
+            background: var(--win-bg);
+            font-weight: bold;
+            border-top: 2px solid var(--win-border-light);
+            border-left: 2px solid var(--win-border-light);
+            border-right: 2px solid var(--win-border-shadow);
+        }
+        .prop-panel {
+            background: var(--win-bg);
+            border: 2px solid;
+            border-color: var(--win-border-light) var(--win-border-shadow) var(--win-border-shadow) var(--win-border-light);
+            padding: 14px;
+            min-height: 200px;
+        }
+        .prop-panel.hidden { display: none; }
+        .prop-table td { padding: 4px 6px; }
+
+</style>
 </head>
 <body class="theme-win95" id="os-body">
 
@@ -903,7 +986,7 @@
     <div class="crt-scanlines"></div>
 
     <!-- RETRO BIOS / POST BOOT SCREEN -->
-    <div id="bios-boot-screen" onclick="handlePowerOnInteraction()">
+    <div id="bios-boot-screen" onclick="handlePowerOnInteraction(event)">
         
         <!-- INITIAL BLACK SCREEN: POWER ON PROMPT ONLY -->
         <div id="power-screen-container">
@@ -966,43 +1049,49 @@
 
             <!-- Desktop Shortcuts Column -->
             <div id="desktop-icons">
-                <div class="desktop-shortcut" id="icon-catalog" onclick="openWindow('catalog-window')">
+                <div class="desktop-shortcut" id="icon-catalog">
                     <div class="shortcut-icon">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M2 5C2 3.89 2.89 3 4 3H10L12 6H20C21.1 6 22 6.9 22 8V19C22 20.1 21.1 21 20 21H4C2.89 21 2 20.1 2 19V5Z" fill="#E6AE17" stroke="#000000" stroke-width="1.5"/><path d="M2 9H22V19C22 20.1 21.1 21 20 21H4C2.89 21 2 20.1 2 19V9Z" fill="#F1C40F" stroke="#000000" stroke-width="1.5"/></svg>
                     </div>
                     <div class="shortcut-label">C:\GAMES</div>
                 </div>
-                <div class="desktop-shortcut" id="icon-codyfrog" onclick="openGameWindow('codyfrogclassic.html', 'Cody Frog', 'window-codyfrog', 'FROG', this)">
+                <div class="desktop-shortcut" id="icon-codyfrog">
                     <div class="shortcut-icon">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="14" rx="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="7" cy="6" r="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="17" cy="6" r="3" fill="#2ECC71" stroke="#000000" stroke-width="1.5"/><circle cx="7" cy="6" r="1" fill="#FFFFFF"/><circle cx="17" cy="6" r="1" fill="#FFFFFF"/><path d="M8 14Q12 18 16 14" stroke="#000000" stroke-width="1.5" fill="none"/></svg>
                     </div>
                     <div class="shortcut-label">CODYFROG</div>
                 </div>
-                <div class="desktop-shortcut" id="icon-traingame" onclick="openGameWindow('traingame.html', 'Train Game', 'window-traingame', 'TRAIN', this)">
+                <div class="desktop-shortcut" id="icon-traingame">
                     <div class="shortcut-icon">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="3" y="10" width="16" height="8" rx="2" fill="#E74C3C" stroke="#000000" stroke-width="1.5"/><rect x="13" y="6" width="6" height="12" fill="#34495E" stroke="#000000" stroke-width="1.5"/><rect x="15" y="8" width="3" height="4" fill="#AADFFF"/><rect x="5" y="6" width="3" height="4" fill="#2C3E50" stroke="#000000" stroke-width="1"/><circle cx="6" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><circle cx="12" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><circle cx="17" cy="19" r="2.5" fill="#111111" stroke="#000000" stroke-width="1"/><path d="M6 5C6 3 8 2 10 2" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
                     </div>
                     <div class="shortcut-label">TRAINGAME</div>
                 </div>
-                <div class="desktop-shortcut" id="icon-gnomes" onclick="openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', 'GNOMES', this)">
+                <div class="desktop-shortcut" id="icon-gnomes">
                     <div class="shortcut-icon">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 14H20L12 2Z" fill="#E74C3C" stroke="#000000" stroke-width="1.5"/><circle cx="10" cy="8" r="1" fill="#FFFFFF"/><circle cx="15" cy="11" r="1.2" fill="#FFFFFF"/><rect x="7" y="14" width="10" height="8" rx="2" fill="#F5CBA7" stroke="#000000" stroke-width="1.5"/><ellipse cx="12" cy="19" rx="4" ry="2.5" fill="#ECF0F1"/></svg>
                     </div>
                     <div class="shortcut-label">GNOMES</div>
                 </div>
-                <div class="desktop-shortcut" id="icon-sysvoid" onclick="openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', 'SYSVOID', this)">
+                <div class="desktop-shortcut" id="icon-sysvoid">
                     <div class="shortcut-icon">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" fill="#050505" stroke="#00FF00" stroke-width="1.5"/><path d="M12 5L7 17L12 14L17 17L12 5Z" fill="#00FF00" stroke="#000000" stroke-width="1"/></svg>
                     </div>
                     <div class="shortcut-label">SYS_VOID</div>
                 </div>
-                <div class="desktop-shortcut" id="icon-gridmix" onclick="openGameWindow('musicgridlivemix.html', 'Music Grid Synthesizer', 'window-gridmix', 'GRIDMIX', this)">
+                <div class="desktop-shortcut" id="icon-gridmix">
                     <div class="shortcut-icon">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" fill="#111525" stroke="#00D2FF" stroke-width="1.5"/><rect x="5" y="5" width="5" height="5" fill="#00D2FF"/><rect x="14" y="5" width="5" height="5" fill="#FF3366"/><rect x="9" y="14" width="5" height="5" fill="#00FF7F"/><rect x="14" y="14" width="5" height="5" fill="#FFD700"/></svg>
                     </div>
                     <div class="shortcut-label">GRIDMIX</div>
                 </div>
-                <div class="desktop-shortcut" id="icon-terminal" onclick="toggleWindow('terminal-window')">
+                <div class="desktop-shortcut" id="icon-apexcad">
+                    <div class="shortcut-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" fill="#3498DB" stroke="#000000" stroke-width="1.5"/><polyline points="3.27 6.96 12 12.01 20.73 6.96" stroke="#000000" stroke-width="1.5"/><line x1="12" y1="22.08" x2="12" y2="12" stroke="#000000" stroke-width="1.5"/></svg>
+                    </div>
+                    <div class="shortcut-label">APEXCAD</div>
+                </div>
+                <div class="desktop-shortcut" id="icon-terminal">
                     <div class="shortcut-icon">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="15" rx="2" fill="#111111" stroke="#000000" stroke-width="1.5"/><rect x="4" y="5" width="16" height="11" fill="#000000"/><path d="M6 8L9 10L6 12" stroke="#00FF00" stroke-width="1.5" fill="none"/><line x1="11" y1="12" x2="14" y2="12" stroke="#00FF00" stroke-width="1.5"/><rect x="8" y="18" width="8" height="3" fill="#888888" stroke="#000000" stroke-width="1"/></svg>
                     </div>
@@ -1217,11 +1306,41 @@
                             </div>
                         </div>
 
+                        <!-- Game 6: ApexCAD 3D -->
+                        <div class="game-card bevel-out" id="card-apexcad">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="game-title">ApexCAD 3D Workstation</h3>
+                                    <span class="game-file-name">APEXCAD.EXE</span>
+                                </div>
+                                <span class="card-badge">3D CAD</span>
+                            </div>
+                            <div class="card-media">
+                                <svg width="100%" height="100%" viewBox="0 0 200 120" style="background:#0e1726;">
+                                    <path d="M100 20 L160 50 V90 L100 120 L40 90 V50 Z" fill="#3498DB" opacity="0.3" stroke="#00D2FF" stroke-width="2"/>
+                                    <polyline points="40,50 100,80 160,50" stroke="#00D2FF" stroke-width="2" fill="none"/>
+                                    <line x1="100" y1="120" x2="100" y2="80" stroke="#00D2FF" stroke-width="2"/>
+                                    <text x="100" y="40" fill="#00FF00" font-family="monospace" font-size="14" font-weight="bold" text-anchor="middle">APEXCAD 3D</text>
+                                </svg>
+                            </div>
+                            <div class="card-description">
+                                1990s CSG 3D Solid Modeling & CAD Workstation with real-time boolean grouping, STL import/export, and interactive ViewCube.
+                            </div>
+                            <div class="card-meta-list">
+                                <span>SIZE: 1.2 MB</span>
+                                <span>TYPE: 3D CAD Workstation</span>
+                                <span>STATUS: READY</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-action primary bevel-out" onclick="openGameWindow('apexcad.html', 'ApexCAD 3D Workstation', 'window-apexcad', 'CAD', this)">▶ RUN PROGRAM</button>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
                 <div class="window-statusbar">
-                    <span id="catalog-status-count">5 Object(s) displayed</span>
+                    <span id="catalog-status-count">6 Object(s) displayed</span>
                     <span id="catalog-status-usage">Total Disk Usage: 942.8 KB</span>
                 </div>
             </div>
@@ -1326,6 +1445,10 @@ Type 'TYPE README.TXT' to view system documentation manual.
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" fill="#111525" stroke="#00D2FF" stroke-width="1.5"/><rect x="5" y="5" width="5" height="5" fill="#00D2FF"/><rect x="14" y="5" width="5" height="5" fill="#FF3366"/><rect x="9" y="14" width="5" height="5" fill="#00FF7F"/><rect x="14" y="14" width="5" height="5" fill="#FFD700"/></svg>
                     <span>Music Grid Synth</span>
                 </div>
+                <div class="start-item" onclick="openGameWindow('apexcad.html', 'ApexCAD 3D Workstation', 'window-apexcad', 'CAD', this)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" fill="#3498DB" stroke="#000000" stroke-width="1.5"/><polyline points="3.27 6.96 12 12.01 20.73 6.96" stroke="#000000" stroke-width="1.5"/><line x1="12" y1="22.08" x2="12" y2="12" stroke="#000000" stroke-width="1.5"/></svg>
+                    <span>ApexCAD 3D Workstation</span>
+                </div>
                 <div class="start-divider"></div>
                 <div class="start-item" onclick="promptFloppyDriveAction()">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" fill="#2980B9" stroke="#000000" stroke-width="1.5"/><rect x="7" y="3" width="10" height="7" fill="#BDC3C7" stroke="#000000" stroke-width="1"/><rect x="12" y="4" width="3" height="5" fill="#7F8C8D"/><rect x="6" y="13" width="12" height="8" fill="#ECF0F1" stroke="#000000" stroke-width="1"/></svg>
@@ -1400,6 +1523,7 @@ Type 'TYPE README.TXT' to view system documentation manual.
                     <option value="GNOMES.HTML">Gnomes in the Tall Grass (3D Meadow Sim)</option>
                     <option value="SYS_VOID.HTML">S Y S T E M _ V O I D (Vector Space Shooter)</option>
                     <option value="GRIDMIX.HTML">Music Grid Synthesizer (Audio Sequencer)</option>
+                    <option value="APEXCAD.HTML">ApexCAD 3D Workstation (3D CSG CAD System)</option>
                 </select>
             </div>
 
@@ -1425,7 +1549,337 @@ Type 'TYPE README.TXT' to view system documentation manual.
     </div>
 
     <!-- Subsystem Scripts -->
-    <script src="floppy_installer.js"></script>
+    <script src="floppy_installer.js">
+        // DESKTOP ICON SELECTION, DOUBLE-CLICK, CONTEXT MENU, AND DRAG ENGINE
+        let selectedDesktopIcon = null;
+        let contextTargetIcon = null;
+
+        function initDesktopIconEngine() {
+            const desktop = document.getElementById('desktop');
+            const iconsContainer = document.getElementById('desktop-icons');
+            if (!desktop || !iconsContainer) return;
+
+            const savedPos = JSON.parse(localStorage.getItem('jglovr_desktop_icon_positions') || '{}');
+            const icons = Array.from(iconsContainer.querySelectorAll('.desktop-shortcut'));
+            
+            let defaultTop = 16;
+            let defaultLeft = 16;
+
+            icons.forEach((icon, idx) => {
+                const id = icon.id || (`icon-shortcut-` + idx);
+                icon.id = id;
+
+                if (savedPos[id]) {
+                    icon.style.position = 'absolute';
+                    icon.style.top = savedPos[id].top + 'px';
+                    icon.style.left = savedPos[id].left + 'px';
+                } else {
+                    icon.style.position = 'absolute';
+                    icon.style.top = defaultTop + 'px';
+                    icon.style.left = defaultLeft + 'px';
+                    defaultTop += 95;
+                    if (defaultTop > window.innerHeight - 150) {
+                        defaultTop = 16;
+                        defaultLeft += 110;
+                    }
+                }
+
+                // Single Click -> Select
+                icon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    selectDesktopIcon(icon);
+                });
+
+                // Double Click -> Launch
+                icon.addEventListener('dblclick', (e) => {
+                    e.stopPropagation();
+                    launchDesktopIcon(icon);
+                });
+
+                // Right Click -> Context Menu
+                icon.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    selectDesktopIcon(icon);
+                    showDesktopContextMenu(e.clientX, e.clientY, icon);
+                });
+
+                // Draggable Shortcut Position
+                makeIconDraggable(icon);
+            });
+
+            // Deselect icons & close context menu on background click
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.desktop-shortcut') && !e.target.closest('#desktop-context-menu')) {
+                    deselectAllDesktopIcons();
+                    hideDesktopContextMenu();
+                }
+            });
+
+            desktop.addEventListener('contextmenu', (e) => {
+                if (e.target === desktop || e.target.id === 'desktop-icons') {
+                    e.preventDefault();
+                    deselectAllDesktopIcons();
+                    showDesktopContextMenu(e.clientX, e.clientY, null);
+                }
+            });
+        }
+
+        function selectDesktopIcon(iconElem) {
+            deselectAllDesktopIcons();
+            if (!iconElem) return;
+            iconElem.classList.add('selected');
+            selectedDesktopIcon = iconElem;
+        }
+
+        function deselectAllDesktopIcons() {
+            document.querySelectorAll('.desktop-shortcut').forEach(el => el.classList.remove('selected'));
+            selectedDesktopIcon = null;
+        }
+
+        function launchDesktopIcon(iconElem) {
+            if (!iconElem) return;
+            playSound('launch');
+
+            const id = iconElem.id;
+            if (id === 'icon-catalog') openWindow('catalog-window');
+            else if (id === 'icon-codyfrog') openGameWindow('codyfrogclassic.html', 'Cody Frog', 'window-codyfrog', 'FROG', iconElem);
+            else if (id === 'icon-traingame') openGameWindow('traingame.html', 'Train Game', 'window-traingame', 'TRAIN', iconElem);
+            else if (id === 'icon-gnomes') openGameWindow('gnomesinthetallgrass.html', 'Gnomes in the Tall Grass', 'window-gnomes', 'GNOMES', iconElem);
+            else if (id === 'icon-sysvoid') openGameWindow('systemvoid.html', 'S Y S T E M _ V O I D', 'window-sysvoid', 'SYSVOID', iconElem);
+            else if (id === 'icon-gridmix') openGameWindow('musicgridlivemix.html', 'Music Grid Synthesizer', 'window-gridmix', 'GRIDMIX', iconElem);
+            else if (id === 'icon-apexcad') openGameWindow('apexcad.html', 'ApexCAD 3D Workstation', 'window-apexcad', 'CAD', iconElem);
+            else if (id === 'icon-terminal') toggleWindow('terminal-window');
+            else if (iconElem.onclick) {
+                iconElem.onclick();
+            }
+        }
+
+        function showDesktopContextMenu(x, y, iconElem) {
+            contextTargetIcon = iconElem;
+            const menu = document.getElementById('desktop-context-menu');
+            if (!menu) return;
+
+            const burnBtn = document.getElementById('context-burn-item');
+            const deleteBtn = document.getElementById('context-delete-item');
+
+            if (iconElem) {
+                if (burnBtn) burnBtn.style.display = (typeof openFloppyBurnModal === 'function') ? 'flex' : 'none';
+                if (deleteBtn) {
+                    deleteBtn.style.display = iconElem.classList.contains('custom-desktop-icon') ? 'flex' : 'none';
+                }
+            } else {
+                if (burnBtn) burnBtn.style.display = 'none';
+                if (deleteBtn) deleteBtn.style.display = 'none';
+            }
+
+            const maxX = window.innerWidth - 220;
+            const maxY = window.innerHeight - 190;
+            menu.style.left = Math.min(x, maxX) + 'px';
+            menu.style.top = Math.min(y, maxY) + 'px';
+            menu.classList.remove('hidden');
+        }
+
+        function hideDesktopContextMenu() {
+            const menu = document.getElementById('desktop-context-menu');
+            if (menu) menu.classList.add('hidden');
+        }
+
+        function contextMenuAction(action) {
+            hideDesktopContextMenu();
+            const target = contextTargetIcon || selectedDesktopIcon;
+
+            if (action === 'open') {
+                if (target) launchDesktopIcon(target);
+                else openWindow('catalog-window');
+            } else if (action === 'burn') {
+                if (typeof openFloppyBurnModal === 'function') {
+                    openFloppyBurnModal();
+                }
+            } else if (action === 'info') {
+                const key = target ? target.id : 'CODYFROG';
+                openProgramProperties(key);
+            } else if (action === 'delete') {
+                if (target && target.classList.contains('custom-desktop-icon')) {
+                    if (confirm(`Remove desktop shortcut for ${target.innerText}?`)) {
+                        target.remove();
+                    }
+                }
+            }
+        }
+
+        function makeIconDraggable(iconElem) {
+            let isDragging = false;
+            let startX = 0, startY = 0;
+            let initialLeft = 0, initialTop = 0;
+
+            iconElem.addEventListener('mousedown', (e) => {
+                if (e.button !== 0) return;
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                initialLeft = iconElem.offsetLeft;
+                initialTop = iconElem.offsetTop;
+                iconElem.style.zIndex = 99;
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+
+                iconElem.style.left = (initialLeft + deltaX) + 'px';
+                iconElem.style.top = (initialTop + deltaY) + 'px';
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (!isDragging) return;
+                isDragging = false;
+                iconElem.style.zIndex = 5;
+
+                // Snap to Grid (100px X, 95px Y)
+                const snapLeft = Math.max(16, Math.round((iconElem.offsetLeft - 16) / 100) * 100 + 16);
+                const snapTop = Math.max(16, Math.round((iconElem.offsetTop - 16) / 95) * 95 + 16);
+
+                iconElem.style.left = snapLeft + 'px';
+                iconElem.style.top = snapTop + 'px';
+
+                const savedPos = JSON.parse(localStorage.getItem('jglovr_desktop_icon_positions') || '{}');
+                savedPos[iconElem.id] = { left: snapLeft, top: snapTop };
+                localStorage.setItem('jglovr_desktop_icon_positions', JSON.stringify(savedPos));
+            });
+        }
+
+
+        setTimeout(initDesktopIconEngine, 200);
+    
+        // PROGRAM LORE & SYSTEM PROPERTIES DATABASE
+        const PROGRAM_LORE_DATABASE = {
+        "CODYFROG": {
+                "title": "Cody Frog (Classic Logic Edition)",
+                "fileName": "CODYFROG.EXE",
+                "publisher": "PONDLOGIC",
+                "year": "1994",
+                "type": "Coding & Logic Puzzle Game",
+                "headquarters": "Cambridge, Massachusetts, USA",
+                "description": "Developed by Pondlogic in 1994, Cody Frog was hailed as a breakthrough computer science logic puzzle game designed to teach algorithm execution, stack manipulation, and grid traversal through intuitive frog movements."
+        },
+        "CODY26": {
+                "title": "Cody Frog '26 (Original 3D Engine)",
+                "fileName": "CODY26.EXE",
+                "publisher": "PONDLOGIC",
+                "year": "1994",
+                "type": "3D Coding & Spatial Logic Engine",
+                "headquarters": "Cambridge, Massachusetts, USA",
+                "description": "Pondlogic's flagship spatial computing division released this high-performance 3D rendering suite to model complex algorithmic pathfinding, recursive branching, and 3D grid spatial orientation."
+        },
+        "SYS_VOID": {
+                "title": "S Y S T E M _ V O I D",
+                "fileName": "SYS_VOID.EXE",
+                "publisher": "VOID WORKS",
+                "year": "1993",
+                "type": "Vector Space Arcade Shooter",
+                "headquarters": "Tokyo, Japan",
+                "description": "Released in 1993 by Tokyo-based experimental software house VOID WORKS, System Void combined ultra-fast wireframe vector graphics with intense orbital arcade combat and synth soundtrack synthesis."
+        },
+        "GNOMES": {
+                "title": "Gnomes in the Tall Grass",
+                "fileName": "GNOMES.EXE",
+                "publisher": "ECOSPHERE SOFTWARE",
+                "brandingName": "ECOSPHERE",
+                "year": "1998",
+                "type": "3D Nature & Meadow Simulation",
+                "headquarters": "Boulder, Colorado, USA",
+                "description": "Published in 1998 by Ecosphere Software (known simply as Ecosphere in branding), this serene 3D meadow simulator allowed users to explore tall grass ecosystems, discover hidden gnomes, and observe procedural wildlife dynamics."
+        },
+        "TRAIN": {
+                "title": "Train Game (3D Rail Sim)",
+                "fileName": "TRAIN.EXE",
+                "publisher": "RAILROAD SIMULATIONS INC.",
+                "year": "1991",
+                "type": "Real-Time Rail Transit Simulator",
+                "headquarters": "Chicago, Illinois, USA",
+                "description": "First published in 1991 by Chicago-based Railroad Simulations Inc., Train Game set the gold standard for desktop model railroading, complete with wooden covered bridges, diesel engine physics, and custom track switching."
+        },
+        "GRIDMIX": {
+                "title": "Music Grid Synthesizer",
+                "fileName": "GRIDMIX.EXE",
+                "publisher": "SYNTHWAVE DYNAMICS LTD.",
+                "year": "1995",
+                "type": "16-Step Audio Sequencer & Workstation",
+                "headquarters": "Berlin, Germany",
+                "description": "Released in 1995 by Berlin audio pioneer Synthwave Dynamics Ltd., GridMix brought professional 16-step matrix sequencing, scale quantizers, and polyphonic Web Audio synth voice sculpting to personal computers."
+        },
+        "APEXCAD": {
+                "title": "ApexCAD 3D Workstation",
+                "fileName": "APEXCAD.EXE",
+                "publisher": "APEX GRAPHICS CORP.",
+                "year": "1992",
+                "type": "3D CSG CAD Solid Modeling Engine",
+                "headquarters": "San Jose, California, USA",
+                "description": "Published in 1992 by Silicon Valley graphics pioneer Apex Graphics Corp., ApexCAD delivered industrial-grade Constructive Solid Geometry (CSG), real-time boolean subtractive mesh rendering, and interactive 3D ViewCube navigation."
+        }
+};
+
+        function openProgramProperties(keyOrFilename) {
+            playSound('click');
+            hideDesktopContextMenu();
+
+            let key = (keyOrFilename || 'CODYFROG').toUpperCase().replace('.EXE', '').replace('.HTML', '').replace('WINDOW-', '').replace('WIN-CUSTOM-', '').replace('ICON-', '');
+            if (key.includes('TRAIN')) key = 'TRAIN';
+            else if (key.includes('26')) key = 'CODY26';
+            else if (key.includes('CODY')) key = 'CODYFROG';
+            else if (key.includes('GNOME')) key = 'GNOMES';
+            else if (key.includes('VOID') || key.includes('SYS')) key = 'SYS_VOID';
+            else if (key.includes('GRID')) key = 'GRIDMIX';
+            else if (key.includes('CAD') || key.includes('APEX')) key = 'APEXCAD';
+
+            const info = PROGRAM_LORE_DATABASE[key] || {
+                title: key,
+                fileName: key + '.EXE',
+                publisher: 'CUSTOM USER SOFTWARE',
+                year: '2026',
+                type: 'Installed Executable Program',
+                headquarters: 'Local Workstation (Drive C:)',
+                description: 'Custom installed retro program stored on local hard drive storage C:\\GAMES.'
+            };
+
+            const modal = document.getElementById('properties-modal');
+            if (!modal) return;
+
+            document.getElementById('prop-window-title').textContent = `Properties: ${info.fileName}`;
+            document.getElementById('prop-game-title').textContent = info.title;
+            document.getElementById('prop-file-name').textContent = info.fileName;
+            document.getElementById('prop-publisher').textContent = info.publisher + (info.brandingName ? ` (${info.brandingName})` : '');
+            document.getElementById('prop-year').textContent = info.year;
+            document.getElementById('prop-type').textContent = info.type;
+            document.getElementById('prop-hq').textContent = info.headquarters;
+            document.getElementById('prop-location').textContent = `C:\\GAMES\\${info.fileName}`;
+            document.getElementById('prop-size').textContent = `1.4 MB (1,452,032 bytes)`;
+            document.getElementById('prop-description-text').innerHTML = `<b>${info.title}</b><br><br><b>Publisher:</b> ${info.publisher} (${info.year})<br><b>Headquarters:</b> ${info.headquarters}<br><br>${info.description}`;
+            document.getElementById('prop-icon-box').innerHTML = getSvgIcon(key);
+
+            switchPropTab('general');
+            modal.classList.remove('hidden');
+        }
+
+        function closePropertiesModal() {
+            playSound('click');
+            const modal = document.getElementById('properties-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function switchPropTab(tabName) {
+            playSound('click');
+            ['general', 'lore', 'sys'].forEach(t => {
+                const tabEl = document.getElementById('tab-prop-' + t);
+                const contentEl = document.getElementById('prop-content-' + t);
+                if (tabEl) tabEl.classList.toggle('active', t === tabName);
+                if (contentEl) contentEl.classList.toggle('hidden', t !== tabName);
+            });
+        }
+
+    </script>
     
     <!-- System JavaScript -->
     <script>
@@ -1437,6 +1891,7 @@ Type 'TYPE README.TXT' to view system documentation manual.
             'GNOMES': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><path d="M12 2L4 14H20L12 2Z" fill="#E74C3C" stroke="#000000" stroke-width="1.5"/><circle cx="10" cy="8" r="1" fill="#FFFFFF"/><circle cx="15" cy="11" r="1.2" fill="#FFFFFF"/><rect x="7" y="14" width="10" height="8" rx="2" fill="#F5CBA7" stroke="#000000" stroke-width="1.5"/><ellipse cx="12" cy="19" rx="4" ry="2.5" fill="#ECF0F1"/></svg>`,
             'SYSVOID': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><rect x="2" y="2" width="20" height="20" fill="#050505" stroke="#00FF00" stroke-width="1.5"/><path d="M12 5L7 17L12 14L17 17L12 5Z" fill="#00FF00" stroke="#000000" stroke-width="1"/></svg>`,
             'GRIDMIX': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><rect x="2" y="2" width="20" height="20" fill="#111525" stroke="#00D2FF" stroke-width="1.5"/><rect x="5" y="5" width="5" height="5" fill="#00D2FF"/><rect x="14" y="5" width="5" height="5" fill="#FF3366"/><rect x="9" y="14" width="5" height="5" fill="#00FF7F"/><rect x="14" y="14" width="5" height="5" fill="#FFD700"/></svg>`,
+            'CAD': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" fill="#3498DB" stroke="#000000" stroke-width="1.5"/><polyline points="3.27 6.96 12 12.01 20.73 6.96" stroke="#000000" stroke-width="1.5"/><line x1="12" y1="22.08" x2="12" y2="12" stroke="#000000" stroke-width="1.5"/></svg>`,
             'TERMINAL': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><rect x="2" y="3" width="20" height="15" rx="2" fill="#111111" stroke="#000000" stroke-width="1.5"/><rect x="4" y="5" width="16" height="11" fill="#000000"/><path d="M6 8L9 10L6 12" stroke="#00FF00" stroke-width="1.5" fill="none"/><line x1="11" y1="12" x2="14" y2="12" stroke="#00FF00" stroke-width="1.5"/><rect x="8" y="18" width="8" height="3" fill="#888888" stroke="#000000" stroke-width="1"/></svg>`,
             'FLOPPY': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><rect x="3" y="3" width="18" height="18" rx="2" fill="#2980B9" stroke="#000000" stroke-width="1.5"/><rect x="7" y="3" width="10" height="7" fill="#BDC3C7" stroke="#000000" stroke-width="1"/><rect x="12" y="4" width="3" height="5" fill="#7F8C8D"/><rect x="6" y="13" width="12" height="8" fill="#ECF0F1" stroke="#000000" stroke-width="1"/></svg>`
         };
@@ -1825,8 +2280,8 @@ Type 'TYPE README.TXT' to view system documentation manual.
             if (mountedFloppy.isEmpty) {
                 title.textContent = `Empty Floppy Disk Inserted - Drive A:\\`;
                 body.innerHTML = `Physical 3.5" High-Density Floppy Disk mounted successfully!<br><br>
-                    <b>Status:</b> <code>Drive A:\\ is Empty / Ready for Formatting</code><br><br>
-                    This floppy disk is blank. Would you like to write / burn a game from your hard drive collection onto this physical disk?`;
+                    <b>Status:</b> <code>Drive A:\\ is Empty / Ready for Writing</code><br><br>
+                    This floppy disk is blank. Select a program from your <b>Drive C:\\ Hard Drive</b> collection to write onto this physical disk.`;
                 if (btnRun) btnRun.style.display = 'none';
                 if (btnInstall) btnInstall.style.display = 'none';
             } else {
@@ -1834,7 +2289,7 @@ Type 'TYPE README.TXT' to view system documentation manual.
                 body.innerHTML = `Physical 3.5" High-Density Floppy Disk mounted successfully!<br><br>
                     <b>File:</b> <code>A:\\${mountedFloppy.fileName}</code><br>
                     <b>Size:</b> ${(mountedFloppy.sizeBytes / 1024).toFixed(1)} KB<br><br>
-                    Would you like to run the program directly from Drive A:\\, copy &amp; install it to permanent local storage (C:\\GAMES), or burn a game to this disk?`;
+                    Would you like to run the program directly from Drive A:\\, copy &amp; install it to C:\\GAMES, or burn a program to this disk?`;
                 if (btnRun) btnRun.style.display = 'inline-block';
                 if (btnInstall) btnInstall.style.display = 'inline-block';
             }
@@ -2130,21 +2585,33 @@ Type 'TYPE README.TXT' to view system documentation manual.
             "System Boot Complete. Welcome to JGLOVR-OS 3.11."
         ];
 
-        // Interactive Rapid Power-On & POST Sequence Engine
+        // Authentic Retro POST Boot Sequence Engine
         let systemPoweredOn = false;
         let bootSkipped = false;
+        let bootFinished = false;
+        let powerOnTime = 0;
 
-        function handlePowerOnInteraction() {
+        function handlePowerOnInteraction(e) {
+            if (e && typeof e.stopPropagation === 'function') {
+                e.stopPropagation();
+            }
+            const now = Date.now();
+
             if (!systemPoweredOn) {
                 systemPoweredOn = true;
-                document.getElementById('power-screen-container').style.display = 'none';
+                powerOnTime = now;
+
+                const pContainer = document.getElementById('power-screen-container');
+                if (pContainer) pContainer.style.display = 'none';
+                
                 const mainBios = document.getElementById('bios-main-content');
-                mainBios.style.display = 'flex';
-                getAudioContext();
-                startComputerFanHum();
-                toggleBrowserFullscreen();
+                if (mainBios) mainBios.style.display = 'flex';
+
+                try { getAudioContext(); } catch(err) {}
+                try { startComputerFanHum(); } catch(err) {}
+
                 runBiosBootSequence();
-            } else {
+            } else if (!bootFinished && (now - powerOnTime > 400)) {
                 skipBootSequence();
             }
         }
@@ -2156,19 +2623,19 @@ Type 'TYPE README.TXT' to view system documentation manual.
             const targetMem = 16384;
             let lineIndex = 0;
             
-            playHDDSpinUp();
+            try { playHDDSpinUp(); } catch(err) {}
 
             const memInterval = setInterval(() => {
-                if (bootSkipped) {
+                if (bootSkipped || bootFinished) {
                     clearInterval(memInterval);
                     return;
                 }
                 
-                currentMem += 112;
+                currentMem += 384;
                 if (currentMem > targetMem) currentMem = targetMem;
-                memoryCounter.textContent = currentMem.toLocaleString();
+                if (memoryCounter) memoryCounter.textContent = currentMem.toLocaleString();
 
-                if (lineIndex < verbosePostLines.length) {
+                if (biosLogContainer && lineIndex < verbosePostLines.length) {
                     const newDiv = document.createElement('div');
                     newDiv.textContent = verbosePostLines[lineIndex];
                     biosLogContainer.appendChild(newDiv);
@@ -2176,46 +2643,59 @@ Type 'TYPE README.TXT' to view system documentation manual.
                     lineIndex++;
                 }
 
-                if (currentMem === targetMem && lineIndex >= verbosePostLines.length) {
+                if (currentMem >= targetMem && lineIndex >= verbosePostLines.length) {
                     clearInterval(memInterval);
-                    playSound('beep');
-                    playFloppySeek();
+                    try { playSound('beep'); } catch(err) {}
+                    try { playFloppySeek(); } catch(err) {}
                     
                     setTimeout(() => {
                         finishBootSequence();
-                    }, 200);
+                    }, 250);
                 }
-            }, 75);
+            }, 40);
         }
 
         function skipBootSequence() {
             if (!bootSkipped) {
                 bootSkipped = true;
-                stopBootAudio();
+                try { stopBootAudio(); } catch(err) {}
                 finishBootSequence();
             }
         }
 
         function finishBootSequence() {
-            stopBootAudio();
+            if (bootFinished) return;
+            bootFinished = true;
+            try { stopBootAudio(); } catch(err) {}
+
             const biosScreen = document.getElementById('bios-boot-screen');
-            biosScreen.style.transition = 'opacity 0.4s ease-out';
-            biosScreen.style.opacity = '0';
+            if (biosScreen) {
+                biosScreen.style.pointerEvents = 'none';
+                biosScreen.style.transition = 'opacity 0.3s ease-out';
+                biosScreen.style.opacity = '0';
+            }
             
             const viewport = document.getElementById('os-viewport');
-            viewport.classList.add('crt-warming-up');
+            if (viewport) viewport.classList.add('crt-warming-up');
 
-            playSound('open');
+            try { playSound('open'); } catch(err) {}
+
             setTimeout(() => {
-                biosScreen.classList.add('hidden');
-            }, 400);
+                if (biosScreen) {
+                    biosScreen.classList.add('hidden');
+                    biosScreen.style.display = 'none';
+                }
+            }, 300);
         }
 
         document.addEventListener('keydown', function(e) {
+            const now = Date.now();
             if (!systemPoweredOn) {
-                handlePowerOnInteraction();
-            } else if (e.key === 'Escape' || e.key === 'Enter') {
-                skipBootSequence();
+                handlePowerOnInteraction(e);
+            } else if (!bootFinished && (now - powerOnTime > 400)) {
+                if (e.key === 'Enter' || e.key === 'Escape' || e.key === ' ' || e.code === 'Space') {
+                    skipBootSequence();
+                }
             }
         });
 
@@ -2580,10 +3060,125 @@ Type 'TYPE README.TXT' to view system documentation manual.
             triggerShutdown();
         }
 
+        
+        const PROGRAM_FILE_MAP = {
+            'TRAIN.HTML': 'traingame.html',
+            'TRAIN.EXE': 'traingame.html',
+            'TRAIN': 'traingame.html',
+            'CODYFROG.HTML': 'codyfrogclassic.html',
+            'CODYFROG.EXE': 'codyfrogclassic.html',
+            'CODYFROG': 'codyfrogclassic.html',
+            'CODY26.HTML': 'codyfrog.html',
+            'CODY26.EXE': 'codyfrog.html',
+            'CODY26': 'codyfrog.html',
+            'GNOMES.HTML': 'gnomesinthetallgrass.html',
+            'GNOMES.EXE': 'gnomesinthetallgrass.html',
+            'GNOMES': 'gnomesinthetallgrass.html',
+            'SYS_VOID.HTML': 'systemvoid.html',
+            'SYS_VOID.EXE': 'systemvoid.html',
+            'SYS_VOID': 'systemvoid.html',
+            'SYSVOID': 'systemvoid.html',
+            'GRIDMIX.HTML': 'musicgridlivemix.html',
+            'GRIDMIX.EXE': 'musicgridlivemix.html',
+            'GRIDMIX': 'musicgridlivemix.html',
+            'APEXCAD.HTML': 'apexcad.html',
+            'APEXCAD.EXE': 'apexcad.html',
+            'APEXCAD': 'apexcad.html'
+        };
+
+        const BUILTIN_C_PROGRAMS = [
+            { fileName: 'APEXCAD.EXE', label: 'ApexCAD 3D Workstation (3D CSG CAD System)', key: 'APEXCAD.HTML' },
+            { fileName: 'GRIDMIX.EXE', label: 'Music Grid Synthesizer (16-Step Audio Sequencer)', key: 'GRIDMIX.HTML' },
+            { fileName: 'TRAIN.EXE', label: 'Train Game (3D Rail Sim & Covered Bridges)', key: 'TRAIN.HTML' },
+            { fileName: 'CODYFROG.EXE', label: 'Cody Frog (Logic & Instruction Edition)', key: 'CODYFROG.HTML' },
+            { fileName: 'CODY26.EXE', label: "Cody Frog '26 (Original 3D Engine)", key: 'CODY26.HTML' },
+            { fileName: 'GNOMES.EXE', label: 'Gnomes in the Tall Grass (3D Meadow Sim)', key: 'GNOMES.HTML' },
+            { fileName: 'SYS_VOID.EXE', label: 'S Y S T E M _ V O I D (Vector Space Shooter)', key: 'SYS_VOID.HTML' }
+        ];
+
+        async function populateFloppyBurnDropdown() {
+            const select = document.getElementById('floppy-burn-select');
+            if (!select) return;
+            select.innerHTML = '';
+
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = '';
+            defaultOpt.textContent = '-- SELECT PROGRAM FROM DRIVE C:\\ --';
+            defaultOpt.disabled = true;
+            defaultOpt.selected = true;
+            select.appendChild(defaultOpt);
+
+            const groupBuiltin = document.createElement('optgroup');
+            groupBuiltin.label = 'Drive C:\\GAMES (System Programs)';
+            BUILTIN_C_PROGRAMS.forEach(prog => {
+                const opt = document.createElement('option');
+                opt.value = prog.key;
+                opt.textContent = `${prog.fileName} - ${prog.label}`;
+                groupBuiltin.appendChild(opt);
+            });
+            select.appendChild(groupBuiltin);
+
+            let customGames = [];
+            if (window.electronAPI && window.electronAPI.listLocalInstalledGames) {
+                customGames = await window.electronAPI.listLocalInstalledGames();
+            } else if (typeof getInstalledGamesFromHardDrive === 'function') {
+                customGames = await getInstalledGamesFromHardDrive();
+            }
+
+            if (customGames.length > 0) {
+                const groupCustom = document.createElement('optgroup');
+                groupCustom.label = 'Drive C:\\GAMES (Installed Programs)';
+                customGames.forEach(game => {
+                    const opt = document.createElement('option');
+                    opt.value = game.fileName;
+                    opt.textContent = `${game.fileName} - ${game.title}`;
+                    groupCustom.appendChild(opt);
+                });
+                select.appendChild(groupCustom);
+            }
+        }
+
+        async function fetchProgramContent(gameKey) {
+            if (!gameKey) return null;
+            const upperKey = gameKey.toUpperCase().trim();
+            
+            const targetUrl = PROGRAM_FILE_MAP[upperKey] || PROGRAM_FILE_MAP[upperKey.replace('.EXE', '.HTML')];
+            if (targetUrl) {
+                try {
+                    const resp = await fetch(targetUrl);
+                    if (resp.ok) {
+                        const text = await resp.text();
+                        return { fileName: upperKey.endsWith('.EXE') ? upperKey.replace('.EXE', '.HTML') : (upperKey.endsWith('.HTML') ? upperKey : upperKey + '.HTML'), content: text };
+                    }
+                } catch(e) {}
+            }
+
+            if (window.electronAPI && window.electronAPI.listLocalInstalledGames) {
+                const installed = await window.electronAPI.listLocalInstalledGames();
+                const found = installed.find(g => g.fileName.toUpperCase() === upperKey || g.fileName.toUpperCase() === upperKey + '.EXE' || g.fileName.toUpperCase() === upperKey + '.HTML');
+                if (found) return { fileName: found.fileName, content: found.content };
+            }
+            if (typeof getInstalledGame === 'function') {
+                const found = await getInstalledGame(gameKey);
+                if (found) return { fileName: found.fileName, content: found.codeContent || found.content };
+            }
+
+            try {
+                const resp = await fetch(gameKey.toLowerCase());
+                if (resp.ok) {
+                    const text = await resp.text();
+                    return { fileName: gameKey.toUpperCase(), content: text };
+                }
+            } catch(e) {}
+
+            return null;
+        }
+
         // Floppy Disk Burn / Writer Engine
-        function openFloppyBurnModal() {
+        async function openFloppyBurnModal() {
             playSound('click');
             closeFloppyModal();
+            await populateFloppyBurnDropdown();
             const modal = document.getElementById('floppy-burn-modal');
             if (modal) modal.classList.remove('hidden');
         }
@@ -2596,8 +3191,11 @@ Type 'TYPE README.TXT' to view system documentation manual.
 
         async function executeFloppyBurn() {
             const select = document.getElementById('floppy-burn-select');
-            if (!select || !select.value) return;
-            const gameFileName = select.value;
+            if (!select || !select.value) {
+                alert("Please select a program from Drive C:\\ first.");
+                return;
+            }
+            const gameKey = select.value;
 
             const progress = document.getElementById('floppy-burn-progress');
             progress.classList.remove('hidden');
@@ -2605,27 +3203,10 @@ Type 'TYPE README.TXT' to view system documentation manual.
             
             playFloppySeek();
 
-            let targetGame = null;
-
-            // 1. Try fetching from installed local games
-            if (window.electronAPI && window.electronAPI.listLocalInstalledGames) {
-                const installed = await window.electronAPI.listLocalInstalledGames();
-                targetGame = installed.find(g => g.fileName.toUpperCase() === gameFileName.toUpperCase());
-            }
-            
-            // 2. Try fetching from relative local HTML game file
-            if (!targetGame) {
-                try {
-                    const resp = await fetch(gameFileName.toLowerCase());
-                    if (resp.ok) {
-                        const text = await resp.text();
-                        targetGame = { fileName: gameFileName, content: text };
-                    }
-                } catch(e) {}
-            }
+            const targetGame = await fetchProgramContent(gameKey);
 
             if (!targetGame) {
-                alert("ERROR: Game file content not found.");
+                alert(`ERROR: Game file content for ${gameKey} not found.`);
                 progress.classList.add('hidden');
                 return;
             }
@@ -2643,20 +3224,37 @@ Type 'TYPE README.TXT' to view system documentation manual.
 
                     setTimeout(() => {
                         progress.classList.add('hidden');
+                        setMountedFloppy({
+                            fileName: targetGame.fileName,
+                            title: targetGame.fileName.replace(/\.[^/.]+$/, "").toUpperCase(),
+                            content: targetGame.content,
+                            sizeBytes: targetGame.content.length,
+                            isEmpty: false
+                        });
                         if (res && res.success) {
                             alert(`SUCCESS! Written ${targetGame.fileName} and RUN_GAME.BAT to physical floppy disk Drive A:\\ !\n\nThe floppy disk is now ready to play on any PC!`);
-                            closeFloppyBurnModal();
                         } else {
-                            alert(`ERROR Writing Floppy Disk: ${res ? res.error : 'Drive A:\\ is not accessible or floppy disk is write-protected.'}`);
+                            alert(`Floppy Disk Written in Virtual Drive A:\\.\nNote: ${res ? res.error : 'Physical Drive A:\\ not present'}`);
                         }
+                        closeFloppyBurnModal();
                     }, 500);
                 } else {
-                    progress.classList.add('hidden');
-                    alert("Floppy Disk Writing is supported in the Desktop App edition.");
-                    closeFloppyBurnModal();
+                    setMountedFloppy({
+                        fileName: targetGame.fileName,
+                        title: targetGame.fileName.replace(/\.[^/.]+$/, "").toUpperCase(),
+                        content: targetGame.content,
+                        sizeBytes: targetGame.content.length,
+                        isEmpty: false
+                    });
+                    setTimeout(() => {
+                        progress.classList.add('hidden');
+                        alert(`SUCCESS! Written ${targetGame.fileName} to Floppy Disk Drive A:\\ !`);
+                        closeFloppyBurnModal();
+                    }, 500);
                 }
             }, 1200);
         }
+
 
         // Real-Time System Clock
         function updateClock() {
@@ -2692,7 +3290,10 @@ SYSTEM UTILITIES & COMMANDS:
 ---------------------------
 - DIR           : List files in current directory
 - A: / C:       : Switch between Drive A:\\ (Floppy) and Drive C:\\ (Hard Drive)
-- COPY A:\\* C:  : Install program from floppy disk to hard drive
+- COPY C:\\GAMES\\<PROG> A: : Copy program from C:\\GAMES to Floppy Drive A:\\
+- COPY A:\\* C:            : Install program from floppy disk to hard drive
+- WRITE / BURN <PROG> A:  : Write program onto floppy disk in Drive A:\\
+- FORMAT A:               : Format floppy disk in Drive A:\\
 - TYPE [file]   : Output text contents of a file (e.g. TYPE README.TXT)
 - RUN [file]    : Execute program in retro window (e.g. RUN TRAIN, RUN CODYFROG)
 - MEM           : Display MS-DOS conventional and XMS memory allocation
@@ -2706,7 +3307,7 @@ SYSTEM UTILITIES & COMMANDS:
 (C) 1995-2026 JGLOVR Systems. All Rights Reserved.`;
 
         // Automatically fetch live README.md from GitHub repository on load
-        fetch('README.md')
+        if (window.location.protocol.startsWith('http')) fetch('README.md')
             .then(res => {
                 if (res.ok) return res.text();
                 throw new Error('Local fetch skipped');
@@ -2731,7 +3332,7 @@ SYSTEM UTILITIES & COMMANDS:
             if (titleText) titleText.textContent = `MS-DOS Command Prompt - [${currentDir}]`;
         }
 
-        function handleTerminalKey(event) {
+        async function handleTerminalKey(event) {
             const inputEl = document.getElementById('term-input');
             const outputEl = document.getElementById('term-output');
 
@@ -2802,13 +3403,69 @@ SYSTEM UTILITIES & COMMANDS:
                 } else if (cmd === 'eject') {
                     ejectFloppyDriveAction();
                     reply += `Drive A:\\ Floppy Disk ejected.`;
-                } else if (cmd.startsWith('copy ')) {
-                    if (mountedFloppy) {
-                        installFloppyToHardDrive();
-                        reply += `Copying A:\\${mountedFloppy.fileName} to C:\\GAMES ... Installed!`;
+                } else if (cmd.startsWith('copy ') || cmd.startsWith('write ') || cmd.startsWith('burn ')) {
+                    const parts = rawCmd.trim().split(/\s+/);
+                    let src = parts[1] ? parts[1].toUpperCase() : '';
+                    let dest = parts[2] ? parts[2].toUpperCase() : '';
+
+                    if (src.startsWith('A:') || src.startsWith('A:\\')) {
+                        if (mountedFloppy && !mountedFloppy.isEmpty) {
+                            await installFloppyToHardDrive();
+                            reply += `Copying A:\\${mountedFloppy.fileName} to C:\\GAMES ... 100% [Installed to Hard Drive]`;
+                        } else {
+                            reply += `Drive A:\\ is empty. Insert a floppy disk first.`;
+                        }
                     } else {
-                        reply += `Drive A:\\ is empty. Insert a floppy disk first.`;
+                        let progName = src.replace('C:\\GAMES\\', '').replace('C:\\', '').trim();
+                        if (cmd.startsWith('write ') || cmd.startsWith('burn ')) {
+                            progName = parts[1] ? parts[1].toUpperCase() : '';
+                        }
+                        if (!progName || progName === 'C:' || progName === 'C:\\GAMES' || progName === 'C:\\GAMES\\*') {
+                            reply += `Syntax: COPY C:\\GAMES\\<PROGRAM> A:\\
+        WRITE <PROGRAM> A:
+        BURN <PROGRAM> A:
+Available Programs on Drive C:\\:
+  - APEXCAD.EXE  (3D CSG CAD Workstation)
+  - GRIDMIX.EXE  (16-Step Audio Sequencer)
+  - TRAIN.EXE    (3D Rail Sim & Covered Bridges)
+  - CODYFROG.EXE (Logic & Math Edition)
+  - CODY26.EXE   (Original 3D Engine)
+  - GNOMES.EXE   (3D Meadow Simulation)
+  - SYS_VOID.EXE (Vector Arcade Shooter)`;
+                        } else {
+                            const programInfo = await fetchProgramContent(progName);
+                            if (programInfo) {
+                                if (window.electronAPI && window.electronAPI.writeGameToFloppyDisk) {
+                                    await window.electronAPI.writeGameToFloppyDisk({
+                                        gameFileName: programInfo.fileName,
+                                        content: programInfo.content,
+                                        drivePath: 'A:\\'
+                                    });
+                                }
+                                setMountedFloppy({
+                                    fileName: programInfo.fileName,
+                                    title: programInfo.fileName.replace(/\.[^/.]+$/, "").toUpperCase(),
+                                    content: programInfo.content,
+                                    sizeBytes: programInfo.content.length,
+                                    isEmpty: false
+                                });
+                                playFloppySeek();
+                                reply += `Writing C:\\GAMES\\${programInfo.fileName} to Floppy Drive A:\\ ...\nWriting sector tracks: [==========> 100%]\n1 file(s) copied to Drive A:\\. Created RUN_GAME.BAT, AUTORUN.INF, and README.TXT.`;
+                            } else {
+                                reply += `File not found - C:\\GAMES\\${progName}`;
+                            }
+                        }
                     }
+                } else if (cmd.startsWith('format ') || cmd === 'format' || cmd === 'format a:' || cmd === 'format a:\\') {
+                    setMountedFloppy({
+                        fileName: 'EMPTY_DISK',
+                        title: 'EMPTY DISK',
+                        content: '',
+                        sizeBytes: 0,
+                        isEmpty: true
+                    });
+                    playFloppySeek();
+                    reply += `Formatting 1.44M, 3.5" High-Density Floppy Disk in Drive A:\\ ...\nFormat complete. 1.44 MB total disk space available.`;
                 } else if (cmd === 'dir' || cmd === 'ls') {
                     if (currentDir === 'A:\\') {
                         if (mountedFloppy) {
@@ -3010,6 +3667,9 @@ C:\\
                     } else if (target.includes('grid') || target.includes('music')) {
                         openGameWindow('musicgridlivemix.html', 'Music Grid Synthesizer', 'window-gridmix', 'GRIDMIX', document.getElementById('icon-gridmix'));
                         reply += `Launching GRIDMIX.EXE...`;
+                    } else if (target.includes('cad') || target.includes('apex') || target.includes('3d')) {
+                        openGameWindow('apexcad.html', 'ApexCAD 3D Workstation', 'window-apexcad', 'CAD', document.getElementById('icon-apexcad'));
+                        reply += `Launching APEXCAD.EXE...`;
                     } else {
                         reply += `Bad command or file name. Type DIR to list files.`;
                     }
@@ -3043,5 +3703,76 @@ C:\\
             }
         }
     </script>
+
+    <!-- RETRO DESKTOP RIGHT-CLICK CONTEXT MENU OVERLAY -->
+    <div id="desktop-context-menu" class="hidden">
+        <div class="menu-item bold" onclick="contextMenuAction('open')">▶ Open / Execute</div>
+        <div class="menu-divider"></div>
+        <div class="menu-item" id="context-burn-item" onclick="contextMenuAction('burn')">💾 Write / Burn to Floppy Disk (A:)</div>
+        <div class="menu-item" onclick="contextMenuAction('info')">ℹ System Properties</div>
+        <div class="menu-divider"></div>
+        <div class="menu-item" id="context-delete-item" onclick="contextMenuAction('delete')">🗑 Delete Shortcut</div>
+    </div>
+
+
+    <!-- RETRO PROGRAM PROPERTIES / SYSTEM INFO MODAL OVERLAY -->
+    <div id="properties-modal" class="hidden">
+        <div class="properties-card bevel-out" style="width: 520px;">
+            <div class="window-titlebar" style="margin:-16px -16px 12px -16px;">
+                <div class="window-title-text">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#2980B9" stroke="#000000" stroke-width="1.5"/><circle cx="12" cy="8" r="1.5" fill="#FFFFFF"/><rect x="11" y="11" width="2" height="6" fill="#FFFFFF"/></svg>
+                    <span id="prop-window-title">Program Properties & System Lore</span>
+                </div>
+                <div class="window-controls">
+                    <button class="win-btn bevel-out" onclick="closePropertiesModal()">X</button>
+                </div>
+            </div>
+
+            <div class="prop-tabs" style="display:flex; gap:4px; margin-bottom:12px;">
+                <div class="prop-tab active" id="tab-prop-general" onclick="switchPropTab('general')">General</div>
+                <div class="prop-tab" id="tab-prop-lore" onclick="switchPropTab('lore')">Publisher & Lore</div>
+                <div class="prop-tab" id="tab-prop-sys" onclick="switchPropTab('sys')">System Reqs</div>
+            </div>
+
+            <div id="prop-content-general" class="prop-panel">
+                <div style="display:flex; gap:16px; align-items:center; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid #888;">
+                    <div id="prop-icon-box" style="width:48px; height:48px; background:#fff; border:2px inset #888; display:flex; align-items:center; justify-content:center;"></div>
+                    <div>
+                        <h3 id="prop-game-title" style="margin:0; font-size:20px; color:#000080;">Program Name</h3>
+                        <span id="prop-file-name" style="font-family:monospace; font-size:14px; background:#e0e0e0; padding:1px 6px;">FILE.EXE</span>
+                    </div>
+                </div>
+                <table class="prop-table" style="width:100%; font-size:15px; border-collapse:collapse;">
+                    <tr><td style="width:140px; font-weight:bold;">Publisher:</td><td id="prop-publisher">Publisher Name</td></tr>
+                    <tr><td style="font-weight:bold;">Year Published:</td><td id="prop-year">1995</td></tr>
+                    <tr><td style="font-weight:bold;">Software Type:</td><td id="prop-type">Software Type</td></tr>
+                    <tr><td style="font-weight:bold;">Headquarters:</td><td id="prop-hq">City, Country</td></tr>
+                    <tr><td style="font-weight:bold;">Target Location:</td><td id="prop-location">C:\GAMES\PROGRAM.EXE</td></tr>
+                    <tr><td style="font-weight:bold;">File Size:</td><td id="prop-size">1.2 MB (1,248,512 bytes)</td></tr>
+                </table>
+            </div>
+
+            <div id="prop-content-lore" class="prop-panel hidden">
+                <div style="background:#fff; border:2px inset #888; padding:12px; font-size:15px; line-height:1.4; height:180px; overflow-y:auto;" id="prop-description-text">
+                    Lore description goes here.
+                </div>
+            </div>
+
+            <div id="prop-content-sys" class="prop-panel hidden">
+                <table class="prop-table" style="width:100%; font-size:15px; border-collapse:collapse;">
+                    <tr><td style="width:140px; font-weight:bold;">Required CPU:</td><td>Intel i486DX2 66 MHz or higher</td></tr>
+                    <tr><td style="font-weight:bold;">Base Memory:</td><td>640 KB Conventional + 4 MB Extended (XMS)</td></tr>
+                    <tr><td style="font-weight:bold;">Graphics Mode:</td><td>VESA VGA 640x480 (256 Colors / Hardware 3D)</td></tr>
+                    <tr><td style="font-weight:bold;">Sound Hardware:</td><td>Sound Blaster 16 / Web Audio DSP</td></tr>
+                    <tr><td style="font-weight:bold;">Storage Media:</td><td>3.5" High-Density Floppy Disk / Hard Drive C:</td></tr>
+                </table>
+            </div>
+
+            <div class="card-actions" style="margin-top:16px; justify-content:flex-end;">
+                <button class="btn-action primary bevel-out" style="width:120px;" onclick="closePropertiesModal()">OK</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
