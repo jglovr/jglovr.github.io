@@ -35,3 +35,9 @@ Desktop.ini
 *.log
 tmp/
 temp/
+
+# Desktop release executables exception
+!downloads/
+!downloads/*.exe
+!desktop-app/dist/*.exe
+
